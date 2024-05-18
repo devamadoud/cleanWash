@@ -1,0 +1,52 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+  Bienvenue
+{% endblock %}
+
+{% block body %}
+  <div class="py-12 mt-8 lg:py-8 max-w-screen-2xl">
+    <section class="bg-white dark:bg-gray-900 h-screen flex flex-col py-12">
+      {% if app.user.job and app.user.job.revokedAt != null %}
+      
+        <div class="flex items-center self-center p-4 text-sm w-2/4 text-gray-800 border border-gray-300 rounded-lg bg-gray-50 dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600" role="alert">
+          <svg class="flex-shrink-0 inline w-4 h-4 me-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+            <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z" />
+          </svg>
+          <span class="sr-only">Info</span>
+          <div>
+            <span class="font-medium">Votre employeur vous à renvoyé, vous ne pouvez plus utiliser la plateform pour travailler jusqu'à ce que vous trouviez du travail dans une boutique.</span>
+            <p class="font-medium mt-2 text-yellow-800">Si vous pensez que c'est une erreur veuillez contacter votre employeur.</p>
+          </div>
+        </div>
+
+      {% endif %}
+
+      {% if app.user.userType == 'gerant' %}
+        <div class="flex items-center self-center p-4 text-sm w-2/4 text-gray-800 border border-gray-300 rounded-lg bg-gray-50 dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600" role="alert">
+          <svg class="flex-shrink-0 inline w-4 h-4 me-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+            <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z" />
+          </svg>
+          <span class="sr-only">Info</span>
+          <div>
+            <span class="font-medium">Notre équipe vous contacteras dans les plus breves delais pour en savoir plus sur votre activité et créer votre boutique.</span>
+            <p class="font-medium mt-2 text-yellow-800">Vous pouvez nous appeler directement ou par whatsApp <span class="text-purple-600"><a href="tel:+221783841245">78 384 12 45 </a></span></p>
+          </div>
+        </div>
+      {% endif %}
+
+      <div class="flex flex-col py-5 h-max">
+        <div class="text-purple-900 py-5 text-4xl w-1/2 font-semibold flex justifay-start">
+          <h1>Bienvenue sur la plateform, {{ app.user.getJob ? 'content de vous revoire ' : 'content de vous avoir parmis nous ' }} {{ app.user.fullName }}</h1>
+        </div>
+        <div class="bg-purple-900 w-full text-sm text-white p-5 border border-purple-950 relative rounded">
+          <div class="flex flex-col justify-start w-2/4">
+            <p class="mb-4"> {{ app.user.userType == 'gerant' ? 'Notre plateform vous permet de gerer votre entreprise de pressing plus efficacement </br> - Gestion des employés. </br> - Gestion des clients. </br> - Gestion du caisse etc...': "Vous vous êtes inscrit en tant qu'employé. Si vous avez déjà un recruteur dans vos contacts, informez-le que vous vous êtes inscrit afin qu'il puisse vous ajouter en tant qu'employé de sa boutique." }} </p>
+            <a href="#" class="inline-flex w-max items-center justify-center px-5 py-3 mr-3 text-base font-medium text-center text-white rounded-lg bg-yellow-500 hover:bg-yellow-600 focus:ring-4 focus:ring-yellow-50 dark:focus:ring-yellow-900">Profile</a>
+          </div>
+          <img src="{{ asset('images/illustrations/pressingWelcome.png') }}" alt="illustration travailleurs" class="absolute bottom-0 right-4 h-80" />
+        </div>
+      </div>
+    </section>
+  </div>
+{% endblock %}

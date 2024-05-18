@@ -1,3 +1,23 @@
-body {
-    background-color: skyblue;
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.boite1{
+    border-left: 4px solid white;
+    border-top: 4px solid white;
+}
+
+.boite2{
+    border-right: 4px solid white;
+    border-top: 4px solid white;
+}
+
+.boite3{
+    border-left: 4px solid white;
+    border-bottom: 4px solid white;
+}
+
+.boite4{
+    border-right: 4px solid white;
+    border-bottom: 4px solid white;
 }

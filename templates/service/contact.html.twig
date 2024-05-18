@@ -1,0 +1,54 @@
+{% extends 'base.html.twig' %}
+
+{% form_theme form 'tailwind_2_layout.html.twig' %}
+
+{% block title %}
+ Contact
+{% endblock %}
+
+{% block body %}
+  <div class="customer-form items-center flex min-h-full px-8">
+    <div class="px-4 lg:w-max sm:mt-5 md:px-8">
+      <div class="items-start justify-between md:flex border-b pb-6 text-gray-600">
+        <div class="max-w-lg">
+          <h2 class="text-purple-800 text-xl font-semibold sm:text-2xl">Contactez-nous</h2>
+          <p class="mb-8 lg:mb-16 font-light text-left sm:text-center text-gray-500 dark:text-gray-400 sm:text-xl">Got a technical issue? Want to send feedback about a beta feature? Need details about our Business plan? Let us know.</p>
+        </div>
+      </div>
+      <div class="px-4 text-sm font-medium">
+        <section class="bg-white dark:bg-gray-900 self-center">
+          <div class="py-8 lg:py-16 px-4 mx-auto max-w-screen-md">
+            
+            {{ form_start(form, {attr: {class: "space-y-8"}}) }}
+                {{ form_row(form.phone, {row_class: '',
+                        label_class: 'block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300',
+                        error_item_class: 'text-red-500 text-sm font-medium',
+                        widget_class: 'shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500 dark:shadow-sm-light',
+                        widget_disabled_class: 'my disabled widget classes',
+                        widget_errors_class: 'ring-1 ring-inset ring-orange-600',
+                    }) 
+                }}
+                {{ form_row(form.subject, {row_class: '',
+                        label_class: 'block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300',
+                        error_item_class: 'text-red-500 text-sm font-medium',
+                        widget_class: 'block p-3 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 shadow-sm focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500 dark:shadow-sm-light',
+                        widget_disabled_class: 'my disabled widget classes',
+                        widget_errors_class: 'ring-1 ring-inset ring-orange-600',
+                    }) 
+                }}
+                {{ form_row(form.message, {row_class: 'sm:col-span-2',
+                        label_class: 'block mb-2 text-sm font-medium text-gray-900 dark:text-gray-400',
+                        error_item_class: 'text-red-500 text-sm font-medium',
+                        widget_class: 'block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg shadow-sm border border-gray-300 focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500',
+                        widget_disabled_class: 'my disabled widget classes',
+                        widget_errors_class: 'ring-1 ring-inset ring-orange-600',
+                    }) 
+                }}
+            <button type="submit" class="inline-flex items-center justify-center px-5 py-3 mr-3 text-base font-medium text-center text-white rounded-lg bg-purple-600 hover:bg-purple-700 focus:ring-4 focus:ring-purple-300 dark:focus:ring-purple-900">{{ button_label|default('Envoyer') }}</button>
+            {{ form_end(form) }}
+          </div>
+        </section>
+      </div>
+    </div>
+  </div>
+{% endblock %}

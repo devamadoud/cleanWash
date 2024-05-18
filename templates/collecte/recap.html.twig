@@ -1,0 +1,53 @@
+{% extends 'base.html.twig' %}
+
+{% form_theme form 'tailwind_2_layout.html.twig' %}
+
+{% block title %}
+  Recap du collecte
+{% endblock %}
+
+{% block body %}
+  <div class="customer-form items-center min-h-full lg:px-8">
+    <div class="max-w-screen-xl px-4 py-0 md:py-8 md:px-8">
+      <div class="items-start justify-between md:flex border-b pb-6 text-gray-600">
+        <div class="max-w-lg">
+          <h3 class="text-purple-800 text-xl font-semibold sm:text-2xl">Recapitulatif du collecte</h3>
+
+          {% if app.user %}
+            <p class="text-gray-700 mt-2 text-sm font-semibold sm:text-md">Voici les detailles de la collecte, veillez renseigner le client le montant de la facture.</p>
+          {% else %}
+            <p class="text-gray-700 mt-2 text-sm font-semibold sm:text-md">Voici les detailles de la collecte, veuillez choisir le mode de payment que vous souhaitez.</p>
+          {% endif %}
+        </div>
+      </div>
+      <div class="lg:w-max mt-5 lg:px-8 lg:mx-auto">
+        <div class="flex flex-col">{{ include('collecte/_recap.html.twig', { collecte: collecte }) }}</div>
+
+        {% if form != null %}
+          {{ form_start(form) }}
+
+            <div class="w-full text-center mt-4">
+                <h3 class="mb-5 text-lg font-medium text-purple-900 dark:text-white">Vous effecturait le payment au collecte ou à la livraison ?</h3>
+                {{ form_widget(form.paymentChoice, {
+                    label_attr: {
+                        class: 'block text-sm font-medium leading-6 cursor-pointer px-3 py-2 m-2',
+                    },
+                    error_attr: {
+                        class: 'text-red-500 text-sm font-medium',
+                    },
+                    attr: {
+                        class: 'block w-full flex gap-4 justify-center rounded-md border-0 py-1.5 px-4 text-center text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-purple-600 sm:text-sm sm:leading-6',
+                    },
+                }) }}
+            </div>
+
+            <div class="w-full text-right mt-4">
+                <a href="{{ path('collecte.edit', { id: collecte.id }) }}" class="px-3 py-2 m-1 text-sm font-medium text-center border text-purple-700 bg-gray-100 rounded-md hover:bg-gray-200 focus:ring-none focus:outline-none focus:bg-gray-300 dark:bg-gray-200 dark:hover:bg-gray-300 dark:focus:ring-none">Edit</a>
+                <button type="submit" class="px-3 py-2 m-1 text-sm font-medium text-center border text-white bg-purple-700 rounded-md hover:bg-purple-800 focus:ring-none focus:outline-none focus:bg-purple-600 dark:bg-purple-600 dark:hover:bg-purple-700 dark:focus:ring-none">Continuer</button>
+            </div>
+          {{ form_end(form) }}
+        {% endif %}
+      </div>
+    </div>
+  </div>
+{% endblock %}

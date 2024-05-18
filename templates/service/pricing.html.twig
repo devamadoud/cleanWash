@@ -1,0 +1,42 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+  clothingTypes
+{% endblock %}
+
+{% block body %}
+  <div class="customer-form items-center min-h-full lg:px-8">
+    <div class="max-w-screen-xl px-4 py-0 md:py-4 md:px-8">
+      <div class="items-start justify-between md:flex border-b pb-6 text-gray-600">
+        <div class="max-w-lg">
+          <h2 class="text-purple-800 text-2xl font-semibold sm:text-2xl">Nos tarifs</h2>
+            <p class="text-gray-700 mt-2 text-sm font-semibold sm:text-md">Nos prix au lavage a deux categories, le lavage par type/nombre de vêtement et par kg.</p>
+        </div>
+      </div>
+      <div class="lg:w-max mt-5 lg:px-8 lg:mx-auto">
+        <div class="max-w-lg">
+          <h3 class="text-purple-800 text-xl font-semibold sm:text-2xl">lavage par type/nombre de vêtement</h3>
+            <p class="text-gray-700 mt-2 text-sm font-medium sm:text-md">Vous pouvez effectuer une collecte en choisissant lavage par type/nombre de vêtement, nous allons alors classer les type de vêtement que vous avez et compter le tout pour ensuite calculer le prix total de votre collecte.</p>
+        </div>
+        <div class="mt-5 shadow-sm border rounded-lg overflow-x-auto">
+          <table class="w-full md:w-full table-auto text-sm text-left">
+            <thead class="bg-gray-50 w-full text-purple-950 font-medium border-b">
+              <tr>
+                <th class="py-2 px-4">Type de vêtement</th>
+                <th class="py-2 px-4">Prix de lavage</th>
+              </tr>
+            </thead>
+            <tbody class="text-gray-600 divide-y bg-white">
+              {% for clothingType in clothingTypes %}
+                <tr>
+                  <td class="px-4 py-2 text-ellipsis overflow-hidden">{{ clothingType.name }}</td>
+                  <td class="px-4 py-2 whitespace-wrap">{{ clothingType.price|format_currency('XOF', locale='de') }}</td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}

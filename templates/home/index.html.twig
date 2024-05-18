@@ -1,0 +1,355 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+  Bienvenue - setSetal
+{% endblock %}
+
+{% block body %}
+  <a href="{{ path('cart.index') }}" class="fixed bottom-0 right-0 m-8 z-50 text-purple-500">
+    <div class="relative">
+      <span class="absolute -top-3 -right-3 text-white text-sm bg-red-700 rounded-full px-2 py-1 border border-white">{{ app.session.get('cart')|length }}</span>
+      <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="bi bi-cart-fill w-9 h-9 text-5xl" viewBox="0 0 16 16">
+        <path d="M0 1.5A.5.5 0 0 1 .5 1H2a.5.5 0 0 1 .485.379L2.89 3H14.5a.5.5 0 0 1 .491.592l-1.5 8A.5.5 0 0 1 13 12H4a.5.5 0 0 1-.491-.408L2.01 3.607 1.61 2H.5a.5.5 0 0 1-.5-.5M5 12a2 2 0 1 0 0 4 2 2 0 0 0 0-4m7 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4m-7 1a1 1 0 1 1 0 2 1 1 0 0 1 0-2m7 0a1 1 0 1 1 0 2 1 1 0 0 1 0-2"/>
+      </svg>
+    </div>
+  </a>
+  <div class="py-5 lg:py-8 max-w-screen-2xl">
+    <section class="bg-white dark:bg-gray-900">
+      <div class="grid max-w-full px-4 py-0 mx-auto lg:gap-8 xl:gap-0 lg:py-8 lg:grid-cols-12">
+        <div class="lg:col-span-6 px-2 text-center lg:text-left sm:mx-auto">
+          <h1 class="max-w-2xl mb-4 text-4xl tracking-tight font-semibold text-purple-900 leading-none dark:text-white">Simplifiez votre routine et redécouvrez la fraîcheur de vos vêtements avec notre solution de pressing innovante dès aujourd'hui !</h1>
+          <p class="max-w-2xl mb-3 font-semibold text-purple-950 lg:mb-5 text-lg lg:text-xl dark:text-gray-400">
+            Découvrez la simplicité et la commodité de récupérer des vêtements impeccables, <span class="text-purple-700">livrés</span> directement à votre porte.
+          </p>
+          <div class="mb-3 w-full text-center flex flex-col md:mx-auto lg:text-left">
+            <div class="text-center m-1">
+              <span class="flex justify-center lg:justify-start items-center gap-3">
+                <svg class="w-3.5 h-3.5 me-2 text-green-500 dark:text-green-400 flex-shrink-0" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+                  <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5Zm3.707 8.207-4 4a1 1 0 0 1-1.414 0l-2-2a1 1 0 0 1 1.414-1.414L9 10.586l3.293-3.293a1 1 0 0 1 1.414 1.414Z" />
+                </svg>Collecté chez-vous
+              </span>
+            </div>
+            <div class="text-center m-1">
+              <span class="flex justify-center lg:justify-start items-center gap-3">
+                <svg class="w-3.5 h-3.5 me-2 text-green-500 dark:text-green-400 flex-shrink-0" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+                  <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5Zm3.707 8.207-4 4a1 1 0 0 1-1.414 0l-2-2a1 1 0 0 1 1.414-1.414L9 10.586l3.293-3.293a1 1 0 0 1 1.414 1.414Z" />
+                </svg>Livrés chez-vous
+              </span>
+            </div>
+            <div class="text-center m-1">
+              <span class="flex justify-center lg:justify-start items-center gap-3">
+                <svg class="w-3.5 h-3.5 me-2 text-green-500 dark:text-green-400 flex-shrink-0" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+                  <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5Zm3.707 8.207-4 4a1 1 0 0 1-1.414 0l-2-2a1 1 0 0 1 1.414-1.414L9 10.586l3.293-3.293a1 1 0 0 1 1.414 1.414Z" />
+                </svg>Suivi de commande etape par etape
+              </span>
+            </div>
+          </div>
+          <div class="flex flex-wrap justify-center mb-3 lg:text-left">
+            <span class="font-bold text-5xl text-purple-900 slashed-zero">- 25 %</span>
+            <span class="font-semibold text-sm text-gray-500 inline-flex items-center ml-2 lg:ml-0">sur le total de votre première collecte</span>
+          </div>
+          <div class="flex flex-wrap gap-4 justify-center">
+            <div class="rounded-3xl p-1 bg-gradient-to-r from-yellow-400 to-purple-400 self-center">
+              <span class="inline-flex px-5 py-3 items-center justify-center text-base font-bold text-center text-purple-900 bg-gray-50 rounded-[calc(1.5rem-2px)] hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 dark:text-white dark:border-gray-700 dark:hover:bg-gray-700 dark:focus:ring-gray-800">Collecte &amp; Livraison gratuit</span>
+            </div>
+            <a href="{{ path('customer.collecte') }}" class="inline-flex items-center justify-center px-5 py-3 text-base font-medium text-center text-white rounded-3xl bg-purple-600 hover:bg-purple-700 focus:ring-4 focus:ring-purple-300 dark:focus:ring-purple-900">
+              Commencer une collecte<svg class="w-5 h-5 ml-2 -mr-1" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                <path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd"></path>
+              </svg>
+            </a>
+          </div>
+        </div>
+        <div class="hidden lg:mt-0 lg:col-span-6 lg:flex">
+          <img src="{{ asset('images/illustrations/pressing4.png') }}" alt="mockup" class="size-full" />
+        </div>
+      </div>
+    </section>
+
+    {# <!-- Hero seection example -
+    <section class="bg-white dark:bg-gray-900">
+      <div class="grid max-w-full px-4 py-8 mx-auto lg:gap-8 xl:gap-0 lg:py-8 lg:grid-cols-12">
+        <div class="lg:col-span-6 px-2 text-center lg:text-left sm:mx-auto">
+          <h1 class="max-w-2xl mb-4 text-4xl tracking-tight font-semibold text-purple-900 leading-none dark:text-white">Tout ce dont vous avez besoins pour la getion de votre entreprise de pressing</h1>
+          <p class="max-w-2xl mb-3 font-semibold text-purple-950 lg:mb-5 text-lg lg:text-xl dark:text-gray-400">Gérez plus éfficacement votre businesse en gardant un oeil sur la <span class="text-purple-700">productivité</span> de votre entreprise</p>
+          <div class="mb-3 w-full text-center flex flex-col md:mx-auto lg:text-left">
+            <div class="text-center m-1">
+              <span class="flex justify-center lg:justify-start items-center gap-3">
+                <svg class="w-3.5 h-3.5 me-2 text-green-500 dark:text-green-400 flex-shrink-0" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+                  <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5Zm3.707 8.207-4 4a1 1 0 0 1-1.414 0l-2-2a1 1 0 0 1 1.414-1.414L9 10.586l3.293-3.293a1 1 0 0 1 1.414 1.414Z"/>
+                </svg>Gestion des employées
+              </span>
+            </div>
+            <div class="text-center m-1">
+              <span class="flex justify-center lg:justify-start items-center gap-3">
+                <svg class="w-3.5 h-3.5 me-2 text-green-500 dark:text-green-400 flex-shrink-0" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+                  <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5Zm3.707 8.207-4 4a1 1 0 0 1-1.414 0l-2-2a1 1 0 0 1 1.414-1.414L9 10.586l3.293-3.293a1 1 0 0 1 1.414 1.414Z"/>
+                </svg>Gestion des clients
+              </span>
+            </div>
+            <div class="text-center m-1">
+              <span class="flex justify-center lg:justify-start items-center gap-3">
+                <svg class="w-3.5 h-3.5 me-2 text-green-500 dark:text-green-400 flex-shrink-0" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+                  <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5Zm3.707 8.207-4 4a1 1 0 0 1-1.414 0l-2-2a1 1 0 0 1 1.414-1.414L9 10.586l3.293-3.293a1 1 0 0 1 1.414 1.414Z"/>
+                </svg>Gestion des factures avec suivi par Qr-code
+              </span>
+            </div>
+          </div>
+          <div class="text-center mb-3 lg:text-left">
+            <span class="font-bold text-5xl text-purple-900 slashed-zero">
+              5 000 F
+            </span>
+            <span class="font-light text-2xl -ml-2 text-purple-900">/moi</span>
+          </div>
+          <a href="#" class="inline-flex items-center justify-center px-5 py-3 mr-3 text-base font-medium text-center text-white rounded-lg bg-purple-600 hover:bg-purple-700 focus:ring-4 focus:ring-purple-300 dark:focus:ring-purple-900">
+            Commencez gratuitement <svg class="w-5 h-5 ml-2 -mr-1" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+              <path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd"></path>
+            </svg>
+          </a>
+          <a href="#" class="inline-flex items-center justify-center px-5 py-3 text-base font-medium text-center text-gray-900 border border-gray-300 rounded-lg hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 dark:text-white dark:border-gray-700 dark:hover:bg-gray-700 dark:focus:ring-gray-800">
+            En savoir plus
+          </a>
+          
+        </div>
+        <div class="hidden lg:mt-0 lg:col-span-6 lg:flex">
+          <img src="{{ asset('images/illustrations/pressing4.png') }}" alt="mockup" />
+        </div>
+      </div>
+    </section>
+  - The Hero Section --> #}
+
+    <section class="py-12">
+      <div class="max-w-screen-xl mx-auto px-4 text-center text-gray-600 md:px-8">
+        <div class="max-w-2xl mx-auto">
+          <h3 class="text-purple-900 text-3xl font-semibold sm:text-4xl">Aucun tâche ne registe a nos experts</h3>
+          <p class="mt-3 text-purple-950">Nous traitons chaque type de tessus avec notre expertise et des produits sélectionés avec soins.</p>
+        </div>
+        <div class="mt-12">
+          <ul class="grid gap-y-8 gap-x-12 sm:grid-cols-2 lg:grid-cols-3">
+            <li class="space-y-3">
+              <div class="w-48 h-48 mx-auto bg-purple-100 text-purple-600 rounded-full flex items-center justify-center">
+                <img class="h-48" src="{{ asset('images/illustrations/icons/pressingIcon4.png') }}" />
+              </div>
+              <h4 class="text-lg text-purple-800 font-semibold">Collecte</h4>
+              <p>Au moment du collecte nous prenons le soins de trier les diférents type de tussus pour plus d'eficacité au lavage.</p>
+            </li>
+            <li class="space-y-3">
+              <div class="w-48 h-48 mx-auto bg-purple-100 text-purple-600 rounded-full flex items-center justify-center">
+                <img class="h-48" src="{{ asset('images/illustrations/icons/pressingIcon6.png') }}" />
+              </div>
+              <h4 class="text-lg text-purple-800 font-semibold">Produits de qualité</h4>
+              <p>
+                Nous utilisons des produits de haut qualité disponible <a href="#" class="text-purple-600">ici</a> pour traiter les tâches resitants au premier lavage.
+              </p>
+            </li>
+            <li class="space-y-3">
+              <div class="w-48 h-48 mx-auto bg-purple-100 text-purple-600 rounded-full flex items-center justify-center">
+                <img class="h-48" src="{{ asset('images/illustrations/icons/pressingIcon5.png') }}" />
+              </div>
+              <h4 class="text-lg text-purple-800 font-semibold">Sec &amp; plié</h4>
+              <p>Après le lavage nous prenons le soins de bien sécher et de plier vos vêtements avant de vous les rendre.</p>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="py-12 mt-8">
+      <div class="max-w-screen-xl mx-auto px-4 text-gray-600 md:px-8">
+        <div class="relative max-w-xl mx-auto sm:text-center">
+          <h3 class="text-purple-800 text-3xl font-semibold sm:text-4xl">Où que vous soyez à Dakar</h3>
+          <div class="mt-3 max-w-xl mb-3">
+            <p class="text-purple-950 text-lg">Restez chez-vous nous venons vers vous pour la collection et la livraison.</p>
+          </div>
+        </div>
+        <div class="grid grid-cols-1 lg:grid-cols-6 text-center py-5">
+          <div class="lg:col-start-2 col-span-1 lg:col-span-4 items-stretch">
+            <img src="{{ asset('images/illustrations/pressingDakar.png') }}" class="w-auto" alt="Carte de dakar" />
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="py">
+      <div class="max-w-screen-xl mx-auto px-4 text-gray-600 md:px-8">
+        <div class="relative max-w-xl mx-auto sm:text-center mb-8">
+          <h3 class="text-purple-800 text-3xl font-semibold sm:text-4xl">Les étapes à suivre</h3>
+          <div class="mt-3 max-w-xl mb-3">
+            <p class="text-purple-950 text-lg">Suivez ces étapes simplement, pas besoin de vous inscrire en tant que client.</p>
+          </div>
+        </div>
+        <ol class="items-center w-full space-y-4 sm:flex sm:space-x-8 sm:space-y-0 rtl:space-x-reverse">
+          <li class="flex items-start text-gray-500 dark:text-gray-400 space-x-2.5 rtl:space-x-reverse">
+            <span class="flex items-center justify-center w-8 h-8 border border-blue-600 rounded-full shrink-0 dark:border-blue-500">1</span>
+            <span>
+              <h3 class="font-medium leading-tight text-purple-800">Lancer la commande</h3>
+              <p class="text-sm">
+                <a href="#" class="text-purple-600">Ce button</a> vas vous rédirige vert un formulaire, vous devez renseigner votre numéro de téléfone puis autorisez la localisation afin que notre livreur vous trouve plus facilement.
+              </p>
+            </span>
+          </li>
+          <li class="flex items-start text-gray-500 dark:text-gray-400 space-x-2.5 rtl:space-x-reverse">
+            <span class="flex items-center justify-center w-8 h-8 border border-blue-600 rounded-full shrink-0 dark:border-blue-500">2</span>
+            <span>
+              <h3 class="font-medium leading-tight text-purple-800">Collecte</h3>
+              <p class="text-sm">Notre collecteur arrive chez-vous pour effectuer la collecte; vous devez luis présenter les vêtements à collecter, il vas les enregistrer devant vous, ensuite il vas vous comuniquer le montant de la factur et demander comment vous allez la regler.</p>
+            </span>
+          </li>
+          <li class="flex items-start text-gray-500 dark:text-gray-400 space-x-2.5 rtl:space-x-reverse">
+            <span class="flex items-center justify-center w-8 h-8 border border-blue-600 rounded-full shrink-0 dark:border-blue-500">3</span>
+            <span>
+              <h3 class="font-medium leading-tight text-purple-800">Livraison</h3>
+              <p class="text-sm">Une fois le lavage terminé, notre livreur vous rameneras vos vêtements à domicile, il vous fait l'inventair si vous y tenez, si vous aviez choisis l'option payer a la livraison vous reglez la facture, si vous avez le temps vous notez le service; Voilà.</p>
+            </span>
+          </li>
+        </ol>
+      </div>
+    </section>
+    {#
+    <section class="py-16 mt-5">
+      <div class="max-w-screen-xl mx-auto px-4 text-gray-600 md:px-8">
+        <div class="relative max-w-xl mx-auto sm:text-center mb-8">
+          <h3 class="text-purple-800 text-3xl font-semibold sm:text-4xl">Vous pocedez une entreprise de pressing à Dakar ?</h3>
+          <div class="mt-3 max-w-xl mb-3">
+            <p>Notre plateform vous permet de gérer votre entreprise pour elargire votre champ d'action et croitre votre entreprise.</p>
+          </div>
+        </div>
+        <div class="flex flex-wrap gap-2 justify-center">
+          <div class="relative flex flex-col rounded-xl border mt-6 sm:mt-0">
+            <div class="p-8 space-y-4 border-b">
+              <span class="text-purple-600 font-medium">Plan basic</span>
+              <div class="text-purple-800 text-3xl font-semibold">Gratuit</div>
+              <p></p>
+              <a href="{{ path('app_register') }}" class="px-3 py-3 rounded-lg w-full font-semibold text-sm duration-150 text-white bg-purple-600 hover:bg-purple-500 active:bg-purple-700">
+                Commencer gratuitement
+              </a>
+            </div>
+            <ul class="p-8 space-y-3">
+              <li class="pb-2 text-gray-800 font-medium">
+                <p>Features</p>
+              </li>
+              <li class="flex items-center gap-5">
+                <svg class="w-3.5 h-3.5 me-2 text-green-500 dark:text-green-400 flex-shrink-0" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+                  <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5Zm3.707 8.207-4 4a1 1 0 0 1-1.414 0l-2-2a1 1 0 0 1 1.414-1.414L9 10.586l3.293-3.293a1 1 0 0 1 1.414 1.414Z" />
+                </svg>Gestion des clients
+              </li>
+              <li class="flex items-center gap-5 line-through">
+                <svg class="w-3.5 h-3.5 me-2 text-gray-500 dark:text-gray-400 flex-shrink-0" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+                  <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5Zm3.707 8.207-4 4a1 1 0 0 1-1.414 0l-2-2a1 1 0 0 1 1.414-1.414L9 10.586l3.293-3.293a1 1 0 0 1 1.414 1.414Z" />
+                </svg>Gestion des employées
+              </li>
+              <li class="flex items-center gap-5">
+                <svg class="w-3.5 h-3.5 me-2 text-green-500 dark:text-green-400 flex-shrink-0" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+                  <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5Zm3.707 8.207-4 4a1 1 0 0 1-1.414 0l-2-2a1 1 0 0 1 1.414-1.414L9 10.586l3.293-3.293a1 1 0 0 1 1.414 1.414Z" />
+                </svg>Gestion du caisse
+              </li>
+              <li class="flex items-center gap-5">
+                <svg class="w-3.5 h-3.5 me-2 text-green-500 dark:text-green-400 flex-shrink-0" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+                  <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5Zm3.707 8.207-4 4a1 1 0 0 1-1.414 0l-2-2a1 1 0 0 1 1.414-1.414L9 10.586l3.293-3.293a1 1 0 0 1 1.414 1.414Z" />
+                </svg>Gestion des collectes
+              </li>
+              <li class="flex items-center gap-5 line-through">
+                <svg class="w-3.5 h-3.5 me-2 text-gray-500 dark:text-gray-400 flex-shrink-0" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+                  <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5Zm3.707 8.207-4 4a1 1 0 0 1-1.414 0l-2-2a1 1 0 0 1 1.414-1.414L9 10.586l3.293-3.293a1 1 0 0 1 1.414 1.414Z" />
+                </svg>Suivie des commandes avec QR-code
+              </li>
+            </ul>
+          </div>
+          <div class="relative flex flex-col rounded-xl border mt-6 sm:mt-0">
+            <span class="w-32 absolute -top-5 left-0 right-0 mx-auto px-3 py-2 rounded-full border shadow-md bg-white text-center text-gray-700 text-sm font-semibold">Most popular</span><div class="p-8 space-y-4 border-b">
+              <span class="text-purple-600 font-medium">Startup</span><div class="text-gray-800 text-3xl font-semibold">
+                10 000 FCFA <span class="text-xl text-gray-600 font-normal">/moi</span>
+              </div>
+              <p></p>
+              <a href="{{ path('app_register') }}" class="px-3 py-3 rounded-lg w-full font-semibold text-sm duration-150 text-white bg-purple-600 hover:bg-purple-500 active:bg-purple-700">
+                Commencer
+              </a>
+            </div>
+            <ul class="p-8 space-y-3">
+              <li class="pb-2 text-gray-800 font-medium">
+                <p>Features</p>
+              </li>
+              <li class="flex items-center gap-5">
+                <svg class="w-3.5 h-3.5 me-2 text-green-500 dark:text-green-400 flex-shrink-0" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+                  <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5Zm3.707 8.207-4 4a1 1 0 0 1-1.414 0l-2-2a1 1 0 0 1 1.414-1.414L9 10.586l3.293-3.293a1 1 0 0 1 1.414 1.414Z" />
+                </svg>Gestion des clients
+              </li>
+              <li class="flex items-center gap-5">
+                <svg class="w-3.5 h-3.5 me-2 text-green-500 dark:text-green-400 flex-shrink-0" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+                  <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5Zm3.707 8.207-4 4a1 1 0 0 1-1.414 0l-2-2a1 1 0 0 1 1.414-1.414L9 10.586l3.293-3.293a1 1 0 0 1 1.414 1.414Z" />
+                </svg>Gestion des employées
+              </li>
+              <li class="flex items-center gap-5">
+                <svg class="w-3.5 h-3.5 me-2 text-green-500 dark:text-green-400 flex-shrink-0" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+                  <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5Zm3.707 8.207-4 4a1 1 0 0 1-1.414 0l-2-2a1 1 0 0 1 1.414-1.414L9 10.586l3.293-3.293a1 1 0 0 1 1.414 1.414Z" />
+                </svg>Gestion du caisse
+              </li>
+              <li class="flex items-center gap-5">
+                <svg class="w-3.5 h-3.5 me-2 text-green-500 dark:text-green-400 flex-shrink-0" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+                  <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5Zm3.707 8.207-4 4a1 1 0 0 1-1.414 0l-2-2a1 1 0 0 1 1.414-1.414L9 10.586l3.293-3.293a1 1 0 0 1 1.414 1.414Z" />
+                </svg>Gestion des collectes
+              </li>
+              <li class="flex items-center gap-5">
+                <svg class="w-3.5 h-3.5 me-2 text-green-500 dark:text-green-400 flex-shrink-0" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+                  <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5Zm3.707 8.207-4 4a1 1 0 0 1-1.414 0l-2-2a1 1 0 0 1 1.414-1.414L9 10.586l3.293-3.293a1 1 0 0 1 1.414 1.414Z" />
+                </svg>Suivie des commandes avec QR-code
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+  #}
+
+    <section class="bg-white py-12 text-gray-700 sm:py-16 lg:py-20">
+      <div class="mx-auto max-w-screen-xl px-4 sm:px-6 lg:px-8">
+        <div class="mx-auto max-w-md text-center">
+          <h2 class="text-purple-800 text-3xl font-semibold sm:text-4xl">Nos produits</h2>
+          <div class="mt-3 max-w-xl mb-3">
+            <p class="text-purple-950 text-lg">Nous certifions la qualité et l'éfficacité de ces produits.</p>
+          </div>
+        </div>
+
+        <div class="mt-10 grid grid-cols-2 gap-6 sm:grid-cols-4 sm:gap-4 lg:mt-16">
+          {% for product in products %}
+            {% if product.published == true %}
+              <article class="relative flex flex-col overflow-hidden rounded-lg border">
+                <div class="aspect-square overflow-hidden">
+                  <img class="h-full w-full object-cover transition-all duration-300 group-hover:scale-125" src="{{ asset('images/uploads/products/') }}{{ product.productImage }}" alt="Product image" />
+                </div>
+                {% if product.promo > 0 %}
+                  <div class="absolute top-0 m-2 rounded-full bg-white">
+                    <p class="rounded-full bg-skyblue-800 p-1 text-sm font-bold tracking-wide text-white sm:py-1 sm:px-3">- {{ product.promo }}%</p>
+                  </div>
+                {% endif %}
+                <div class="my-4 mx-auto flex w-10/12 flex-col items-start justify-between">
+                  <div class="mb-2 flex">
+                    <p class="mr-3 text-sm font-semibold">{{ product.price|format_currency('XOF', locale='de') }}</p>
+                    <del class="text-xs text-gray-400">{{ product.PurchasePrice|format_currency('XOF', locale='de') }}</del>
+                  </div>
+                  <h3 class="mb-2 text-sm text-gray-600">{{ product.name }}</h3>
+                </div>
+                <a href="{{ path('cart.add', {id: product.id, quantity: 1}) }}" data-turbo-prefetch="false" class="group mx-auto mb-2 flex h-10 w-10/12 items-stretch overflow-hidden rounded-md text-gray-600">
+                  <div class="flex w-full items-center justify-center bg-purple-700 text-white text-xs uppercase transition group-hover:bg-purple-600 group-hover:text-white">Acheter</div>
+                  <div class="flex items-center justify-center bg-purple-600 text-white px-5 transition group-hover:bg-purple-700 group-hover:text-white">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="bi h-5 w-5 bi-cart-plus" viewBox="0 0 16 16">
+                      <path d="M9 5.5a.5.5 0 0 0-1 0V7H6.5a.5.5 0 0 0 0 1H8v1.5a.5.5 0 0 0 1 0V8h1.5a.5.5 0 0 0 0-1H9z"/>
+                      <path d="M.5 1a.5.5 0 0 0 0 1h1.11l.401 1.607 1.498 7.985A.5.5 0 0 0 4 12h1a2 2 0 1 0 0 4 2 2 0 0 0 0-4h7a2 2 0 1 0 0 4 2 2 0 0 0 0-4h1a.5.5 0 0 0 .491-.408l1.5-8A.5.5 0 0 0 14.5 3H2.89l-.405-1.621A.5.5 0 0 0 2 1zm3.915 10L3.102 4h10.796l-1.313 7zM6 14a1 1 0 1 1-2 0 1 1 0 0 1 2 0m7 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0"/>
+                    </svg>
+                  </div>
+                </a>
+              </article>
+            {% endif %}
+          {% endfor %}
+        </div>
+        <div class="mx-auto max-w-md text-center mt-4 py-6">
+          <a href="#" class="inline-flex items-center justify-center px-5 py-3 text-base font-medium text-center text-white rounded-3xl bg-purple-600 hover:bg-purple-700 focus:ring-4 focus:ring-purple-300 dark:focus:ring-purple-900">
+            Plus de produits 
+            <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="bi bi-arrow-right w-5 h-5 ml-2" viewBox="0 0 16 16">
+              <path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8"/>
+            </svg>
+          </a>
+        </div>
+      </div>
+    </section>
+  </div>
+{% endblock %}

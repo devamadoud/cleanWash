@@ -22,7 +22,13 @@ return [
     '@symfony/stimulus-bundle' => [
         'path' => './vendor/symfony/stimulus-bundle/assets/dist/loader.js',
     ],
-    '@hotwired/turbo' => [
-        'version' => '7.3.0',
+    '@zxing/browser' => [
+        'version' => '0.1.4',
+    ],
+    '@zxing/library' => [
+        'version' => '0.20.0',
+    ],
+    'ts-custom-error' => [
+        'version' => '3.3.1',
     ],
 ];

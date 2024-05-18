@@ -1,0 +1,107 @@
+{% if app.user %}
+<div class="flex justify-between lg:p-5">
+  <div class="text-sm">
+    <h2>Client</h2>
+    <div class="text-left">
+      <span class="text-semibold text-purple-950">Nom &amp; prénom :</span>
+      <span>{{ collecte.customer.fullName }}</span>
+    </div>
+    <div class="text-left">
+      <span class="text-semibold text-purple-950">Téléfone :</span>
+      <span>{{ collecte.customer.phoneNumber }}</span>
+    </div>
+    <div class="text-left">
+      <span class="text-semibold text-purple-950">Adresse :</span>
+      <span>{{ collecte.customer.adress }}</span>
+    </div>
+  </div>
+  <div class="text-sm">
+    <h2>Collecte</h2>
+    <div class="text-left">
+      <span class="text-semibold text-purple-950">Pressing :</span>
+      <span class="text-semibold font-extralight">{{ collecte.shop.comName }}</span>
+    </div>
+    <div class="text-left">
+      <span class="text-semibold text-purple-950">Téléfone :</span>
+      <span class="">{{ collecte.shop.owner.telefone }}</span>
+    </div>
+    <div class="text-left">
+      <span class="text-semibold text-purple-950">Adresse :</span>
+      <span>{{ collecte.shop.adress }}</span>
+    </div>
+    <div class="text-left">
+      <span class="text-semibold text-purple-950">Date :</span>
+      <span>{{ collecte.collectedAt|format_datetime(locale = 'fr') }}</span>
+    </div>
+  </div>
+  <div class="text-sm">
+    {% if qrCode %}
+      <img src="{{ qrCode }}" alt="Qr code" width="150" height="150">
+      <a href="{{ qrCode }}" download>Telecharger</a>
+    {% endif %}
+  </div>
+</div>
+{% else %}
+  <div class="text-sm font-medium text-purple-950 p-4">
+    <p>L'aperçus de votre prochaine facture, notre collecteur le confirmeras avec vous.</p>
+  </div>
+{% endif %}
+<div class="mt-5 shadow-sm border rounded-lg overflow-x-auto">
+    {% if collectePea == 'clothingPea' %}
+        <table class="w-full sm:w-full table-auto text-sm text-left">
+            <thead class="bg-gray-50 text-purple-950 w-80 font-medium border-b">
+            <tr>
+                <th class="py-2 px-4">Pois du collecte</th>
+                <th class="py-2 px-4">Palier de prix</th>
+                <th class="py-2 px-4"></th>
+            </tr>
+            </thead>
+            <tbody class="text-gray-600 divide-y bg-white">
+            {% set total = 0 %}
+            {% for collecteItem in collecte.collecteDetaillespeas %}
+                <tr>
+                    <td class="px-4 py-2 text-ellipsis overflow-hidden">{{ collecteItem.pea }} Kg</td>
+                    <td class="px-4 py-2 text-ellipsis overflow-hidden"></td>
+                    <td class="px-4 py-2 whitespace-wrap text-right">{{ collecteItem.clothingPea.priceMin|format_currency('XOF', locale='de') }}</td>
+                </tr>
+                {% set total = collecteItem.clothingPea.priceMin %}
+            {% endfor %}
+            <tr>
+                <td class="text-center text-xs md:text-sm px-4 py-2 whitespace-wrap">Frais de sèchage et de pliage non compris.</td>
+                <td class="font-bold px-4 py-4 whitespace-nowrap">Total :</td>
+                <td class="px-4 py-4 whitespace-nowrap font-bold text-right">{{ total|format_currency('XOF', locale='de') }}</td>
+            </tr>
+            </tbody>
+        </table>
+        {% else %}
+        <table class="w-full sm:w-full table-auto text-sm text-left">
+            <thead class="bg-gray-50 text-purple-950 w-80 font-medium border-b">
+            <tr>
+                <th class="py-2 px-4">Pièces</th>
+                <th class="py-2 px-4">P.U</th>
+                <th class="py-2 px-4">Qté</th>
+                <th class="py-2 px-4">P.T</th>
+            </tr>
+            </thead>
+            <tbody class="text-gray-600 divide-y bg-white">
+            {% set total = 0 %}
+            {% set priceTot = 0 %}
+            {% for collecteItem in collecte.collecteDetailles %}
+                <tr>
+                <td class="px-4 py-2 text-ellipsis overflow-hidden">{{ collecteItem.clothingType.name }}</td>
+                <td class="px-4 py-2 whitespace-wrap">{{ collecteItem.clothingType.price }}</td>
+                <td class="px-4 py-2 whitespace-wrap">{{ collecteItem.quantity }}</td>
+                <td class="px-4 py-2 whitespace-wrap">{{ collecteItem.clothingType.price * collecteItem.quantity }}</td>
+                {% set priceTot = collecteItem.clothingType.price * collecteItem.quantity %}
+                {% set total = total + priceTot %}
+                </tr>
+            {% endfor %}
+            <tr>
+                <td colspan="2" class="text-center text-xs md:text-sm px-4 py-2 whitespace-wrap">Les frais de collecte et de livraison sont gratuit.</td>
+                <td class="font-bold px-6 py-4 whitespace-nowrap">Total :</td>
+                <td class="px-6 py-4 whitespace-nowrap font-bold">{{ total|format_currency('XOF', locale='de') }}</td>
+            </tr>
+            </tbody>
+        </table>
+    {% endif %}
+</div>

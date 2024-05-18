@@ -1,0 +1,74 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Inscription{% endblock %}
+
+{% block body %}
+
+    {% form_theme registrationForm 'tailwind_2_layout.html.twig' %}
+
+    {{ form_errors(registrationForm) }}
+    <div class="flex min-h-full flex-col justify-center mx-auto px-6 py-12 lg:px-8 registration-form">
+        <div class="sm:mx-auto sm:w-full sm:max-w-sm">
+            <img class="mx-auto h-10 w-auto" src="https://tailwindui.com/img/logos/mark.svg?color=purple&shade=600" alt="Your Company">
+            <h2 class="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">Veuillez vous inscrire</h2>
+        </div>
+        {{ form_start(registrationForm) }}
+            {{ form_row(registrationForm.fullName,
+                {
+                row_class: 'row',
+                label_class: 'block text-sm font-medium leading-6 text-gray-900',
+                error_item_class: 'text-red-500 text-sm font-medium ml-3 mb-2',
+                widget_class: 'block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-purple-600 sm:text-sm sm:leading-6',
+                widget_disabled_class: 'my disabled widget classes',
+                widget_errors_class: 'ring-1 ring-inset ring-orange-600',
+            }) }}
+            {{ form_row(registrationForm.adress,
+                {
+                row_class: 'row',
+                label_class: 'block text-sm font-medium leading-6 text-gray-900 mx-2',
+                error_item_class: 'text-red-500 text-sm font-medium ml-3 mb-2',
+                widget_class: 'block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-purple-600 sm:text-sm sm:leading-6',
+                widget_disabled_class: 'my disabled widget classes',
+                widget_errors_class: 'ring-1 ring-inset ring-orange-600',
+            }) }}
+            {{ form_row(registrationForm.userType,
+                {
+                row_class: 'row',
+                label_class: 'block text-sm font-medium leading-6 text-gray-900',
+                error_item_class: 'text-red-500 text-sm font-medium ml-3 mb-2',
+                widget_class: 'block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-purple-600 sm:text-sm sm:leading-6',
+                widget_disabled_class: 'my disabled widget classes',
+                widget_errors_class: 'ring-1 ring-inset ring-orange-600',
+            }) }}
+            {{ form_row(registrationForm.telefone,
+                {
+                row_class: 'row',
+                label_class: 'block text-sm font-medium leading-6 text-gray-900',
+                widget_class: 'block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-purple-600 sm:text-sm sm:leading-6',
+                error_item_class: 'text-red-500 text-sm ml-3 mb-2 font-medium',
+                widget_disabled_class: 'my disabled widget classes',
+                widget_errors_class: 'ring-1 ring-inset ring-orange-600',
+            }) }}
+            {{ form_row(registrationForm.plainPassword,
+                {
+                row_class: 'row',
+                label_class: 'block text-sm font-medium leading-6 text-gray-900',
+                error_item_class: 'text-red-500 text-sm font-medium ml-3 mb-2',
+                widget_class: 'block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-purple-600 sm:text-sm sm:leading-6',
+                widget_disabled_class: 'my disabled widget classes',
+                widget_errors_class: 'ring-1 ring-inset ring-orange-600',
+            }) }}
+            {{ form_row(registrationForm.confirmPassword,
+                {
+                row_class: 'row',
+                label_class: 'block text-sm font-medium leading-6 text-gray-900',
+                widget_class: 'block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-purple-600 sm:text-sm sm:leading-6',
+                error_item_class: 'text-red-500 text-sm font-medium ml-3 mb-2',
+                widget_disabled_class: 'my disabled widget classes',
+                widget_errors_class: 'ring-1 ring-inset ring-orange-600',
+            }) }}
+            {{ form_row(registrationForm.agreeTerms) }}
+            {{ form_row(registrationForm.save) }}
+        {{ form_end(registrationForm) }}
+    </div>
+{% endblock %}

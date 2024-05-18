@@ -1,0 +1,42 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+  Hello CartController!
+{% endblock %}
+
+{% block body %}
+  <div class="py-5 lg:py-8 max-w-screen-2xl">
+    <div class="mt-5 shadow-sm border rounded-lg overflow-x-auto">
+      <table class="w-full sm:w-full table-auto text-sm text-left">
+        <thead class="bg-gray-50 text-purple-950 w-80 font-medium border-b">
+          <tr>
+            <th class="py-2 px-4">Produit</th>
+            <th class="py-2 px-4">P.U</th>
+            <th class="py-2 px-4">Qté</th>
+            <th class="py-2 px-4">P.T</th>
+          </tr>
+        </thead>
+        <tbody class="text-gray-600 divide-y bg-white">
+          {% for product in products %}
+            <tr>
+              <td class="px-4 py-2 text-ellipsis overflow-hidden">{{ product.name }}</td>
+              <td class="px-4 py-2 whitespace-wrap">{{ product.unitPrice }}</td>
+              <td class="px-4 py-2 whitespace-wrap">{{ product.quantity }}</td>
+              <td class="px-4 py-2 whitespace-wrap">{{ product.unitPrice * product.quantity }}</td>
+            </tr>
+          {% endfor %}
+          <tr>
+            <td colspan="2" class="text-center text-xs md:text-sm px-4 py-2 whitespace-wrap">Les frais de collecte et de livraison sont gratuit.</td>
+            <td class="font-bold px-6 py-4 whitespace-nowrap">Total :</td>
+            <td class="px-6 py-4 whitespace-nowrap font-bold">{{ app.session.get('cartTot')|format_currency('XOF', locale='de') }}</td>
+          </tr>
+          <tr>
+            <td colspan="2" class="text-center text-xs md:text-sm px-4 py-2 whitespace-wrap">Les frais de collecte et de livraison sont gratuit.</td>
+            <td class="font-bold px-6 py-4 whitespace-nowrap">Total :</td>
+            <td class="px-6 py-4 whitespace-nowrap font-bold"><a href="{{ path('cart.clear') }}" data-turbo-prefetch="false">Vider le panier</a></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+{% endblock %}
