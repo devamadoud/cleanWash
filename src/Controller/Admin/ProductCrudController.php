@@ -28,11 +28,12 @@ class ProductCrudController extends AbstractCrudController
                 ->setBasePath('/images/uploads/products')
                 ->setUploadedFileNamePattern('[randomhash][month][day][timestamp].[extension]'),
             TextField::new('name'),
+            NumberField::new('quantityStocke'),
             TextEditorField::new('ProductDescription'),
             NumberField::new('promo'),
             MoneyField::new('price')->setCurrency('XOF')->setStoredAsCents(false),
             MoneyField::new('PurchasePrice')->setCurrency('XOF')->setStoredAsCents(false),
-            BooleanField::new('published'),
+            BooleanField::new('published')->renderAsSwitch(true),
         ];
     }
 

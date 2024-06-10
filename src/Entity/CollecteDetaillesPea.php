@@ -24,6 +24,9 @@ class CollecteDetaillesPea
     #[ORM\JoinColumn(nullable: true)]
     private ?ClothingPea $clothingPea = null;
 
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $status = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -61,6 +64,18 @@ class CollecteDetaillesPea
     public function setClothingPea(?ClothingPea $clothingPea): static
     {
         $this->clothingPea = $clothingPea;
+
+        return $this;
+    }
+
+    public function getStatus(): ?string
+    {
+        return $this->status;
+    }
+
+    public function setStatus(?string $status): static
+    {
+        $this->status = $status;
 
         return $this;
     }

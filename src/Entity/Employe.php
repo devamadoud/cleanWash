@@ -75,12 +75,12 @@ class Employe
 
     public function getEmployedAt(): ?\DateTimeImmutable
     {
-        return $this->employedAt;
+        return $this->employedAt ?? new \DateTimeImmutable();
     }
 
     public function setEmployedAt(\DateTimeImmutable $employedAt): static
     {
-        $this->employedAt = $employedAt;
+        $this->employedAt = new \DateTimeImmutable();
 
         return $this;
     }
@@ -92,7 +92,7 @@ class Employe
 
     public function setRevokedAt(?\DateTimeImmutable $revokedAt): static
     {
-        $this->revokedAt = $revokedAt;
+        $this->revokedAt = new \DateTimeImmutable();
 
         return $this;
     }

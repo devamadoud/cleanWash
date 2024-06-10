@@ -1,0 +1,69 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+  Termes d'Utilisation
+{% endblock %}
+
+{% block body %}
+  <div class="customer-form items-center flex min-h-full px-8">
+    <div class="px-4 lg:w-max mt-5 md:px-8">
+      <div class="items-start justify-between md:flex border-b pb-6 text-gray-600">
+        <div class="max-w-3xl">
+          <h1 class="text-purple-800 text-xl font-semibold sm:text-2xl">Termes et Conditions d'Utilisation</h1>
+          <p class="text-md text-gray-800">Bienvenue sur setsetal-service. En utilisant notre application et nos services, vous acceptez de vous conformer aux termes et conditions suivants. Veuillez lire attentivement ces termes d'utilisation avant de commencer à utiliser notre plateforme.</p>
+        </div>
+        <span class="bg-gray-200 text-gray-800 p-3 rounded-md">Dernière mise à jour : le 01/06/2024</span>
+      </div>
+      <div class="px-4 text-sm font-medium">
+        <h2 class="font-semibold text-purple-800 text-lg m-4">1. Acceptation des Termes</h2>
+        <p class="text-md pl-6">En accédant à notre application et en utilisant nos services, vous acceptez d'être lié par ces termes d'utilisation et toutes les lois et réglementations applicables. Si vous n'acceptez pas ces termes, veuillez ne pas utiliser notre application.</p>
+
+        <h2 class="font-semibold text-purple-800 text-lg m-4">2. Description des Services</h2>
+        <p class="text-md pl-6">setsetal-service permet à ses utilisateurs de commander des services de pressing en ligne et d'acheter des produits tiers via notre boutique. Nous nous engageons à fournir des services de qualité et à assurer la satisfaction de nos utilisateurs.</p>
+
+        <h2 class="font-semibold text-purple-800 text-lg m-4">3. Inscription et Compte Utilisateur</h2>
+        <p class="text-md pl-6">Pour utiliser certains de nos services, vous devez créer un compte utilisateur. Vous acceptez de fournir des informations exactes, complètes et à jour lors de votre inscription. Vous êtes responsable de la confidentialité de votre compte et de votre mot de passe et de toutes les activités qui se produisent sous votre compte.</p>
+
+        <h2 class="font-semibold text-purple-800 text-lg m-4">4. Utilisation Acceptable</h2>
+        <p class="text-md pl-6">
+          Vous acceptez d'utiliser notre application uniquement à des fins légales et conformément aux présentes conditions. Vous acceptez de ne pas utiliser notre application :<ul class="list-disc pl-10">
+            <li>Pour toute activité illégale ou frauduleuse</li>
+            <li>Pour harceler, abuser ou nuire à une autre personne</li>
+            <li>Pour violer la propriété intellectuelle ou d'autres droits de toute personne</li>
+            <li>Pour introduire des virus ou tout autre code malveillant</li>
+          </ul>
+        </p>
+
+        <h2 class="font-semibold text-purple-800 text-lg m-4">5. Données Personnelles et Confidentialité</h2>
+        <p class="text-md pl-6">
+          Nous nous engageons à protéger votre vie privée. Notre <a href="{{ path('politique.conf') }}" class="text-purple-700 hover:text-purple-900 hover:underline">Politique de Confidentialité</a> explique comment nous collectons, utilisons et protégeons vos données personnelles. En utilisant notre application, vous consentez à cette collecte et utilisation.
+        </p>
+
+        <h2 class="font-semibold text-purple-800 text-lg m-4">6. Commandes et Paiements</h2>
+        <p class="text-md pl-6">Lorsque vous passez une commande pour un service de pressing ou un produit via notre application, vous acceptez de payer le prix indiqué au moment de la commande. Nous utilisons des services externes pour traiter les paiements en ligne, et nous pouvons partager les données nécessaires à cette fin.</p>
+
+        <h2 class="font-semibold text-purple-800 text-lg m-4">7. Politique de Retour et Remboursement</h2>
+        <p class="text-md pl-6">
+          Veuillez consulter notre <a href="{{ path('retour.remb') }}" class="text-purple-700 hover:text-purple-900 hover:underline">Politique de Retour et Remboursement</a> pour plus d'informations sur les retours et remboursements.
+        </p>
+
+        <h2 class="font-semibold text-purple-800 text-lg m-4">8. Propriété Intellectuelle</h2>
+        <p class="text-md pl-6">Tout le contenu de notre application, y compris mais sans s'y limiter, les textes, graphiques, logos, images et logiciels, est la propriété de setsetal-service ou de ses concédants de licence et est protégé par les lois sur la propriété intellectuelle.</p>
+
+        <h2 class="font-semibold text-purple-800 text-lg m-4">9. Limitation de Responsabilité</h2>
+        <p class="text-md pl-6">setsetal-service ne sera pas responsable des dommages directs, indirects, accessoires, consécutifs ou punitifs résultant de votre utilisation de notre application ou de nos services. Nous ne garantissons pas que notre application sera exempte d'erreurs ou disponible en permanence.</p>
+
+        <h2 class="font-semibold text-purple-800 text-lg m-4">10. Modifications des Termes</h2>
+        <p class="text-md pl-6">Nous nous réservons le droit de modifier ces termes d'utilisation à tout moment. Nous vous informerons de tout changement via une notification sur notre site web ou par e-mail. Votre utilisation continue de notre application après de telles modifications constitue votre acceptation des nouveaux termes.</p>
+
+        <h2 class="font-semibold text-purple-800 text-lg m-4">11. Contact</h2>
+        <p class="text-md pl-6">
+          Pour toute question concernant ces termes d'utilisation, veuillez nous contacter via notre <a href="{{ path('contact') }}" class="text-purple-700 hover:text-purple-900 hover:underline">formulaire de contact</a> ou par e-mail à support@setsetal-service.com.
+        </p>
+
+        <h2 class="font-semibold text-purple-800 text-lg m-4">12. Droit Applicable</h2>
+        <p class="text-md pl-6">Ces termes d'utilisation sont régis et interprétés conformément aux lois en vigueur dans notre juridiction. Tout litige relatif à ces termes sera soumis à la compétence exclusive des tribunaux de notre juridiction.</p>
+      </div>
+    </div>
+  </div>
+{% endblock %}

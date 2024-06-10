@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\ProductRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -47,6 +49,30 @@ class Product
 
     #[ORM\Column(nullable: true)]
     private ?int $quantityStocke = null;
+
+    /**
+     * @var Collection<int, OrderDetailles>
+     */
+    #[ORM\OneToMany(targetEntity: OrderDetailles::class, mappedBy: 'product', orphanRemoval: true)]
+    private Collection $orderDetailles;
+
+    /**
+     * @var Collection<int, Categories>
+     */
+    #[ORM\ManyToMany(targetEntity: Categories::class, inversedBy: 'products')]
+    private Collection $category;
+
+    #[ORM\Column(nullable: true)]
+    private ?float $promoPrice = null;
+
+    #[ORM\Column(nullable: true)]
+    private ?int $quantitySales = null;
+
+    public function __construct()
+    {
+        $this->orderDetailles = new ArrayCollection();
+        $this->category = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -103,24 +129,24 @@ class Product
 
     public function getCreatedAt(): ?\DateTimeImmutable
     {
-        return $this->createdAt;
+        return $this->createdAt ?? new \DateTimeImmutable();
     }
 
     public function setCreatedAt(\DateTimeImmutable $createdAt): static
     {
-        $this->createdAt = $createdAt;
+        $this->createdAt = new \DateTimeImmutable();
 
         return $this;
     }
 
     public function getUpdatedAt(): ?\DateTimeImmutable
     {
-        return $this->updatedAt;
+        return $this->updatedAt ?? new \DateTimeImmutable();
     }
 
     public function setUpdatedAt(\DateTimeImmutable $updatedAt): static
     {
-        $this->updatedAt = $updatedAt;
+        $this->updatedAt =  new \DateTimeImmutable();
 
         return $this;
     }
@@ -181,6 +207,84 @@ class Product
     public function setQuantityStocke(?int $quantityStocke): static
     {
         $this->quantityStocke = $quantityStocke;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, OrderDetailles>
+     */
+    public function getOrderDetailles(): Collection
+    {
+        return $this->orderDetailles;
+    }
+
+    public function addOrderDetaille(OrderDetailles $orderDetaille): static
+    {
+        if (!$this->orderDetailles->contains($orderDetaille)) {
+            $this->orderDetailles->add($orderDetaille);
+            $orderDetaille->setProduct($this);
+        }
+
+        return $this;
+    }
+
+    public function removeOrderDetaille(OrderDetailles $orderDetaille): static
+    {
+        if ($this->orderDetailles->removeElement($orderDetaille)) {
+            // set the owning side to null (unless already changed)
+            if ($orderDetaille->getProduct() === $this) {
+                $orderDetaille->setProduct(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Categories>
+     */
+    public function getCategory(): Collection
+    {
+        return $this->category;
+    }
+
+    public function addCategory(Categories $category): static
+    {
+        if (!$this->category->contains($category)) {
+            $this->category->add($category);
+        }
+
+        return $this;
+    }
+
+    public function removeCategory(Categories $category): static
+    {
+        $this->category->removeElement($category);
+
+        return $this;
+    }
+
+    public function getPromoPrice(): ?float
+    {
+        return $this->promoPrice;
+    }
+
+    public function setPromoPrice(?float $promoPrice): static
+    {
+        $this->promoPrice = $promoPrice;
+
+        return $this;
+    }
+
+    public function getQuantitySales(): ?int
+    {
+        return $this->quantitySales;
+    }
+
+    public function setQuantitySales(?int $quantitySales): static
+    {
+        $this->quantitySales = $quantitySales;
 
         return $this;
     }

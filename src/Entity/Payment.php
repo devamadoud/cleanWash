@@ -13,10 +13,6 @@ class Payment
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\OneToOne(inversedBy: 'payment', cascade: ['persist', 'remove'])]
-    #[ORM\JoinColumn(nullable: false)]
-    private ?Collecte $collecte = null;
-
     #[ORM\Column]
     private ?float $amount = null;
 
@@ -26,21 +22,24 @@ class Payment
     #[ORM\Column(length: 255)]
     private ?string $paimentMode = null;
 
+    #[ORM\OneToOne(mappedBy: 'payment', cascade: ['persist', 'remove'])]
+    private ?Collecte $collecte = null;
+
+    #[ORM\Column]
+    private ?bool $confirmation = null;
+
+    #[ORM\Column(length: 255)]
+    private ?string $cashedBy = null;
+
+    #[ORM\OneToOne(mappedBy: 'payment', cascade: ['persist', 'remove'])]
+    private ?Order $productOrder = null;
+
+    #[ORM\Column(length: 255)]
+    private ?string $status = null;
+
     public function getId(): ?int
     {
         return $this->id;
-    }
-
-    public function getCollecte(): ?Collecte
-    {
-        return $this->collecte;
-    }
-
-    public function setCollecte(Collecte $collecte): static
-    {
-        $this->collecte = $collecte;
-
-        return $this;
     }
 
     public function getAmount(): ?float
@@ -75,6 +74,86 @@ class Payment
     public function setPaimentMode(string $paimentMode): static
     {
         $this->paimentMode = $paimentMode;
+
+        return $this;
+    }
+
+    public function getCollecte(): ?Collecte
+    {
+        return $this->collecte;
+    }
+
+    public function setCollecte(?Collecte $collecte): static
+    {
+        // unset the owning side of the relation if necessary
+        if ($collecte === null && $this->collecte !== null) {
+            $this->collecte->setPayment(null);
+        }
+
+        // set the owning side of the relation if necessary
+        if ($collecte !== null && $collecte->getPayment() !== $this) {
+            $collecte->setPayment($this);
+        }
+
+        $this->collecte = $collecte;
+
+        return $this;
+    }
+
+    public function isConfirmation(): ?bool
+    {
+        return $this->confirmation;
+    }
+
+    public function setConfirmation(bool $confirmation): static
+    {
+        $this->confirmation = $confirmation;
+
+        return $this;
+    }
+
+    public function getCashedBy(): ?string
+    {
+        return $this->cashedBy;
+    }
+
+    public function setCashedBy(string $cashedBy): static
+    {
+        $this->cashedBy = $cashedBy;
+
+        return $this;
+    }
+
+    public function getProductOrder(): ?Order
+    {
+        return $this->productOrder;
+    }
+
+    public function setProductOrder(?Order $productOrder): static
+    {
+        // unset the owning side of the relation if necessary
+        if ($productOrder === null && $this->productOrder !== null) {
+            $this->productOrder->setPayment(null);
+        }
+
+        // set the owning side of the relation if necessary
+        if ($productOrder !== null && $productOrder->getPayment() !== $this) {
+            $productOrder->setPayment($this);
+        }
+
+        $this->productOrder = $productOrder;
+
+        return $this;
+    }
+
+    public function getStatus(): ?string
+    {
+        return $this->status;
+    }
+
+    public function setStatus(string $status): static
+    {
+        $this->status = $status;
 
         return $this;
     }

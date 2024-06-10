@@ -5,18 +5,42 @@
 {% endblock %}
 
 {% block body %}
-  <div class="customer-form items-center flex min-h-full px-8">
+  <div class="about-page items-center flex min-h-full px-8">
     <div class="px-4 lg:w-max mt-5 md:px-8">
       <div class="items-start justify-between md:flex border-b pb-6 text-gray-600">
-        <div class="max-w-lg">
-            <h3 class="text-purple-800 text-xl font-semibold sm:text-2xl">A propos de nous</h3>
-            <p class="text-gray-500 mt-2">Veuillez entrer le numéro de téléfone du client pour commencer.</p>
+        <div class="max-w-3xl">
+          <h1 class="text-purple-800 text-xl font-semibold sm:text-2xl">À propos de Setsetal-Service</h1>
+          <p class="text-md text-gray-800">Bienvenue sur setsetal-service. Notre mission est de faciliter la vie de nos utilisateurs en leur offrant la possibilité de commander des services de pressing en ligne et d'acheter des produits tiers via notre boutique.</p>
         </div>
       </div>
       <div class="px-4 text-sm font-medium">
-        <p>
-            Lorem ipsum dolor sit amet, consectetur adipisicing elit. Doloremque, quaerat expedita modi facere deleniti numquam ducimus velit est reprehenderit omnis iste cupiditate consectetur eius accusamus iure quos at tempore perspiciatis dolores aspernatur eos totam officiis. Quibusdam vitae iure deleniti, illum, tempore harum cum nemo quas velit obcaecati corporis asperiores temporibus?
+        <h2 class="font-semibold text-purple-800 text-lg m-4">Notre Mission</h2>
+        <p class="text-md pl-6">Chez setsetal-service, notre objectif est de fournir un service de qualité qui simplifie les tâches quotidiennes de nos utilisateurs. Nous nous efforçons de rendre les services de pressing et l'achat de produits tiers accessibles et pratiques.</p>
+
+        <h2 class="font-semibold text-purple-800 text-lg m-4">Nos Services</h2>
+        <p class="text-md pl-6">
+          Nous offrons une gamme de services conçus pour répondre aux besoins de nos clients :
+          <ul class="list-disc pl-10">
+            <li>Commande de services de pressing en ligne</li>
+            <li>Achat de produits tiers via notre boutique</li>
+          </ul>
         </p>
+
+        <h2 class="font-semibold text-purple-800 text-lg m-4">Collecte et Utilisation des Données</h2>
+        <p class="text-md pl-6">
+          Nous accordons une grande importance à la confidentialité et à la sécurité des données de nos utilisateurs. Pour plus de détails, consultez notre <a href="{{ path('politique.conf') }}" class="text-purple-700 hover:text-purple-900 hover:underline">Politique de Confidentialité</a>.
+        </p>
+
+        <h2 class="font-semibold text-purple-800 text-lg m-4">Notre Équipe</h2>
+        <p class="text-md pl-6">Notre équipe est composée de professionnels dévoués qui travaillent sans relâche pour offrir le meilleur service possible à nos clients. Nous croyons en l'importance de la collaboration et de l'innovation pour atteindre nos objectifs.</p>
+
+        <h2 class="font-semibold text-purple-800 text-lg m-4">Contactez-Nous</h2>
+        <p class="text-md pl-6">
+          Si vous avez des questions ou des suggestions, n'hésitez pas à nous contacter via notre <a href="{{ path('contact') }}" class="text-purple-700 hover:text-purple-900 hover:underline">formulaire de contact</a>. Nous sommes toujours heureux de recevoir vos commentaires et de vous aider.
+        </p>
+
+        <h2 class="font-semibold text-purple-800 text-lg m-4">Mises à Jour</h2>
+        <p class="text-md pl-6">Restez informé des dernières nouvelles et mises à jour de setsetal-service en visitant régulièrement notre site web. Nous vous informerons également des mises à jour importantes via une bannière sur notre site.</p>
       </div>
     </div>
   </div>

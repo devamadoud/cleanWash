@@ -2,8 +2,10 @@
 
 namespace App\Controller;
 
+use App\Data\customerSearchData;
 use App\Entity\Customer;
 use App\Entity\User;
+use App\Form\CustomerFilterType;
 use App\Form\CustomerType;
 use App\Repository\CustomerRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -19,27 +21,43 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 class CustomerController extends AbstractController
 {
     #[Route('/', name: 'customer.index', methods: ['GET'])]
-    public function index(CustomerRepository $customerRepository): Response
+    public function index(CustomerRepository $customerRepository, Request $request): Response
     {
 
         $user = $this->getUser();
+
         if(!($user instanceof User)){
-            // Restreindre l'accés et redirectionner vers la page d'accueil
+            $this->addFlash('error', 'Vous devez vous identifier pour acceder a la liste des collectes');
             return $this->redirectToRoute('home');
         }
 
+        $reset = $request->query->get('reset', null);
+        if($reset){
+            return $this->redirectToRoute('customer.index');
+        }
+
+        $customerSearchData = new customerSearchData();
+
         // Verifier si l'utilisateur connecté est le propriétaire du shop
         if($user->getShop() != null){
-            $customers = $user->getShop()->getCustomers();
+            $customerSearchData->shop = $user->getShop();
         }
 
         // Verifier si l'utilisateur connecté est un collecteur (un employé)
         if($user->getJob() != null and $user->getJob()->getPoste() == 'collecteur'){
-            $customers = $user->getJob()->getShop()->getCustomers();
+            $customerSearchData->shop = $user->getJob()->getShop();
         }
+
+        $customerFilterForm = $this->createForm(CustomerFilterType::class, $customerSearchData);
+        $customerFilterForm->handleRequest($request);
+
+        $customerSearchData->page = $request->get('page', 1);
+
+        $customers = $customerRepository->findByFilter($customerFilterForm->getData());
 
         return $this->render('customer/index.html.twig', [
             'customers' => $customers,
+            'filterForm' => $customerFilterForm
         ]);
     }
 
@@ -96,10 +114,17 @@ class CustomerController extends AbstractController
     public function addcollecte(Request $request, UrlGeneratorInterface $urlGenerator, EntityManagerInterface $entityManager): Response
     {
         $user = $this->getUser();
+
+        $telefone = $request->getSession()->get('customerPhone');
+        if(!$telefone){
+            $telefone = "";
+        }
+
         $form = $this->createFormBuilder()
             ->add('telefone', TelType::class, [
                 'required' => true,
                 'label' => 'N° de téléphone',
+                'data' => $telefone
             ])->add('waiteForAgentChoice', ChoiceType::class, [
                 'required' => true,
                 'label' => 'Vous pouvez le faire ?',

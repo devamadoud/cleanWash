@@ -2,28 +2,30 @@
 
 namespace App\Controller;
 
+use App\Data\collecteSearchData;
 use App\Entity\ClothingPea;
+use App\Entity\ClothingType;
 use App\Entity\Collecte;
-use App\Entity\CollecteDetailles;
 use App\Entity\CollecteDetaillesPea;
 use App\Entity\Customer;
-use App\Entity\Shop;
+use App\Entity\Payment;
 use App\Entity\User;
-use App\Form\CollecteDetaillesPeaType;
-use App\Form\CollecteDetailsType;
+use App\Form\CollecteFilterType;
 use App\Form\CollecteType;
 use App\Form\CustomerType;
 use App\Repository\CollecteRepository;
 use App\Security\Voter\CollecteVoter;
 use App\Services\QrCodeGenerator;
+use App\Services\UniqueRefGenerator;
+use DateTime;
+use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
-use Symfony\Component\Form\Extension\Core\Type\CollectionType;
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
-use Symfony\Component\Form\Extension\Core\Type\RadioType;
+use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -36,26 +38,40 @@ class CollecteController extends AbstractController
 {
     #[Route('/', name: 'collecte.index', methods: ['GET'])]
     #[IsGranted(CollecteVoter::LIST)]
-    public function index(CollecteRepository $collecteRepository): Response
+    public function index(CollecteRepository $collecteRepository, Request $request): Response
     {
         $user = $this->getUser();
 
         if(!($user instanceof User)){
             $this->addFlash('error', 'Vous devez vous identifier pour acceder a la liste des collectes');
-            return $this->redirectToRoute('home');
+            return $this->redirectToRoute('app_login');
         }
+
+        $reset = $request->query->get('reset', null);
+        if($reset){
+            return $this->redirectToRoute('collecte.index');
+        }
+        $collecteSearcheData = new collecteSearchData();
 
         // Verifier si l'utilisateur connecté est le propriétaire du shop
         if($user->getShop() != null){
-            $collectes = $user->getShop()->getCollectes();
+            $collecteSearcheData->shop = $user->getShop();
         }
 
         // Verifier si l'utilisateur connecté est un collecteur & livreur, caissier ou un laveur (un employé)
         if($user->getJob() != null){
-            $collectes = $user->getJob()->getShop()->getCollectes();
+            $collecteSearcheData->shop = $user->getJob()->getShop();
         }
+
+        $collecteSearcheData->page = $request->query->get('page', 1);
+        $collecteFilterForm = $this->createForm(CollecteFilterType::class, $collecteSearcheData);
+        $collecteFilterForm->handleRequest($request);
+
+        $collectes = $collecteRepository->findByShop($collecteFilterForm->getData());
+
         return $this->render('collecte/index.html.twig', [
             'collectes' => $collectes,
+            'filterForm' => $collecteFilterForm
         ]);
     }
 
@@ -65,12 +81,64 @@ class CollecteController extends AbstractController
         return $this->render('collecte/qrCodeScan.html.twig');
     }
 
+    #[Route('/clothing', name: 'collecte.clothing', methods: ['GET', 'POST'])]
+    public function clothing(Request $request, EntityManagerInterface $entityManager): Response
+    {
+        $datas = [
+            [
+                'name' => 'T-Shirt',
+                'price' => 500
+            ],
+            [
+                'name' => 'Pantalon',
+                'price' => 500
+            ],
+            [
+                'name' => 'Pull',
+                'price' => 500
+            ],
+            [
+                'name' => 'Short',
+                'price' => 500
+            ],
+            [
+                'name' => 'Robe',
+                'price' => 1000
+            ],
+            [
+                'name' => 'Veste',
+                'price' => 1000
+            ],
+            [
+                'name' => 'Jacket',
+                'price' => 1000
+            ],
+            [
+                'name' => 'Robe de soiree',
+                'price' => 1500
+            ],
+            [
+                'name' => 'Robe perle',
+                'price' => 2000
+            ]
+        ];
+
+        foreach ($datas as $key => $data) {
+            $clothingType = new ClothingType();
+            $clothingType->setName($data['name']);
+            $clothingType->setPrice($data['price']);
+            $entityManager->persist($clothingType);
+            $entityManager->flush();
+        }
+        return $this->render('collecte/qrscan.html.twig');
+    }
+
     /**
     * @param User|null $user
     */
     #[Route('/{tel}/{type}/new', name: 'collecte.new', methods: ['GET', 'POST'])]
     #[IsGranted(CollecteVoter::CREATE)]
-    public function new(Request $request, EntityManagerInterface $entityManager, $tel, $type): Response
+    public function new(Request $request, EntityManagerInterface $entityManager, UrlGeneratorInterface $urlGenerator, $tel, $type): Response
     {
         // Initialiser l'utilisateur courant
         $user = $this->getUser();
@@ -98,11 +166,13 @@ class CollecteController extends AbstractController
         if($customer and $customer->getCollectes()->count() > 0){
             foreach ($customer->getCollectes() as $key => $customerCollecte) {
                 if($customerCollecte->getStatus() == "En attente" || $customerCollecte->getStatus() == "En cours"){
+
+                    $url = $urlGenerator->generate('collecte.show', ['id' => $customerCollecte->getId()], UrlGeneratorInterface::ABSOLUTE_URL);
                     if($user){
-                        $this->addFlash('error', 'Ce client a deja une collecte '.$customerCollecte->getStatus().'');
+                        $this->addFlash('error', 'Ce client a deja une collecte. '.$customerCollecte->getStatus().'<a href="'.$url.'" class="text-purple-700 hover:underline"> Voir la collecte</a>.');
                         return $this->redirectToRoute('home');
                     }
-                    $this->addFlash('error', 'Vous avez deja une collecte '.$customerCollecte->getStatus().', merci de patienter notre service vous contactera dans les plus bref delais.');
+                    $this->addFlash('error', 'Vous avez deja une collecte '.$customerCollecte->getStatus().', merci de patienter notre service vous contactera dans les plus bref delais <a href="'.$url.'" class="text-purple-700 hover:underline">Voir la collecte</a>');
                     return $this->redirectToRoute('home');
                 }
             }
@@ -137,6 +207,7 @@ class CollecteController extends AbstractController
         // Verifier si le formulaire est soumis
         if ($form->isSubmitted() && $form->isValid()) {
 
+
             // Si l'utilisateur n'existe pas dans la base de données on l'ajoute
             if(!$customer){
 
@@ -153,8 +224,12 @@ class CollecteController extends AbstractController
                 $customer->setShop($shop);
             }
 
+            // Initialiser le generateur de reference
+            $refGenerator = new UniqueRefGenerator($entityManager);
+
             $caracteres = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
             $code = substr(str_shuffle($caracteres), 0, 4);
+            $collecteRef = $refGenerator->generateCollecteReference(4);
 
             if($type === 'clothingPea'){
                 $collecteDetaillesPea = new CollecteDetaillesPea();
@@ -165,16 +240,28 @@ class CollecteController extends AbstractController
                         ->getQuery()
                         ->getOneOrNullResult()
                 ;
-                $collecteDetaillesPea->setClothingPea($clothingPea)
-                        ->setPea($pea);
 
-                $collecte->addCollecteDetaillesPea($collecteDetaillesPea);
+                $collecteDetaillesPea->setClothingPea($clothingPea)
+                    ->setPea($pea)
+                    ->setStatus('En attente')
+                ;
+
+                $collecte->addCollecteDetaillesPea($collecteDetaillesPea)
+                    ->setReference($collecteRef)
+                ;
             }
 
             if($type === 'clothingType'){
-                
+
+                $totale = 0;
                 foreach ($collecte->getCollecteDetailles() as $key => $collecteD) {
+                    $ref = $refGenerator->generateCollecteDetaillesReference(6);
+                    $collecteD->setReference($ref)
+                        ->setStatus('En attente')
+                    ;
+
                     $collecte->addCollecteDetaille($collecteD);
+
                 }
             }
 
@@ -184,6 +271,7 @@ class CollecteController extends AbstractController
                 ->setStatus('En attente')
                 ->setSecret($code)
                 ->setCollecteType($type)
+                ->setReference($collecteRef)
             ;
 
             $entityManager->persist($collecte);
@@ -211,18 +299,21 @@ class CollecteController extends AbstractController
         }
 
         $form = $this->createFormBuilder($collecte)
+                ->add('totale', HiddenType::class)
                 ->add('paymentChoice', ChoiceType::class, [
-            'choices' => [
-                'At collection' => 'pay-on-collect',
-                'At delivery' => 'pay-on-deliver'],
-                'mapped' => false,
-            'expanded' => true, 'multiple' => false])->getForm()
+                    'choices' => [
+                        'Au collecte' => 'pay-on-collect',
+                        'A la livraison' => 'pay-on-deliver'],
+                    'mapped' => false,
+                    'expanded' => true, 'multiple' => false
+                ])->getForm()
         ;
 
         $form->handleRequest($request);
         if($form->isSubmitted() && $form->isValid()){
 
             $collecte->setPaymentChoice($form->get('paymentChoice')->getData());
+            $collecte->setTotale($form->get('totale')->getData());
 
             $entityManager->flush();
 
@@ -231,11 +322,11 @@ class CollecteController extends AbstractController
             }
 
             if($this->getUser()){
-                $this->addFlash('success', 'Le client a bien été ajoutée.');
+                $this->addFlash('success', 'La collecte a été crée avec succés.');
                 return $this->redirectToRoute('collecte.show', ['id' => $collecte->getId()], Response::HTTP_SEE_OTHER);
             }
 
-            $this->addFlash('success', 'Votre collecte a bien été enregistrée notre equipe va vous contacter dans les plus brefs delais.');
+            $this->addFlash('success', 'Votre collecte a bien été enregistrée notre equipe vous contacteras dans les plus brefs delais.');
             return $this->redirectToRoute('home', [], Response::HTTP_SEE_OTHER);
         }
 
@@ -246,11 +337,16 @@ class CollecteController extends AbstractController
             $collectePea = 'clothingPea';
         }
 
+        $baseurl = $request->getScheme() . '://' . $request->getHttpHost() . $request->getBasePath();
+        $url = $baseurl.$this->generateUrl('collecte.show', ['id' => $collecte->getId()]);
+        $qrCodeGenerator = new QrCodeGenerator();
+        $qrCode = $qrCodeGenerator->generateQrCode($url);
 
         return $this->render('collecte/recap.html.twig', [
             'collecte' => $collecte,
             'collectePea' => $collectePea,
-            'form' => $form
+            'form' => $form, 
+            'qrCode' => $qrCode
         ]);
     }
 
@@ -265,10 +361,8 @@ class CollecteController extends AbstractController
         }
 
         $customer = $collecte->getCustomer();
-        $tel = $customer->getPhoneNumber();
 
-        $form = $this->createForm(CustomerType::
-            class, $customer)
+        $form = $this->createForm(CustomerType::class, $customer)
             ->add('fullName', null, ['label' => 'Name'])
             ->add('phoneNumber', null, ['label' => 'Phone'])
             ->add('adress', null, ['label' => 'Address'])
@@ -299,15 +393,42 @@ class CollecteController extends AbstractController
 
     }
 
-    #[Route('/{id}', name: 'collecte.show', methods: ['GET'])]
-    #[IsGranted(CollecteVoter::VIEW, 'collecte')]
+    #[Route('/{id}', name: 'collecte.show', methods: ['GET', 'POST'])]
     public function show(Collecte $collecte, Request $request): Response
     {
+
         $baseurl = $request->getScheme() . '://' . $request->getHttpHost() . $request->getBasePath();
         $url = $baseurl.$this->generateUrl('collecte.show', ['id' => $collecte->getId()]);
         $qrCodeGenerator = new QrCodeGenerator();
         $qrCode = $qrCodeGenerator->generateQrCode($url);
 
+        if(!$this->getUser()){
+            $form = $this->createFormBuilder()->add('code', PasswordType::class, [
+                'label' => 'Votre code de comande',
+                'attr' => [
+                    'placeholder' => 'exemple: 4kd1'
+                ],
+                "mapped" => false
+            ])->getForm();
+            $form->handleRequest($request);
+            if ($form->isSubmitted() && $form->isValid()) {
+                $code = $form->get('code')->getData();
+                if($code === $collecte->getSecret()){
+                    return $this->render('collecte/suivi.html.twig', [
+                        'collecte' => $collecte,
+                        'collecteDetails' => $collecte->getCollecteDetailles(),
+                        'qrCode' => $qrCode
+                    ]);
+                }else {
+                    $this->addFlash('error', 'Code incorecte, veuillez réessayer');
+                }
+            }
+            return $this->render('collecte/suivi.html.twig', [
+                'form' => $form
+            ]);
+        }
+
+        $this->isGranted("ROLE_EMPLOYE");
         return $this->render('collecte/show.html.twig', [
             'collecte' => $collecte,
             'collecteDetails' => $collecte->getCollecteDetailles(),
@@ -319,12 +440,14 @@ class CollecteController extends AbstractController
     #[IsGranted(CollecteVoter::EDIT, 'collecte')]
     public function edit(Request $request, Collecte $collecte, EntityManagerInterface $entityManager): Response
     {
-
         $customer = $collecte->getCustomer();
 
-        $form = $this->createForm(CollecteType::class, $collecte);
+        $type = $request->query->get('type');
 
-        // Ajouter le client dans le formulaire
+        if($type === "clothingType"){
+            $form = $this->createForm(CollecteType::class, $collecte);
+
+            // Ajouter le client dans le formulaire
             $form->add('customer', EntityType::class, [
                 'class' => Customer::class,
                 'choice_label' => 'fullName',
@@ -332,10 +455,57 @@ class CollecteController extends AbstractController
                 'label' => 'Client',
                 'disabled' => true
             ]);
+        }else{
+
+             $form = $this->createFormBuilder($collecte->getCollecteDetaillesPeas()[0])->add('pea', NumberType::class, [
+                'label' => 'Pois de votre collecte',
+                'attr' => [
+                    'placeholder' => 'Ex. 7'
+                ],
+                'data' => $collecte->getCollecteDetaillesPeas() ? $collecte->getCollecteDetaillesPeas()[0]->getPea() : "",
+                'required' => true,
+                'mapped' => false
+            ])->getForm();
+        }
 
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            $refGenerator = new UniqueRefGenerator($entityManager);
+
+            if($type === "clothingType"){
+                $totale = 0;
+                foreach ($collecte->getCollecteDetailles() as $key => $collecteD) {
+
+                    $ref = $refGenerator->generateOrderDetaillesReference(6);
+                    if($collecteD->getReference() == null){
+                        $collecteD->setReference($ref);
+                    }
+                    $totale += $collecteD->getClothingType()->getPrice();
+                }
+
+                $collecte->addCollecteDetaille($collecteD);
+            }
+
+            if($type === "clothingPea"){
+                $collecteDP = $collecte->getCollecteDetaillesPeas()[0];
+                $pea = $form->get('pea')->getData();
+                $ref = $refGenerator->generateOrderDetaillesReference(6);
+                
+                $clothingPea = $entityManager->getRepository(ClothingPea::class)->createQueryBuilder('c')
+                        ->where('c.pea <= :pea and c.peaMax >= :pea')
+                        ->setParameter('pea', $pea)
+                        ->getQuery()
+                        ->getOneOrNullResult()
+                ;
+                $collecteDP->setClothingPea($clothingPea)
+                        ->setPea($pea);
+                $collecte->addCollecteDetaillesPea($collecteDP)
+                    ->setReference($ref)
+                    ->setTotale($clothingPea->getPriceMin())
+                ;
+            }
+
             $entityManager->flush();
 
             if($this->getUser()){
@@ -351,6 +521,7 @@ class CollecteController extends AbstractController
             'collecte' => $collecte,
             'customer' => $customer,
             'form' => $form,
+            'type' => $type
         ]);
     }
 
@@ -361,7 +532,7 @@ class CollecteController extends AbstractController
         $user = $this->getUser();
         if(!($user instanceof User)){
             $this->addFlash('error', 'Vous devez vous identifier pour confirmer une collecte');
-            return $this->redirectToRoute('home');
+            return $this->redirectToRoute('app_login');
         }
 
         if(!$collecte){
@@ -371,15 +542,240 @@ class CollecteController extends AbstractController
         
         // Verifier si l'utilisateur connecté est le propriétaire du shop ou un collecteur (un employé)
         if($user->getShop() != null or $user->getJob() != null and $user->getJob()->getPoste() == 'collecteur'){
-            $confirmedBy = $user->getShop() != null ? 'Le patron '.$user->getFullName() : 'Le collecteur '.$user->getFullName();
+
+            $confirmedBy = $user->getShop() != null ? 'Le gérant '.$user->getFullName() : 'Le collecteur '.$user->getFullName();
             $collecte->setConfirmedBy($confirmedBy)
-                ->setStatus('En cours')
-                ->setConfirmedAt(new \DateTimeImmutable())
-            ;
+                ->setConfirmedAt(new \DateTimeImmutable());
+
+            if($collecte->getPaymentChoice() == 'pay-on-collect'){
+                $collecte->setStatus('En attente de paiement');
+            }
+
+            if($collecte->getPaymentChoice() == 'pay-on-deliver'){
+                $collecte->setStatus('En cours de traitement');
+
+                if($collecte->getCollecteType() == "clothingType"){
+                    foreach ($collecte->getCollecteDetailles() as $key => $collecteD) {
+                        $collecteD->setStatus('En attente de lavage');
+                    }
+                }
+
+                if($collecte->getCollecteType() == "clothingPea"){
+                    $collecteDP = $collecte->getCollecteDetaillesPeas()[0];
+                    $collecteDP->setStatus('En attente de lavage');
+                }
+
+                $collecte->setStatus('En attente de lavage');
+            }
+                  
             $entityManager->flush();
             $this->addFlash('success', 'La collecte a bien été confirmée');
             return $this->redirectToRoute('collecte.index', [], Response::HTTP_SEE_OTHER);
         }
+    }
+
+    #[Route('/{collecte}/wash', name: 'collecte.wash', methods:['GET'] )]
+    public function clothingTypeWash(Request $request, Collecte $collecte, EntityManagerInterface $entityManager)
+    {
+        if($collecte->getCollecteType() == "clothingType"){
+
+            foreach ($collecte->getCollecteDetailles() as $key => $collecteD) {
+                $collecteD->setStatus('En cours de lavage');
+            }
+        }
+
+        if($collecte->getCollecteType() == "clothingPea"){
+            $collecte->getCollecteDetaillesPeas()[0]->setStatus('En cours de lavage');
+        }
+        
+        $collecte->setStatus('En cours de lavage');
+        
+        $entityManager->flush();
+
+        $referer = $request->headers->get('referer');
+        return $this->redirect($referer);
+    }
+
+    #[Route('/{collecte}/ready', name: 'collecte.ready', methods:['GET'] )]
+    public function readyToshipe(Request $request, Collecte $collecte, EntityManagerInterface $entityManager)
+    {
+        if($collecte->getCollecteType() == "clothingType"){
+
+            foreach ($collecte->getCollecteDetailles() as $key => $collecteD) {
+                $collecteD->setStatus('Traitement terminé');
+            }
+        }
+
+        if($collecte->getCollecteType() == "clothingPea"){
+            $collecte->getCollecteDetaillesPeas()[0]->setStatus('Traitement terminé');
+        }
+        
+        $collecte->setStatus('En attente de livraison');
+        
+        $entityManager->flush();
+
+        $referer = $request->headers->get('referer');
+        return $this->redirect($referer);
+    }
+
+    #[Route('/{collecte}/shipping', name: 'collecte.shipping', methods:['GET'] )]
+    public function shipping(Request $request, Collecte $collecte, EntityManagerInterface $entityManager)
+    {
+        if($collecte->getCollecteType() == "clothingType"){
+
+            foreach ($collecte->getCollecteDetailles() as $key => $collecteD) {
+                $collecteD->setStatus('En cours de livraison');
+            }
+        }
+
+        if($collecte->getCollecteType() == "clothingPea"){
+            $collecte->getCollecteDetaillesPeas()[0]->setStatus('En cours de livraison');
+        }
+        
+        $collecte->setStatus('En cours de livraison');
+
+        $customer = $collecte->getCustomer();
+        
+        $entityManager->flush();
+
+        return $this->redirectToRoute('customer.show', ['id' => $customer->getId()]);
+    }
+
+    #[Route('/{collecte}/shipped', name: 'collecte.shipped', methods:['GET'] )]
+    public function shipped(Request $request, Collecte $collecte, EntityManagerInterface $entityManager)
+    {
+        $secret = $request->query->get('secret');
+
+        if(!$secret){
+            $this->addFlash('error', "Vous devez saisire le code secret de la commande pour confirmer la livraison.");
+            return $this->redirect($request->headers->get('referer'));
+        }
+
+        if($secret and $secret != $collecte->getSecret()){
+            $this->addFlash('error', "Le code que vous avez saisit est incorrecte.");
+            return $this->redirect($request->headers->get('referer'));
+        }
+
+        if($collecte->getStatus() != "En cours de livraison"){
+            $this->addFlash('error', "Cet commande n'est pas prêt pour cette étape.");
+            return $this->redirect($request->headers->get('referer'));
+        }
+
+        if($collecte->getCollecteType() == "clothingType"){
+
+            if($collecte->getPaymentChoice() == "pay-on-collect" and $collecte->getPayment()){
+                $collecte->setStatus('Terminé');
+            }
+
+            if($collecte->getPaymentChoice() == "pay-on-deliver" and !$collecte->getPayment()){
+                $collecte->setStatus('En attente de paiement');
+            }
+        }
+
+        if($collecte->getCollecteType() == "clothingPea"){
+
+            if($collecte->getPaymentChoice() == "pay-on-collect" and $collecte->getPayment()){
+                $collecte->setStatus('Terminé');
+            }
+
+            if($collecte->getPaymentChoice() == "pay-on-deliver" and !$collecte->getPayment()){
+                $collecte->setStatus('En attente de paiement');
+            }
+        }
+        
+        $entityManager->flush();
+
+        $referer = $request->headers->get('referer');
+        return $this->redirect($referer);
+    }
+
+    #[Route('/{collecte}/checkout-service', name: 'collecte.checkout', methods: ['POST', 'GET'])]
+    public function checkout(Request $request, EntityManagerInterface $entityManager, Collecte $collecte)
+    {
+        $user = $this->getUser();
+
+        if(!($user instanceof User)){
+            $this->addFlash('error', "Vous devez vous identifier pour encaisser un paiement.");
+            return $this->redirectToRoute('app_login');
+        }
+
+        if(!$collecte){
+            $this->addFlash('error', "Une erreur c'est produit, veuillez reéssayer plus tard.");
+            return $this->redirect($request->headers->get('referer'));
+        }
+
+        $form = $this->createFormBuilder()
+            ->add('paimentMode', ChoiceType::class, [
+                'choices' => [
+                    'Espéce' => 'espéce',
+                    'Mobile Money' => 'mobile-money'
+                ],
+                'data' => 'espéce',
+                'expanded' => true,
+                'multiple' => false
+            ])->getForm()
+        ;
+        $form->handleRequest($request);
+
+        if($form->isSubmitted() && $form->isValid()){
+            $amount = $collecte->getTotale();
+            $paymentMethode = $form->get('paimentMode')->getData();
+
+            if($user->getShop() or $user->getJob() and $user->getJob()->getPoste() == "caissier" or $user->getJob() and $user->getJob()->getPoste() == "collecteur"){
+                if($collecte->getPayment() != null){
+                    $this->addFlash('warning', "Cette collecte as déjà été payé, veuillez verifier la reference et reéssayez !");
+                    return $this->redirect($request->headers->get('referer'));
+                }
+
+                $payment = new Payment();
+
+                $payment->setPaimentMode($paymentMethode)
+                    ->setPaidAt(new DateTimeImmutable())
+                    ->setAmount($amount)
+                ;
+
+                if($user->getJob() and $user->getJob()->getPoste() == "caissier"){
+                    $payment->setConfirmation(true)
+                        ->setCashedBy("Le caissier")
+                    ;
+                }
+
+                if($user->getShop()){
+                    $payment->setConfirmation(true)
+                        ->setCashedBy("Le gérant")
+                    ;
+                }
+
+                if($user->getJob() and $user->getJob()->getPoste() == "collecteur"){
+                    $payment->setConfirmation(false)
+                        ->setCashedBy("Le collecteur")
+                    ;
+                }
+
+                if($collecte->getPaymentChoice() == "pay-on-collect"){
+                    $collecte->setStatus('En attente de lavage');
+                }
+
+                if($collecte->getPaymentChoice() == "pay-on-deliver"){
+                    $collecte->setStatus('Terminé');
+                }
+
+                $collecte->setPayedAt(new DateTimeImmutable())
+                    ->setPayment($payment)
+                ;
+
+                $entityManager->persist($collecte);
+                $entityManager->flush();
+
+                $this->addFlash('success', "Paiement effectué avec succés.");
+            }
+        }
+
+        return $this->render('payment/checkout.html.twig', [
+            "form" => $form,
+            "collecte" => $collecte
+        ]);
+
     }
 
     #[Route('/{id}', name: 'collecte.delete', methods: ['POST'])]

@@ -74,7 +74,7 @@ class CustomerType extends AbstractType
         }
 
         // verifier si c'est un utilisateur connecté qui a soumis le formulaire
-        if($this->security->isGranted('IS_AUTHENTICATED_REMEMBERED') and $connectedOwner()->getShop() != null or $connectedOwner->getJob() != null){
+        if($this->security->isGranted('IS_AUTHENTICATED_REMEMBERED') and $connectedOwner->getShop() != null or $connectedOwner->getJob() != null){
 
             $shop = $connectedOwner->getShop();
             if($connectedOwner->getJob() != null and $connectedOwner->getJob()->getPoste() == 'collecteur'){
@@ -85,9 +85,7 @@ class CustomerType extends AbstractType
             if(!$data->getId()){
                 $data->setShop($shop);
             }
-
         }
-
     }
 
     public function configureOptions(OptionsResolver $resolver): void

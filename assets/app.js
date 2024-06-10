@@ -1,8 +1,11 @@
+import flowbite from 'flowbite';
+import 'flowbite-datepicker';
 import './bootstrap.js';
-import './flowbit.js';
 import './js/localisation.js';
 import './js/qrcodeReader.js';
 import './js/universal.js';
+import './js/cart.js';
+import './js/datepicker.js';
 /*
  * Welcome to your app's main JavaScript file!
  *

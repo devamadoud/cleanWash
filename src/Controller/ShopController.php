@@ -14,7 +14,7 @@ use Symfony\Component\Routing\Attribute\Route;
 #[Route('/shop')]
 class ShopController extends AbstractController
 {
-    #[Route('/', name: 'app_shop_index', methods: ['GET'])]
+    #[Route('/', name: 'shop.index', methods: ['GET'])]
     public function index(ShopRepository $shopRepository): Response
     {
         return $this->render('shop/index.html.twig', [

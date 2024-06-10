@@ -39,7 +39,14 @@ class CollecteVoter extends Voter
         switch ($attribute) {
 
             case self::EDIT:
-                return $collecte->getStatus() == "En attente";
+                if($collecte->getStatus() == "En attente"){
+                    return true;
+                }
+
+                if($collecte->getStatus() != "En attente" and $user instanceof User){
+                    return true;
+                }
+                
                 break;
 
             case self::VIEW:
@@ -58,7 +65,7 @@ class CollecteVoter extends Voter
             case self::LIST:
                 if($user instanceof User){
                     return $user->getShop()
-                    or $user->getJob()->getRevokedAt() == null;
+                    or $user->getJob()->isActive() == true;
                 }
             case self::CREATE:
                 return true;

@@ -1,0 +1,31 @@
+<form action="{{ path('payment.checkout') }}" method="post" class="flex flex-col gap-2 py-4 px-6 justify-center w-full lg:w-2/4 mx-auto">
+  <div class="flex flex-col gap-1">
+    <label for="ref" class="text-md font-normal text-gray-800 dark:text-gray-400">Référence de la collecte ou de la commande.</label>
+    <input type="number" name="ref" id="ref" placeholder="# Référence :" required class="block w-full rounded-md border border-gray-300 bg-white px-2 py-2 text-xs text-gray-700 placeholder-gray-400 font-medium focus:border-purple-500 focus:ring focus:ring-purple-200 focus:ring-opacity-50" />
+  </div>
+  <p class="mt-2 text-sm font-normal text-gray-800 dark:text-gray-400 mx-auto">Pour quel service allez-vous efféctuer un encaissement ?</p>
+  <div class="flex gap-4 justify-center">
+    <div class="flex gap-1 justify-center px-3 py-2 rounded border bg-gray-100 hover:bg-gray-200 focus:border-purple-600 cursor-pointer">
+      <input type="radio" name="type" id="pressing" value="collecte" required class="text-purple-700" />
+      <label for="pressing" class="text-sm font-normal text-gray-600 dark:text-gray-400 cursor-pointer">Collecte de pressing</label>
+    </div>
+    <div class="flex gap-1 justify-center px-3 py-2 rounded border bg-gray-100 hover:bg-gray-200 focus:border-purple-600 cursor-pointer">
+      <input type="radio" name="type" id="product" value="order" required class="text-purple-700" />
+      <label for="product" class="text-sm font-normal text-gray-600 dark:text-gray-400 cursor-pointer">Comande de produit</label>
+    </div>
+  </div>
+  <p class="mt-2 text-sm font-normal text-gray-800 dark:text-gray-400 mx-auto">Par quelle moyens avez-vous reçus le paiement ?</p>
+  <div class="flex gap-4 justify-center">
+    <div class="flex gap-2 justify-center px-5 py-2.5 border rounded-lg bg-gray-100 hover:bg-gray-300">
+      <input type="radio" required name="paymentMethode" id="espece" value="En espece" class="text-purple-800 focus:ring-purple-400" />
+      <label for="espece" class="block text-sm cursor-pointer font-medium leading-6 text-gray-700">Espéce</label>
+    </div>
+    <div class="flex gap-2 justify-center px-5 py-2.5 border rounded-lg bg-gray-100 hover:bg-gray-300">
+      <input type="radio" required name="paymentMethode" id="mobil-money" value="Mobile Money" class="text-purple-800 focus:ring-purple-400" />
+      <label for="mobil-money" class="block text-sm cursor-pointer font-medium leading-6 text-gray-700">Mobile money</label>
+    </div>
+  </div>
+  <div class="flex gap-4 justify-end">
+    <button type="submit" class="text-white bg-purple-700 hover:bg-purple-800 focus:ring-4 focus:outline-none focus:ring-red-300 dark:focus:ring-purple-800 font-medium rounded-lg text-sm inline-flex items-center px-5 py-2.5 text-center">Valider</button>
+  </div>
+</form>

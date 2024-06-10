@@ -20,5 +20,21 @@ services:
             - '../src/Entity/'
             - '../src/Kernel.php'
 
+    App\Services\PayOutService:
+        arguments:
+            $dunyaMasterApiKey: '%env(PAYDUNYA_MASTER_KEY)%'
+            $dunyaPrivateApiKey: '%env(PAYDUNYA_PRIVATE_KEY)%'
+            $dunyaPublicApiKey: '%env(PAYDUNYA_PUBLIC_KEY)%'
+            $dunyaBaseUrl: '%env(PAYDUNYA_BASE_URL)%'
+            $dunyaToken: '%env(PAYDUNYA_TOKEN)%'
+
+    App\Twig\AttrExtension:
+        tags: ['twig.extension']
+    
+    App\Twig\DatorExtension:
+        tags: ['twig.extension']
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
+
+    Bezhanov\Faker\Provider\Commerce: ~
+    Bezhanov\Faker\Provider\Species: ~

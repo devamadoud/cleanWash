@@ -3,8 +3,11 @@
 namespace App\Repository;
 
 use App\Entity\Payment;
+use DateTimeImmutable;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
+use Knp\Component\Pager\Pagination\PaginationInterface;
+use Knp\Component\Pager\PaginatorInterface;
 
 /**
  * @extends ServiceEntityRepository<Payment>
@@ -16,9 +19,11 @@ use Doctrine\Persistence\ManagerRegistry;
  */
 class PaymentRepository extends ServiceEntityRepository
 {
-    public function __construct(ManagerRegistry $registry)
+    private $paginator;
+    public function __construct(ManagerRegistry $registry, PaginatorInterface $paginator)
     {
         parent::__construct($registry, Payment::class);
+        $this->paginator = $paginator;
     }
 
     //    /**
@@ -45,4 +50,126 @@ class PaymentRepository extends ServiceEntityRepository
     //            ->getOneOrNullResult()
     //        ;
     //    }
+
+    public function findByCollecteShop($shop){
+        $query = $this->createQueryBuilder('p')
+            ->select('c', 'p')
+            ->join('p.collecte', 'c')
+            ->andWhere('c.shop IN (:shop)')
+            ->orderBy('c.payedAt', 'DESC')
+            ->setParameter('shop', $shop)
+            ->getQuery()
+            ->setMaxResults(5)
+        ;
+
+        return $query->getResult();
+    }
+
+    public function findByOrderShop($shop){
+        $query = $this->createQueryBuilder('p')
+            ->select('o', 'p')
+            ->join('p.productOrder', 'o')
+            ->andWhere('o.shop IN (:shop)')
+            ->orderBy('o.paidAt', 'DESC')
+            ->setParameter('shop', $shop)
+            ->getQuery()
+            ->setMaxResults(5)
+        ;
+
+        return $query->getResult();
+    }
+
+    public function findCollecteByShop($searche): PaginationInterface
+    {
+        $query = $this->createQueryBuilder('p')
+            ->select('c', 'p')
+            ->join('p.collecte', 'c')
+            ->andWhere('c.shop IN (:shop)')
+            ->orderBy('c.payedAt', 'DESC')
+            ->setParameter('shop', $searche->shop)
+        ;
+
+        if(!empty($searche->ref)){
+            $query = $query->andWhere('c.reference = :ref')
+                ->setParameter('ref', $searche->ref)
+            ;
+        }
+
+        if(!empty($searche->tel)){
+            $query = $query->join('c.customer', 'cu')
+                ->andWhere('cu.phoneNumber = :tel')
+                ->setParameter('tel', $searche->tel)
+            ;
+        }
+
+        if(!empty($searche->dateFrom) && !empty($searche->dateTo)){
+            // Créer un objet DateTime à partir de la chaîne de date
+            $dateFrom = new DateTimeImmutable($searche->dateFrom);
+            $dateFrom->setTime(0, 0, 0);
+            $dateTo = new DateTimeImmutable($searche->dateTo);
+            $dateTo->setTime(0, 0, 0);
+
+            $query = $query->andWhere('c.collectedAt BETWEEN :dateFrom AND :dateTo')
+                ->setParameter('dateFrom', $dateFrom)
+                ->setParameter('dateTo', $dateTo)
+            ;
+        }
+
+        if(!empty($searche->status)){
+            $query = $query->andWhere('c.status = :status')
+                ->setParameter('status', $searche->status)
+            ;
+        }
+
+        $query = $query->getQuery();
+
+        return $this->paginator->paginate($query, $searche->page, 10);
+    }
+
+    public function findOrderByShop($searche): PaginationInterface
+    {
+        $query = $this->createQueryBuilder('p')
+            ->select('o', 'p')
+            ->join('p.productOrder', 'o')
+            ->andWhere('o.shop IN (:shop)')
+            ->orderBy('o.paidAt', 'DESC')
+            ->setParameter('shop', $searche->shop)
+        ;
+
+        if(!empty($searche->ref)){
+            $query = $query->andWhere('o.reference = :ref')
+                ->setParameter('ref', $searche->ref)
+            ;
+        }
+
+        if(!empty($searche->tel)){
+            $query = $query->join('o.customer', 'cu')
+                ->andWhere('cu.phoneNumber = :tel')
+                ->setParameter('tel', $searche->tel)
+            ;
+        }
+
+        if(!empty($searche->dateFrom) && !empty($searche->dateTo)){
+            // Créer un objet DateTime à partir de la chaîne de date
+            $dateFrom = new DateTimeImmutable($searche->dateFrom);
+            $dateFrom->setTime(0, 0, 0);
+            $dateTo = new DateTimeImmutable($searche->dateTo);
+            $dateTo->setTime(0, 0, 0);
+
+            $query = $query->andWhere('o.createdAt BETWEEN :dateFrom AND :dateTo')
+                ->setParameter('dateFrom', $dateFrom)
+                ->setParameter('dateTo', $dateTo)
+            ;
+        }
+
+        if(!empty($searche->status)){
+            $query = $query->andWhere('o.status = :status')
+                ->setParameter('status', $searche->status)
+            ;
+        }
+
+        $query = $query->getQuery();
+
+        return $this->paginator->paginate($query, $searche->page, 10);
+    }
 }

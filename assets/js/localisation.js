@@ -7,12 +7,18 @@ if (btn) {
     });
 
     async function localise() {
-        const latInput = document.getElementById('customer_coordLat');
-        const longInput = document.getElementById('customer_coordLng');
+        let latInput = document.getElementById('customer_coordLat');
+        let longInput = document.getElementById('customer_coordLng');
+        let checkoutLatInput = document.getElementById('checkout_customer_coordLat');
+        let checkoutLongInput = document.getElementById('checkout_customer_coordLng');
         // Verifier si le service de localisation est disponible sur le navigateur
         if (navigator.geolocation) {
             try {
 
+                if (!(latInput || longInput) && checkoutLatInput && checkoutLongInput) {
+                    latInput = checkoutLatInput;
+                    longInput = checkoutLongInput;
+                }
                 latInput.value = 'En cours...';
                 longInput.value = 'En cours...';
                 const position = await new Promise((resolve, reject) => {

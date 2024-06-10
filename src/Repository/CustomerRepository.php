@@ -5,6 +5,8 @@ namespace App\Repository;
 use App\Entity\Customer;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
+use Knp\Component\Pager\Pagination\PaginationInterface;
+use Knp\Component\Pager\PaginatorInterface;
 
 /**
  * @extends ServiceEntityRepository<Customer>
@@ -16,9 +18,11 @@ use Doctrine\Persistence\ManagerRegistry;
  */
 class CustomerRepository extends ServiceEntityRepository
 {
-    public function __construct(ManagerRegistry $registry)
+    private $paginator;
+    public function __construct(ManagerRegistry $registry, PaginatorInterface $paginator)
     {
         parent::__construct($registry, Customer::class);
+        $this->paginator = $paginator;
     }
 
     //    /**
@@ -45,4 +49,42 @@ class CustomerRepository extends ServiceEntityRepository
     //            ->getOneOrNullResult()
     //        ;
     //    }
+
+    public function findAllAndPaginate($shop, $page): PaginationInterface
+    {
+        $query = $this->createQueryBuilder('c')
+            ->select('s', 'c')
+            ->join('c.shop', 's')
+            ->andWhere('s.id IN (:shop)')
+            ->setParameter('shop', $shop)
+            ->getQuery()
+        ;
+
+        return $this->paginator->paginate($query, $page, 10);
+    }
+
+    public function findByFilter($search)
+    {
+        $query = $this->createQueryBuilder('c')
+            ->select('s', 'c')
+            ->join('c.shop', 's')
+            ->andWhere('s.id IN (:shop)')
+            ->setParameter('shop', $search->shop)
+            ->orderBy('c.id', 'DESC')
+        ;
+
+        if(!empty($search->tel)){
+            $query->andWhere('c.phoneNumber = :tel')
+                ->setParameter('tel', $search->tel)
+            ;
+        }
+
+        if(!empty($search->fullName)){
+            $query->andWhere('c.fullName LIKE :name')
+                ->setParameter('name', '%'.$search->fullName.'%')
+            ;
+        }
+
+        return $this->paginator->paginate($query, $search->page, 10);
+    }
 }

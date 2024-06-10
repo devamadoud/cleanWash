@@ -31,4 +31,20 @@ return [
     'ts-custom-error' => [
         'version' => '3.3.1',
     ],
+    'flowbite' => [
+        'version' => '2.3.0',
+    ],
+    '@popperjs/core' => [
+        'version' => '2.11.8',
+    ],
+    'flowbite/dist/flowbite.min.css' => [
+        'version' => '2.3.0',
+        'type' => 'css',
+    ],
+    'flowbite-datepicker' => [
+        'version' => '1.2.6',
+    ],
+    'flowbite-datepicker/Datepicker' => [
+        'version' => '1.2.6',
+    ],
 ];

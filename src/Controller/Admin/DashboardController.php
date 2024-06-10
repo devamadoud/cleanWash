@@ -2,11 +2,13 @@
 
 namespace App\Controller\Admin;
 
+use App\Entity\Categories;
 use App\Entity\ClothingPea;
 use App\Entity\ClothingType;
 use App\Entity\Collecte;
 use App\Entity\Customer;
 use App\Entity\Employe;
+use App\Entity\Order;
 use App\Entity\Product;
 use App\Entity\Shop;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Dashboard;
@@ -51,9 +53,11 @@ class DashboardController extends AbstractDashboardController
         yield MenuItem::linkToDashboard('Dashboard', 'fa fa-home');
         yield MenuItem::linkToCrud('Boutique', 'fas fa-shop', Shop::class);
         yield MenuItem::linkToCrud('Products', 'fas fa-shopping-cart', Product::class);
+        yield MenuItem::linkToCrud('Categories', 'fas fa-list', Categories::class);
         yield MenuItem::linkToCrud('Type de vêtement', 'fas fa-tshirt', ClothingType::class);
         yield MenuItem::linkToCrud('Collecte par poids', 'fas fa-weight', ClothingPea::class);
         yield MenuItem::linkToCrud('Collectes', 'fas fa-bookmark', Collecte::class);
+        yield MenuItem::linkToCrud('Comandes', 'fas fa-shopping-cart', Order::class);
         yield MenuItem::linkToCrud('Clients', 'fas fa-users', Customer::class);
         yield MenuItem::linkToCrud('Employes', 'far fa-address-card', Employe::class);
         // yield MenuItem::linkToCrud('The Label', 'fas fa-list', EntityClass::class);

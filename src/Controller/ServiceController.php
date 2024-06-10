@@ -10,6 +10,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 class ServiceController extends AbstractController
 {
@@ -21,6 +22,27 @@ class ServiceController extends AbstractController
         ]);
     }
 
+    #[Route('/service/checkout/', name: 'service.checkout')]
+    public function checkout(Request $request, HttpClientInterface $httpClient): Response
+    {   
+        dd($request, 'checkout');
+
+        $this->addFlash('success', 'Le paiment a bien été effectue, votre commande sera traitée dans les plus brefs delais !');
+        return $this->redirectToRoute('home');
+    }
+
+    #[Route('/service/checkout/callback', name: 'service.checkout.callback')]
+    public function checkoutCallback(Request $request): Response
+    {
+        $data = json_decode($request->getContent(), true);
+
+        if($data['status'] === 'succeeded') {
+            
+        }
+
+        $this->addFlash('success', 'Le paiment a bien été effectue, votre commande sera traitée dans les plus brefs delais !');
+        return $this->redirectToRoute('home');
+    }
     #[Route('/pricing', name: 'pricing')]
     public function pricing(EntityManagerInterface $entityManager): Response
     {
@@ -78,5 +100,29 @@ class ServiceController extends AbstractController
         return $this->render('service/contact.html.twig', [
             'form' => $form,
         ]);
+    }
+
+    #[Route('/politique-de-confidentialite', name: 'politique.conf')]
+    public function policeConfidentialite(): Response
+    {
+        return $this->render('service/politique_conf.html.twig');
+    }
+
+    #[Route('/termes-et-conditions', name: 'termes.conditions')]
+    public function termesConditions(): Response
+    {
+        return $this->render('service/termes_util.html.twig');
+    }
+
+    #[Route('/politique-de-retour', name: 'retour.remb')]
+    public function politiqueRetour(): Response
+    {
+        return $this->render('service/retours_remb.html.twig');
+    }
+
+    #[Route('/faq', name: 'faq')]
+    public function faq(): Response
+    {
+        return $this->render('service/faq.html.twig');
     }
 }

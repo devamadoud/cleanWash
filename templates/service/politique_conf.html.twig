@@ -1,0 +1,125 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+  Politique de Confidentialité
+{% endblock %}
+
+{% block body %}
+  <div class="customer-form items-center flex min-h-full px-8">
+    <div class="px-4 lg:w-max mt-5 md:px-8">
+      <div class="items-start justify-between md:flex border-b pb-6 text-gray-600">
+        <div class="max-w-3xl">
+            <h1 class="text-purple-800 text-xl font-semibold sm:text-2xl">Politique de Confidentialité</h1>
+            <p class="text-md text-gray-800">
+                Bienvenue sur sets etal-service. Nous nous engageons à protéger la confidentialité de nos utilisateurs.
+            </p>
+            <p class="ext-md text-gray-800">
+                Cette politique de confidentialité explique comment nous collectons, utilisons, stockons et protégeons vos données personnelles lorsque vous utilisez notre plateforme de commande de services de pressing en ligne et d'achat de produits tiers.
+            </p>
+            <p class="ext-md text-gray-800">
+                Pour en savoir plus sur les termes et conditions d'Utilisation du plateforme, Nous vous invitons à lire les <a href="{{ path('termes.conditions') }}" class="text-purple-700 hover:text-purple-800 hover:underline">Termes et Conditions d'Utilisation</a> de setsetal-service
+            </p>
+        </div>
+        <span class="bg-gray-200 text-gray-800 p-3 rounded-md">Dernière mise à jour : le 01/06/2024</span>
+      </div>
+      <div class="px-4 text-sm font-medium">
+        <h2 class="font-semibold text-purple-800 text-lg m-4">1. Informations Générales</h2>
+        <p class="text-md pl-6">
+            Nom de l'application : setsetal-service
+        </p>
+        <p class="text-md pl-6">
+            Objectif : Permettre à nos utilisateurs de commander des services de pressing en ligne et d'acheter des produits tiers via notre boutique.
+        </p>
+
+        <h2 class="font-semibold text-purple-800 text-lg m-4">2. Types de Données Collectées</h2>
+        
+        <p class="pl-6">
+            Nous collectons les types de données personnelles suivants :
+            <ul class="list-disc pl-10">
+                <li>Nom complet</li>
+                <li>Numéro de téléphone</li>
+                <li>Adresse</li>
+                <li>Coordonnées GPS</li>
+            </ul>
+        </p>
+        <p class="text-md pl-6">
+            Nous ne collectons aucune donnée sensible.
+        </p>
+
+        <h2 class="font-semibold text-purple-800 text-lg m-4">3. Méthodes de Collecte</h2>
+
+        <p class="pl-6">
+            Nous collectons vos données personnelles via :
+            <ul class="list-disc pl-10">
+                <li>Formulaire d'inscription pour les employés et les administrateurs</li>
+                <li>Formulaire de commande pour collecter les informations des clients</li>
+            </ul>
+        </p>
+        <p class="text-md pl-6">
+            Nous n'utilisons aucun service tiers pour collecter des informations sur nos utilisateurs.
+        </p>
+
+        <h2 class="font-semibold text-purple-800 text-lg m-4">4. Utilisation des Données</h2>
+
+        <p class="pl-6">
+            Nous utilisons vos données personnelles uniquement pour :
+            <ul class="list-disc pl-10">
+                <li>Compléter une commande ou un service</li>
+            </ul>
+        </p>
+        <p class="text-md pl-6">
+            Pour le service de paiement en ligne, nous avons besoin du numéro de téléphone et de l'e-mail de l'utilisateur. Nous faisons appel à des services externes pour les paiements en ligne, et c'est le seul cas où nous partageons les données de l'utilisateur.
+        </p>
+
+        <h2 class="font-semibold text-purple-800 text-lg m-4">5. Stockage et Sécurité des Données</h2>
+
+        <p class="pl-6">
+            Vos données personnelles sont stockées sur des serveurs sécurisés. Nous avons mis en place des mesures de sécurité telles que :
+            <ul class="list-disc pl-10">
+                <li>Chiffrement des données</li>
+                <li>Accès restreint</li>
+            </ul>
+        </p>
+
+        <h2 class="font-semibold text-purple-800 text-lg m-4">6. Durée de Conservation des Données</h2>
+
+        <p class="pl-6">
+            Nous conservons vos données personnelles :
+            <ul class="list-disc pl-10">
+                <li>Pour un compte utilisateur : jusqu'à la suppression du compte</li>
+                <li>Pour un client : jusqu'à la réception d'une demande de suppression</li>
+            </ul>
+        </p>
+
+
+        <h2 class="font-semibold text-purple-800 text-lg m-4">7. Droits des Utilisateurs</h2>
+        <p class="pl-6">
+            Pour des raisons de sécurité et dans le cadre de la supervision des employés et des propriétaires de boutique, nous ne permettons pas la rectification ou la suppression des données par l'utilisateur lui-même. En tant que client, un utilisateur peut rectifier ses informations mais ne peut pas les supprimer.
+        </p>
+
+        <h2 class="font-semibold text-purple-800 text-lg m-4">8. Cookies et Technologies Similaires</h2>
+
+        <p class="pl-6">
+            Nous n'utilisons pas de cookies sur la plateforme pour le moment.
+        </p>
+
+        <h2 class="font-semibold text-purple-800 text-lg m-4">9. Contact</h2>
+
+        <p class="pl-6">
+            Pour toute question concernant cette politique de confidentialité, veuillez utiliser notre formulaire de <a href="{{ path('contact') }}" class="text-purple-700 hover:text-purple-900 hover:underline">contact</a> disponible sur le site.
+
+        </p>
+        <p class="text-md pl-6">
+            Nous gérons nous-mêmes la protection des données.
+        </p>
+
+        <h2 class="font-semibold text-purple-800 text-lg m-4">10. Mises à Jour de la Politique de Confidentialité</h2>
+
+        <p class="pl-6">
+            Nous informerons les utilisateurs de tout changement apporté à cette politique de confidentialité via une bannière sur le site web.
+        </p>
+
+      </div>
+    </div>
+  </div>
+{% endblock %}

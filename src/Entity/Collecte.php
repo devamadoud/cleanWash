@@ -41,9 +41,6 @@ class Collecte
     private ?string $paymentChoice = null;
 
     #[ORM\Column(nullable: true)]
-    private ?bool $payed = null;
-
-    #[ORM\Column(nullable: true)]
     private ?\DateTimeImmutable $payedAt = null;
 
     #[ORM\Column(nullable: true)]
@@ -70,6 +67,15 @@ class Collecte
 
     #[ORM\Column(length: 255)]
     private ?string $collecteType = null;
+
+    #[ORM\Column(length: 255)]
+    private ?string $reference = null;
+
+    #[ORM\OneToOne(inversedBy: 'collecte', cascade: ['persist', 'remove'])]
+    private ?Payment $payment = null;
+
+    #[ORM\Column(nullable: true)]
+    private ?float $totale = null;
 
     public function __construct()
     {
@@ -168,18 +174,6 @@ class Collecte
     public function setPaymentChoice(?string $paymentChoice): static
     {
         $this->paymentChoice = $paymentChoice;
-
-        return $this;
-    }
-
-    public function isPayed(): ?bool
-    {
-        return $this->payed;
-    }
-
-    public function setPayed(?bool $payed): static
-    {
-        $this->payed = $payed;
 
         return $this;
     }
@@ -294,6 +288,42 @@ class Collecte
     public function setCollecteType(string $collecteType): static
     {
         $this->collecteType = $collecteType;
+
+        return $this;
+    }
+
+    public function getReference(): ?string
+    {
+        return $this->reference;
+    }
+
+    public function setReference(string $reference): static
+    {
+        $this->reference = $reference;
+
+        return $this;
+    }
+
+    public function getPayment(): ?Payment
+    {
+        return $this->payment;
+    }
+
+    public function setPayment(?Payment $payment): static
+    {
+        $this->payment = $payment;
+
+        return $this;
+    }
+
+    public function getTotale(): ?float
+    {
+        return $this->totale;
+    }
+
+    public function setTotale(?float $totale): static
+    {
+        $this->totale = $totale;
 
         return $this;
     }

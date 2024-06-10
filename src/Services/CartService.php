@@ -18,8 +18,8 @@ class CartService
     {
         $product = $this->productRepository->findOneBy(['id' => $id]);
 
-        if($product === null || $product->getQuantityStocke() === 0) {
-            return new Response('Produit indisponible', Response::HTTP_BAD_REQUEST);
+        if($product === null || $product->getQuantityStocke() < $quantity) {
+            return new Response('Stock insuffisant', Response::HTTP_BAD_REQUEST);
         }
 
         $cart = $this->request->getSession()->get('cart', []) ?: [];
@@ -27,25 +27,72 @@ class CartService
 
         if(isset($cart["product[$id]"]["id"]) && $cart["product[$id]"]["id"] === $id) {
             $cart["product[$id]"]["quantity"] += $quantity;
-            $cartTot += $product->getPrice() * $quantity;
+
+            if($product->getPromo() > 0) {
+                $cart["product[$id]"]["unitPrice"] = $product->getPromoPrice();
+                $cartTot += $product->getPromoPrice() * $quantity;
+            }else{
+                $cart["product[$id]"]["unitPrice"] = $product->getPrice();
+                $cartTot += $product->getPrice() * $quantity;
+            }
+            
         } else {
             $cart["product[$id]"]["id"] = $id;
             $cart["product[$id]"]["quantity"] = $quantity;
             $cart["product[$id]"]["name"] = $product->getName();
             $cart["product[$id]"]["img"] = $product->getProductImage();
-            $cart["product[$id]"]["unitPrice"] = $product->getPrice();
-            $cartTot += $cart["product[$id]"]["unitPrice"] * $quantity;
+
+            // Si le produit est en promo
+            if($product->getPromo() > 0) {
+
+                $cart["product[$id]"]["unitPrice"] = $product->getPromoPrice();
+                $cartTot += $product->getPromoPrice() * $quantity;
+
+            }else{
+            
+                $cart["product[$id]"]["unitPrice"] = $product->getPrice();
+                $cartTot += $product->getPrice() * $quantity;
+            }
         }
 
         $this->request->getSession()->set('cart', $cart);
         $this->request->getSession()->set('cartTot', $cartTot);
+        return new Response (count($cart), Response::HTTP_OK);
+    }
 
-        return new Response ('Success', Response::HTTP_OK);
+    public function getProduct($cart)
+    {
+        $products = [];
+
+        if(!empty($cart)){
+            foreach($cart as $key => $value) {
+                $products[$key]['id'] = $value['id'];
+                $products[$key]['name'] = $value['name'];
+                $products[$key]['img'] = $value['img'];
+                $products[$key]['unitPrice'] = $value['unitPrice'];
+                $products[$key]['quantity'] = $value['quantity'];
+            }
+        }
+
+        return $products;
     }
 
     public function getCart()
     {
         return $this->request->getSession()->get('cart');
+    }
+
+    public function delete(int $id){
+        $cart = $this->getCart();
+
+        if(isset($cart["product[$id]"]["id"]) && $cart["product[$id]"]["id"] === $id) {
+            $cartTot = $this->request->getSession()->get('cartTot') - $cart["product[$id]"]["unitPrice"] * $cart["product[$id]"]["quantity"];
+            $this->request->getSession()->set('cartTot', $cartTot);
+            unset($cart["product[$id]"]);
+            $this->request->getSession()->set('cart', $cart);
+        }
+
+        return new Response('', Response::HTTP_OK);
     }
 
     public function getTotal()

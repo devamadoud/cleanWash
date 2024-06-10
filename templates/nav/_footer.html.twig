@@ -1,5 +1,29 @@
-<div class="max-w-screen-xl mx-auto px-4 text-gray-600 md:px-8">
-  <div class="py-10 border-t md:text-center">
-    <p>© 2024 ABAW Tech Solutions. Tout droits reservé.</p>
+<div class="w-full max-w-screen-xl mx-auto p-4 md:py-8">
+  <div class="sm:flex sm:items-center sm:justify-between">
+    <a href="{{ path('home') }}" class="flex items-center mb-4 sm:mb-0 space-x-3 rtl:space-x-reverse">
+      <img src="{{ asset('/images/icons/setsetalLogo4.png') }}" class="h-16" alt="StSetal Logo" />
+    </a>
+    <ul class="flex flex-wrap items-center mb-6 text-sm font-medium text-gray-500 sm:mb-0 dark:text-gray-400">
+      <li>
+        <a href="{{ path('propos') }}" class="hover:underline me-4 md:me-6">A propos</a>
+      </li>
+      <li>
+        <a href="{{ path('politique.conf') }}" class="hover:underline me-4 md:me-6">Politique de confidentialité</a>
+      </li>
+      <li>
+        <a href="{{ path('termes.conditions') }}" class="hover:underline me-4 md:me-6">Termes et conditions d'utilisations</a>
+      </li>
+      <li>
+        <a href="{{ path('retour.remb') }}" class="hover:underline me-4 md:me-6">Politique de retour</a>
+      </li>
+      <li>
+        <a href="{{ path('contact') }}" class="hover:underline me-4 md:me-6">Contact</a>
+      </li>
+      <li>
+        <a href="{{ path('faq') }}" class="hover:underline font-semibold">FAQ</a>
+      </li>
+    </ul>
   </div>
+  <hr class="my-6 border-gray-200 sm:mx-auto dark:border-gray-700 lg:my-8" />
+  <span class="block text-sm text-gray-500 sm:text-center dark:text-gray-400">© 2024 <a href="{{ path('home') }}" class="hover:underline">SetSetal.</a> ABAW Tech Solutions. Tout droits reservé.</span>
 </div>
