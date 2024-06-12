@@ -9,6 +9,7 @@ use App\Entity\User;
 use App\Form\CollecteFilterType;
 use App\Repository\CollecteRepository;
 use App\Repository\PaymentRepository;
+use App\Services\PayOutService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -149,5 +150,30 @@ class PaymentController extends AbstractController
         
         $this->addFlash("error", "Une erreur est survenue.");
         return $this->redirectToRoute('home');
+    }
+
+    #[Route('/{order}/payout', name: 'payment.payout', methods: ['POST', 'GET'])]
+    public function payout(Order $order, EntityManagerInterface $entityManager): Response
+    {
+        return $this->render('payment/payout.html.twig', [
+            'order' => $order
+        ]);
+    }
+
+    #[Route('/{order}/callback', name: 'payment.callback', methods: ['POST', 'GET'])]
+    public function callback(Request $request, PayOutService $payOutService, int $order): Response
+    {
+        $transaction_id = $request->query->get('transaction_id');
+        if($transaction_id){
+            $confirmation = $payOutService->kkiaPayOut()->verifyTransaction($transaction_id);
+
+            if($confirmation->status === "SUCCESS"){
+                return $this->redirectToRoute('order.onlineCheckout', ['order' => $order, "transaction" => $transaction_id, "methode" => $confirmation->source]);
+            }else{
+                dd($confirmation);
+            }
+        }
+
+        return $this->render('home/index.html.twig');
     }
 }

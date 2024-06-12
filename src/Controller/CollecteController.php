@@ -302,8 +302,8 @@ class CollecteController extends AbstractController
                 ->add('totale', HiddenType::class)
                 ->add('paymentChoice', ChoiceType::class, [
                     'choices' => [
-                        'Au collecte' => 'pay-on-collect',
-                        'A la livraison' => 'pay-on-deliver'],
+                        'En ligne' => 'online',
+                        'A la livraison' => 'on-deliver'],
                     'mapped' => false,
                     'expanded' => true, 'multiple' => false
                 ])->getForm()
@@ -547,11 +547,11 @@ class CollecteController extends AbstractController
             $collecte->setConfirmedBy($confirmedBy)
                 ->setConfirmedAt(new \DateTimeImmutable());
 
-            if($collecte->getPaymentChoice() == 'pay-on-collect'){
+            if($collecte->getPaymentChoice() == 'online'){
                 $collecte->setStatus('En attente de paiement');
             }
 
-            if($collecte->getPaymentChoice() == 'pay-on-deliver'){
+            if($collecte->getPaymentChoice() == 'on-deliver'){
                 $collecte->setStatus('En cours de traitement');
 
                 if($collecte->getCollecteType() == "clothingType"){
@@ -663,22 +663,22 @@ class CollecteController extends AbstractController
 
         if($collecte->getCollecteType() == "clothingType"){
 
-            if($collecte->getPaymentChoice() == "pay-on-collect" and $collecte->getPayment()){
+            if($collecte->getPaymentChoice() == "online" and $collecte->getPayment()){
                 $collecte->setStatus('Terminé');
             }
 
-            if($collecte->getPaymentChoice() == "pay-on-deliver" and !$collecte->getPayment()){
+            if($collecte->getPaymentChoice() == "on-deliver" and !$collecte->getPayment()){
                 $collecte->setStatus('En attente de paiement');
             }
         }
 
         if($collecte->getCollecteType() == "clothingPea"){
 
-            if($collecte->getPaymentChoice() == "pay-on-collect" and $collecte->getPayment()){
+            if($collecte->getPaymentChoice() == "online" and $collecte->getPayment()){
                 $collecte->setStatus('Terminé');
             }
 
-            if($collecte->getPaymentChoice() == "pay-on-deliver" and !$collecte->getPayment()){
+            if($collecte->getPaymentChoice() == "on-deliver" and !$collecte->getPayment()){
                 $collecte->setStatus('En attente de paiement');
             }
         }
@@ -704,77 +704,89 @@ class CollecteController extends AbstractController
             return $this->redirect($request->headers->get('referer'));
         }
 
-        $form = $this->createFormBuilder()
-            ->add('paimentMode', ChoiceType::class, [
-                'choices' => [
-                    'Espéce' => 'espéce',
-                    'Mobile Money' => 'mobile-money'
-                ],
-                'data' => 'espéce',
-                'expanded' => true,
-                'multiple' => false
-            ])->getForm()
-        ;
-        $form->handleRequest($request);
+        $amount = $collecte->getTotale();
+        $paymentMethode = $request->query->get('paymentMethode');
 
-        if($form->isSubmitted() && $form->isValid()){
-            $amount = $collecte->getTotale();
-            $paymentMethode = $form->get('paimentMode')->getData();
-
-            if($user->getShop() or $user->getJob() and $user->getJob()->getPoste() == "caissier" or $user->getJob() and $user->getJob()->getPoste() == "collecteur"){
-                if($collecte->getPayment() != null){
-                    $this->addFlash('warning', "Cette collecte as déjà été payé, veuillez verifier la reference et reéssayez !");
-                    return $this->redirect($request->headers->get('referer'));
+        if($user->getShop() or $user->getJob() and $user->getJob()->getPoste() == "caissier" or $user->getJob() and $user->getJob()->getPoste() == "collecteur"){
+            if($collecte->getPayment() != null){
+                
+                $clean = true;
+                foreach ($collecte->getCollecteDetailles() as $key => $cl) {
+                    if($cl->getStatus() == "En attente"){
+                        $clean = false;
+                        break;
+                    }
                 }
 
-                $payment = new Payment();
-
-                $payment->setPaimentMode($paymentMethode)
-                    ->setPaidAt(new DateTimeImmutable())
-                    ->setAmount($amount)
-                ;
-
-                if($user->getJob() and $user->getJob()->getPoste() == "caissier"){
-                    $payment->setConfirmation(true)
-                        ->setCashedBy("Le caissier")
-                    ;
-                }
-
-                if($user->getShop()){
-                    $payment->setConfirmation(true)
-                        ->setCashedBy("Le gérant")
-                    ;
-                }
-
-                if($user->getJob() and $user->getJob()->getPoste() == "collecteur"){
-                    $payment->setConfirmation(false)
-                        ->setCashedBy("Le collecteur")
-                    ;
-                }
-
-                if($collecte->getPaymentChoice() == "pay-on-collect"){
+                if(!$clean){
                     $collecte->setStatus('En attente de lavage');
+                    $entityManager->flush();
+                    return $this->redirectToRoute('collecte.show', ['id' => $collecte->getId()]);
                 }
 
-                if($collecte->getPaymentChoice() == "pay-on-deliver"){
+                if($collecte->getPaymentChoice() == "on-deliver"){
                     $collecte->setStatus('Terminé');
                 }
 
-                $collecte->setPayedAt(new DateTimeImmutable())
-                    ->setPayment($payment)
-                ;
-
-                $entityManager->persist($collecte);
-                $entityManager->flush();
-
-                $this->addFlash('success', "Paiement effectué avec succés.");
+                $this->addFlash('warning', "Cette collecte as déjà été payé, veuillez verifier la reference et reéssayez !");
+                return $this->redirect($request->headers->get('referer'));
             }
+
+            $payment = new Payment();
+
+            $payment->setPaimentMode($paymentMethode)
+                ->setPaidAt(new DateTimeImmutable())
+                ->setAmount($amount)
+            ;
+
+            if($user->getJob() and $user->getJob()->getPoste() == "caissier"){
+                $payment->setConfirmation(true)
+                    ->setCashedBy("Le caissier")
+                    ->setStatus('Effectuée')
+                ;
+            }
+
+            if($user->getShop()){
+                $payment->setConfirmation(true)
+                    ->setCashedBy("Le gérant")
+                    ->setStatus('Effectuée')
+                ;
+            }
+
+            if($user->getJob() and $user->getJob()->getPoste() == "collecteur"){
+                $payment->setConfirmation(false)
+                    ->setCashedBy("Le collecteur")
+                    ->setStatus('En attente de confirmation')
+                ;
+            }
+
+            if($collecte->getPaymentChoice() == "online"){
+                $collecte->setStatus('En attente de lavage');
+            }
+
+            if($collecte->getPaymentChoice() == "on-deliver"){
+                $collecte->setStatus('Terminé');
+            }
+
+            if($collecte->getPaymentChoice() == "online"){
+                $collecte->setStatus('En attente de lavage');
+            }
+
+            if($collecte->getPaymentChoice() == "on-deliver"){
+                $collecte->setStatus('Terminé');
+            }
+
+            $collecte->setPayedAt(new DateTimeImmutable())
+                ->setPayment($payment)
+            ;
+
+            $entityManager->persist($collecte);
+            $entityManager->flush();
+
+            $this->addFlash('success', "Paiement effectué avec succés.");
         }
 
-        return $this->render('payment/checkout.html.twig', [
-            "form" => $form,
-            "collecte" => $collecte
-        ]);
+        return $this->redirectToRoute('collecte.show', ['id' => $collecte->getId()]);
 
     }
 

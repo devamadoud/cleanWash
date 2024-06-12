@@ -27,6 +27,9 @@ services:
             $dunyaPublicApiKey: '%env(PAYDUNYA_PUBLIC_KEY)%'
             $dunyaBaseUrl: '%env(PAYDUNYA_BASE_URL)%'
             $dunyaToken: '%env(PAYDUNYA_TOKEN)%'
+            $kkiapayPublicKey: '%env(KKIAPAY_PUBLIC_APIKEY)%'
+            $kkiapayPrivateKey: '%env(KKIAPAY_PRIVATE_APIKEY)%'
+            $kkiapaySecret: '%env(KKIAPAY_SECRET)%'
 
     App\Twig\AttrExtension:
         tags: ['twig.extension']

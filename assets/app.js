@@ -6,6 +6,7 @@ import './js/qrcodeReader.js';
 import './js/universal.js';
 import './js/cart.js';
 import './js/datepicker.js';
+import './js/weeklyTransactionChart.js';
 /*
  * Welcome to your app's main JavaScript file!
  *

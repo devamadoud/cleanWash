@@ -101,4 +101,77 @@ class CollecteRepository extends ServiceEntityRepository
         $query = $query->getQuery();
         return $this->paginator->paginate($query, $searche->page, 10);
     }
+
+    public function getTransactionsCountByDay($shop)
+    {
+        $query = $this->createQueryBuilder('c')
+            ->select('DATE(c.collectedAt) as dayDate, COUNT(c) as orderCount, SUM(c.totale) as totalAmount')
+            ->join('c.shop', 's')
+            ->andWhere('s = :shop')
+            ->setParameter('shop', $shop)
+            ->andWhere('c.collectedAt >= :startDate')
+            ->andWhere('c.collectedAt < :endDate')
+            ->andWhere('c.status = :status')
+            ->setParameter('status', 'Terminé')
+            ->setParameter('startDate', (new \DateTimeImmutable('now'))->modify('-7 days')->setTime(23, 59, 59))
+            ->setParameter('endDate', (new \DateTimeImmutable('now')))
+            ->groupBy('dayDate')
+            ->orderBy('dayDate', 'ASC')
+            ->getQuery();
+
+        return $query->getResult();
+    }
+
+    public function getTotalTransactionAmountLast7Days($shop)
+    {
+        $query = $this->createQueryBuilder('c')
+            ->select('SUM(c.totale) as totalAmount')
+            ->join('c.shop', 's')
+            ->andWhere('s = :shop')
+            ->setParameter('shop', $shop)
+            ->andWhere('c.collectedAt >= :startDate')
+            ->andWhere('c.collectedAt < :endDate')
+            ->andWhere('c.status = :status')
+            ->setParameter('status', 'Terminé')
+            ->setParameter('startDate', (new \DateTimeImmutable('now'))->modify('-7 days')->setTime(23, 59, 59))
+            ->setParameter('endDate', (new \DateTimeImmutable('now'))->setTime(23, 59, 59))
+            ->getQuery();
+
+        return $query->getSingleScalarResult();
+    }
+
+    public function getTotalTransactionAmountPrevious7Days($shop)
+    {
+        $query = $this->createQueryBuilder('c')
+            ->select('SUM(c.totale) as totalAmount')
+            ->join('c.shop', 's')
+            ->andWhere('s = :shop')
+            ->setParameter('shop', $shop)
+            ->andWhere('c.collectedAt >= :startDate')
+            ->andWhere('c.collectedAt < :endDate')
+            ->andWhere('c.status = :status')
+            ->setParameter('status', 'Terminé')
+            ->setParameter('startDate', (new \DateTimeImmutable('now'))->modify('-14 days')->setTime(23, 59, 59))
+            ->setParameter('endDate', (new \DateTimeImmutable('now'))->modify('-7 days')->setTime(23, 59, 59))
+            ->getQuery();
+
+        return $query->getSingleScalarResult();
+    }
+
+    public function getNewCollectes($shop)
+    {
+        $query = $this->createQueryBuilder('c')
+            ->select('c')
+            ->join('c.shop', 's')
+            ->andWhere('c.shop = :shop')
+            ->andWhere('c.status = :status')
+            ->setParameter('shop', $shop)
+            ->setParameter('status', 'En attente')
+            ->orderBy('c.collectedAt', 'DESC')
+            ->setMaxResults(5)
+            ->getQuery()
+        ;
+
+        return $query->getResult();
+    }
 }

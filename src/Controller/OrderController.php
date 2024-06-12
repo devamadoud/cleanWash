@@ -145,6 +145,10 @@ class OrderController extends AbstractController
             return $this->redirectToRoute('home');
         }
 
+        if($paymentChoice == "online"){
+            return $this->redirectToRoute('payment.payout', ['order' => $order->getId()]);
+        }
+
         $this->addFlash('success', 'Votre commande a bien été enregistrée, notre équipe vous contactera dans les meilleurs delais.');
         return $this->redirectToRoute('home');
     }
@@ -397,11 +401,27 @@ class OrderController extends AbstractController
             $this->addFlash('error', "Une erreur c'est produit, cette commande a déja été payée.");
         }
 
+        if($order->getPayment()){
+            $completed = true;
+            foreach ($order->getOrderDetailles() as $key => $od) {
+                if($od->getStatus() != "Validé"){
+                    $completed = false;
+                }
+            }
+
+            if($completed){
+                $order->setStatus('Terminé');
+                $entityManager->flush();
+                return $this->redirectToRoute('order.show', ['id' => $order->getId()]);
+            }
+        }
+        
         if($order->getPayment() != null){
             $this->addFlash('warning', "Cette collecte as déjà été payé, veuillez verifier la reference et reéssayez !");
             return $this->redirect($request->headers->get('referer'));
         }
         
+
         if($user->getShop() or $user->getJob() and $user->getJob()->getPoste() == "caissier" or $user->getJob() and $user->getJob()->getPoste() == "collecteur"){
 
             $paymentMethode = $request->query->get('paymentMethode');
@@ -457,6 +477,59 @@ class OrderController extends AbstractController
             $this->addFlash('success', "Paiement effectué avec succés.");
             return $this->redirect($request->headers->get('referer'));
         }
+    }
+
+    #[Route('/{order}/{transaction}/online-checkout-service', name: 'order.onlineCheckout', methods: ['POST', 'GET'])]
+    public function onlineCheckout(Request $request, EntityManagerInterface $entityManager, Order $order, string $transaction)
+    {
+        if(!$order){
+            $this->addFlash('error', "Une erreur c'est produit, veuillez reéssayer plus tard.");
+            return $this->redirect($request->headers->get('referer'));
+        }
+
+        if($order->getStatus() != "En attente de paiement" && $order->getPayment() != null){
+            $this->addFlash('error', "Une erreur c'est produit, cette commande a déja été payée.");
+        }
+
+        if($order->getPayment() != null){
+            $this->addFlash('warning', "Cette collecte as déjà été payé, veuillez verifier la reference et reéssayez !");
+            return $this->redirect($request->headers->get('referer'));
+        }
+        
+        $paymentMethode = "Online";
+
+        $amount = $order->getTotale();
+
+        $payment = new Payment();
+
+        $payment->setPaimentMode($paymentMethode)
+            ->setPaidAt(new DateTimeImmutable())
+            ->setAmount($amount)
+            ->setCashedBy("Le client")
+            ->setStatus('Effectuée')
+            ->setConfirmation(true)
+            ->setTransactionId($transaction)
+        ;
+
+        if($order->getPaymentChoice() == "online"){
+            $order->setStatus('En cours de traitement');
+            
+            foreach ($order->getOrderDetailles() as $key => $od) {
+                $od->setStatus('En cours de traitement');
+            }
+        }
+
+        if($order->getPaymentChoice() == "on-deliver"){
+            $order->setStatus('Terminé');
+        }
+
+        $order->setPaidAt(new DateTimeImmutable())
+            ->setPayment($payment)
+        ;
+        $entityManager->flush();
+
+        $this->addFlash('success', "Paiement effectué avec succés.");
+        return $this->redirectToRoute('home');
     }
 
     #[Route('/{order}/cancel', name: 'order.cancel', methods: ['GET', 'POST'])]

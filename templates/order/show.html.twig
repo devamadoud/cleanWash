@@ -72,7 +72,7 @@
 
                 <div class="w-full inline-flex gap-4 text-left">
                   <span class="text-sm font-medium py-1.5 text-gray-600">Statut :</span>
-                  {% if order.status != 'Terminé' %}
+                  {% if order.status != 'Terminée' %}
                     <span class="px-3 py-1.5 text-sm {{ order.status != 'Annulé' ? 'bg-yellow-100 text-yellow-600' : 'bg-red-200 text-red-600' }} rounded-md">{{ order.status }}</span>
                   {% else %}
                     <span class="px-3 py-1.5 text-sm bg-green-300 text-green-800 rounded-md">{{ order.status }}</span>

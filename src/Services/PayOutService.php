@@ -2,6 +2,7 @@
 namespace App\Services;
 
 use GuzzleHttp\Client;
+use Kkiapay\Kkiapay;
 use Paydunya\Paydunya;
 
 class PayOutService
@@ -13,7 +14,15 @@ class PayOutService
     private $dunyaToken;
     private $client;
 
-    public function __construct(string $dunyaMasterApiKey, string $dunyaPrivateApiKey, string $dunyaPublicApiKey, string $dunyaBaseUrl, string $dunyaToken)
+    private $kkiapayPublicKey;
+    private $kkiapayPrivateKey;
+    private $kkiapaySecret;
+
+    public function __construct(
+        string $kkiapayPublicKey, string $kkiapayPrivateKey, string $kkiapaySecret, 
+        string $dunyaMasterApiKey, string $dunyaPrivateApiKey, string $dunyaPublicApiKey, 
+        string $dunyaBaseUrl, string $dunyaToken
+    )
     {
         $this->client = new Client();
         $this->dunyaMasterApiKey = $dunyaMasterApiKey;
@@ -21,8 +30,12 @@ class PayOutService
         $this->dunyaPublicApiKey = $dunyaPublicApiKey;
         $this->dunyaBaseUrl = $dunyaBaseUrl;
         $this->dunyaToken = $dunyaToken;
+
+        $this->kkiapayPublicKey = $kkiapayPublicKey;
+        $this->kkiapayPrivateKey = $kkiapayPrivateKey;
+        $this->kkiapaySecret = $kkiapaySecret;
     }
-    public function payOut($phoneNumber, $amount, )
+    public function payDunyaOut($phoneNumber, $amount, )
     {
         $body = [
             "recipient_phone" => $phoneNumber,
@@ -69,5 +82,10 @@ class PayOutService
         $paydunyaStore::setCallbackUrl('');
 
         return $paydunyaStore;
+    }
+
+    public function kkiaPayOut(){
+        $kkiapay = new Kkiapay($this->kkiapayPublicKey, $this->kkiapayPrivateKey, $this->kkiapaySecret, true);
+        return $kkiapay;
     }
 }
