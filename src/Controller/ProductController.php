@@ -46,7 +46,6 @@ class ProductController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
 
             $quantity = $form->get('quantity')->getData();
-            dd($quantity);
             $cartService->add($product->getId(), $quantity);
 
             $this->addFlash('success', 'Le produit a bien ete ajouté au panier');

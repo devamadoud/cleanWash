@@ -63,6 +63,12 @@ class Order
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $motifCancel = null;
 
+    #[ORM\OneToOne(mappedBy: 'productOrder', cascade: ['persist', 'remove'])]
+    private ?Shipe $shipe = null;
+
+    #[ORM\OneToOne(mappedBy: 'orderInvoice', cascade: ['persist', 'remove'])]
+    private ?Invoice $invoice = null;
+
     public function __construct()
     {
         $this->orderDetailles = new ArrayCollection();
@@ -260,6 +266,50 @@ class Order
     public function setMotifCancel(?string $motifCancel): static
     {
         $this->motifCancel = $motifCancel;
+
+        return $this;
+    }
+
+    public function getShipe(): ?Shipe
+    {
+        return $this->shipe;
+    }
+
+    public function setShipe(?Shipe $shipe): static
+    {
+        // unset the owning side of the relation if necessary
+        if ($shipe === null && $this->shipe !== null) {
+            $this->shipe->setProductOrder(null);
+        }
+
+        // set the owning side of the relation if necessary
+        if ($shipe !== null && $shipe->getProductOrder() !== $this) {
+            $shipe->setProductOrder($this);
+        }
+
+        $this->shipe = $shipe;
+
+        return $this;
+    }
+
+    public function getInvoice(): ?Invoice
+    {
+        return $this->invoice;
+    }
+
+    public function setInvoice(?Invoice $invoice): static
+    {
+        // unset the owning side of the relation if necessary
+        if ($invoice === null && $this->invoice !== null) {
+            $this->invoice->setOrderInvoice(null);
+        }
+
+        // set the owning side of the relation if necessary
+        if ($invoice !== null && $invoice->getOrderInvoice() !== $this) {
+            $invoice->setOrderInvoice($this);
+        }
+
+        $this->invoice = $invoice;
 
         return $this;
     }

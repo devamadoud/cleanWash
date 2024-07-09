@@ -77,6 +77,12 @@ class Collecte
     #[ORM\Column(nullable: true)]
     private ?float $totale = null;
 
+    #[ORM\OneToOne(mappedBy: 'collecte', cascade: ['persist', 'remove'])]
+    private ?Shipe $shipe = null;
+
+    #[ORM\OneToOne(mappedBy: 'collecte', cascade: ['persist', 'remove'])]
+    private ?Invoice $invoice = null;
+
     public function __construct()
     {
         $this->collecteDetailles = new ArrayCollection();
@@ -324,6 +330,50 @@ class Collecte
     public function setTotale(?float $totale): static
     {
         $this->totale = $totale;
+
+        return $this;
+    }
+
+    public function getShipe(): ?Shipe
+    {
+        return $this->shipe;
+    }
+
+    public function setShipe(?Shipe $shipe): static
+    {
+        // unset the owning side of the relation if necessary
+        if ($shipe === null && $this->shipe !== null) {
+            $this->shipe->setCollecte(null);
+        }
+
+        // set the owning side of the relation if necessary
+        if ($shipe !== null && $shipe->getCollecte() !== $this) {
+            $shipe->setCollecte($this);
+        }
+
+        $this->shipe = $shipe;
+
+        return $this;
+    }
+
+    public function getInvoice(): ?Invoice
+    {
+        return $this->invoice;
+    }
+
+    public function setInvoice(?Invoice $invoice): static
+    {
+        // unset the owning side of the relation if necessary
+        if ($invoice === null && $this->invoice !== null) {
+            $this->invoice->setCollecte(null);
+        }
+
+        // set the owning side of the relation if necessary
+        if ($invoice !== null && $invoice->getCollecte() !== $this) {
+            $invoice->setCollecte($this);
+        }
+
+        $this->invoice = $invoice;
 
         return $this;
     }

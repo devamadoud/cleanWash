@@ -2,6 +2,8 @@
 
 namespace App\Services;
 
+use Symfony\Component\OptionsResolver\OptionsResolver;
+
 class TransactionChartBuilder
 {
 
@@ -40,12 +42,12 @@ class TransactionChartBuilder
         $chartBuilder->setOptions([
             'scales' => [
                 'y-transaction-count' => [
-                    'suggestedMin' => 0,
+                    'suggestedMin' => 5,
                     'suggestedMax' => 25,
                     'beginAtZero' => true,
                     'ticks' => [
                         'stepSize' => 5,
-                        'min' => 0,
+                        'min' => 5,
                         'max' => 50,
                         'autoSkip' => false,
                         'ticks' => [
@@ -59,13 +61,9 @@ class TransactionChartBuilder
                     'beginAtZero' => true,
                     'ticks' => [
                         'stepSize' => 100000,
-                        'min' => 10000,
-                        'max' => 100000,
-                        'autoSkip' => false,
-                        'includeBounds' => false,
-                        'ticks' => [
-                            'callback' => 'function(value) { return Number(value).toLocaleString(); }'
-                        ]
+                        'maxTicksLimit' => 6,
+                        'autoSkip' => true,
+                        'includeBounds' => true,
                     ]
                 ],
             ],

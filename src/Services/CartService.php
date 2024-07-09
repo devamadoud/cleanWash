@@ -60,7 +60,7 @@ class CartService
         return new Response (count($cart), Response::HTTP_OK);
     }
 
-    public function getProduct($cart)
+    public function getProduct(array $cart): array
     {
         $products = [];
 
@@ -77,12 +77,13 @@ class CartService
         return $products;
     }
 
-    public function getCart()
+    public function getCart(): object
     {
         return $this->request->getSession()->get('cart');
     }
 
-    public function delete(int $id){
+    public function delete(int $id): Response
+    {
         $cart = $this->getCart();
 
         if(isset($cart["product[$id]"]["id"]) && $cart["product[$id]"]["id"] === $id) {
@@ -95,17 +96,17 @@ class CartService
         return new Response('', Response::HTTP_OK);
     }
 
-    public function getTotal()
+    public function getTotal(): float
     {
         return $this->request->getSession()->get('cartTot');
     }
 
-    public function removeTot()
+    public function removeTot(): void
     {
-        return $this->request->getSession()->remove('cartTot');
+        $this->request->getSession()->remove('cartTot');
     }
 
-    public function clear()
+    public function clear(): void
     {
         $session = $this->request->getSession();
         $session->remove('cart');

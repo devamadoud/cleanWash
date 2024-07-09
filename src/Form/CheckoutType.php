@@ -25,10 +25,10 @@ class CheckoutType extends AbstractType
                 "multiple" => false,
                 "expanded" => true,
                 "choices" => [
-                    'A la livraison' => "on-delivery",
+                    'A la livraison' => "on-deliver",
                     "Mobile Money" => "online",
                 ],
-                'data' => "A la livraison",
+                'data' => "on-deliver",
             ])
             ->add('adress', TextType::class, [
                 "label" => "Adresse de facturation (facultatif)",

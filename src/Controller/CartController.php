@@ -6,6 +6,7 @@ use App\Entity\Customer;
 use App\Form\CheckoutType;
 use App\Repository\ProductRepository;
 use App\Services\CartService;
+use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -34,18 +35,19 @@ class CartController extends AbstractController
 
             if(!$customer){
                 $customer = $dataCustomer;
+                $customer->setCreatedAt(new DateTimeImmutable());
             }
 
             $request->getSession()->set('paymentMethodes', $data['paymentMethodes']);
             
             $em->persist($customer);
             $em->flush();
-            if($data['paymentMethodes'] === 'on-delivery'){
+            if($data['paymentMethodes'] === 'on-deliver'){
                 return $this->redirectToRoute('order.new', ['customer' => $customer->getId()]);
             }
 
             if($data['paymentMethodes'] === 'online'){
-                $this->addFlash("warning", "La methode de paiement que vous avez choisit n'est paas encore disponible, vous pourrait payer votre commande a la livraison.");
+                // $this->addFlash("warning", "La methode de paiement que vous avez choisit n'est paas encore disponible, vous pourrait payer votre commande a la livraison.");
                 return $this->redirectToRoute('order.new', ['customer' => $customer->getId()]);
             }
         }
@@ -66,6 +68,7 @@ class CartController extends AbstractController
                 'cartTot' => $cartService->getTotal()
             ];
             return new Response(json_encode($dataResponse), Response::HTTP_OK);
+            
         }elseif($cartService->add($id, $quantity)->getStatusCode() === Response::HTTP_BAD_REQUEST) {
             $this->addFlash('error', 'Le produit n\'a pas pu etre ajouté au panier le stock est insuffisant');
             return $this->redirectToRoute('cart.index');

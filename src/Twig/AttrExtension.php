@@ -14,7 +14,7 @@ class AttrExtension extends AbstractExtension
         ];
     }
 
-    public function attrWithoutValue($attributes)
+    public function attrWithoutValue(object $attributes) :string
     {
         $output = '';
 

@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\Payment;
+use App\Entity\Shop;
 use DateTimeImmutable;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
@@ -19,7 +20,7 @@ use Knp\Component\Pager\PaginatorInterface;
  */
 class PaymentRepository extends ServiceEntityRepository
 {
-    private $paginator;
+    private PaginatorInterface $paginator;
     public function __construct(ManagerRegistry $registry, PaginatorInterface $paginator)
     {
         parent::__construct($registry, Payment::class);
@@ -51,7 +52,8 @@ class PaymentRepository extends ServiceEntityRepository
     //        ;
     //    }
 
-    public function findByCollecteShop($shop){
+    public function findByCollecteShop(Shop $shop) : array
+    {
         $query = $this->createQueryBuilder('p')
             ->select('c', 'p')
             ->join('p.collecte', 'c')
@@ -65,7 +67,8 @@ class PaymentRepository extends ServiceEntityRepository
         return $query->getResult();
     }
 
-    public function findByOrderShop($shop){
+    public function findByOrderShop(Shop $shop): array
+    {
         $query = $this->createQueryBuilder('p')
             ->select('o', 'p')
             ->join('p.productOrder', 'o')
@@ -79,7 +82,7 @@ class PaymentRepository extends ServiceEntityRepository
         return $query->getResult();
     }
 
-    public function findCollecteByShop($searche): PaginationInterface
+    public function findCollecteByShop(object $searche): PaginationInterface
     {
         $query = $this->createQueryBuilder('p')
             ->select('c', 'p')
@@ -126,7 +129,7 @@ class PaymentRepository extends ServiceEntityRepository
         return $this->paginator->paginate($query, $searche->page, 10);
     }
 
-    public function findOrderByShop($searche): PaginationInterface
+    public function findOrderByShop(object $searche): PaginationInterface
     {
         $query = $this->createQueryBuilder('p')
             ->select('o', 'p')
@@ -152,9 +155,9 @@ class PaymentRepository extends ServiceEntityRepository
         if(!empty($searche->dateFrom) && !empty($searche->dateTo)){
             // Créer un objet DateTime à partir de la chaîne de date
             $dateFrom = new DateTimeImmutable($searche->dateFrom);
-            $dateFrom->setTime(0, 0, 0);
+            $dateFrom->setTime(23, 59, 59);
             $dateTo = new DateTimeImmutable($searche->dateTo);
-            $dateTo->setTime(0, 0, 0);
+            $dateTo->setTime(23, 59, 59);
 
             $query = $query->andWhere('o.createdAt BETWEEN :dateFrom AND :dateTo')
                 ->setParameter('dateFrom', $dateFrom)

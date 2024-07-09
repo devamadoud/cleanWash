@@ -16,7 +16,9 @@ use App\Form\CustomerType;
 use App\Repository\CollecteRepository;
 use App\Security\Voter\CollecteVoter;
 use App\Services\QrCodeGenerator;
+use App\Services\ShipeService;
 use App\Services\UniqueRefGenerator;
+use App\Services\UserProvider;
 use DateTime;
 use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
@@ -216,7 +218,9 @@ class CollecteController extends AbstractController
                 // Récupérer les informations du nouveau client
                 $customerTelefone = $tel;
 
-                $customer->setPhoneNumber($customerTelefone);
+                $customer->setPhoneNumber($customerTelefone)
+                    ->setCreatedAt(new DateTimeImmutable())
+                ;
             }
 
             // si le client existe deja mais il effectue une nouvelle collecte dans un shop different de son shop actuel, on le met a jour
@@ -318,12 +322,21 @@ class CollecteController extends AbstractController
             $entityManager->flush();
 
             if($collecte->getCustomer()->getFullName() == null and $collecte->getCustomer()->getAdress() == null){
-                return $this->redirectToRoute('collecte.customer', ['id' => $collecte->getId()]);
+                return $this->redirectToRoute('collecte.customer', ['collecte' => $collecte->getId()]);
             }
 
             if($this->getUser()){
+
+                if($collecte->getPaymentChoice() == 'online'){
+                    return $this->redirectToRoute('payment.payout', ['ref' => $collecte->getReference()]);
+                }
+
                 $this->addFlash('success', 'La collecte a été crée avec succés.');
                 return $this->redirectToRoute('collecte.show', ['id' => $collecte->getId()], Response::HTTP_SEE_OTHER);
+            }
+
+            if(!$this->getUser() and $form->get('paymentChoice')->getData() == "online"){
+                return $this->redirectToRoute('payment.payout', ['ref' => $collecte->getReference()]);
             }
 
             $this->addFlash('success', 'Votre collecte a bien été enregistrée notre equipe vous contacteras dans les plus brefs delais.');
@@ -350,8 +363,8 @@ class CollecteController extends AbstractController
         ]);
     }
 
-    #[Route('/{id}/customer', name: 'collecte.customer', methods: ['GET', 'POST'])]
     #[IsGranted(CollecteVoter::CREATE)]
+    #[Route('/{collecte}/customer', name: 'collecte.customer', methods: ['GET', 'POST'])]
     public function customer(Request $request, Collecte $collecte, EntityManagerInterface $entityManager): Response
     {
         if(!$collecte){
@@ -379,11 +392,18 @@ class CollecteController extends AbstractController
             $entityManager->flush();
             if($this->getUser()){
                 $this->addFlash('success', 'Le client a bien été ajoutée.');
-                return $this->redirectToRoute('collecte.show', ['id' => $collecte->getId()], Response::HTTP_SEE_OTHER);
+                if($collecte->getPaymentChoice() == 'online'){
+                    return $this->redirectToRoute('payment.payout', ['ref' => $collecte->getReference()]);
+                }
+                return $this->redirectToRoute('collecte.show', ['id' => $collecte->getId()]);
+            }
+
+            if($collecte->getPaymentChoice() == 'online'){
+                return $this->redirectToRoute('payment.payout', ['ref' => $collecte->getReference()]);
             }
 
             $this->addFlash('success', 'Votre collecte a bien été enregistrée notre equipe va vous contacter dans les plus brefs delais.');
-            return $this->redirectToRoute('home', [], Response::HTTP_SEE_OTHER);
+            return $this->redirectToRoute('home');
         }
 
         return $this->render('collecte/newCustomer.html.twig', [
@@ -428,7 +448,6 @@ class CollecteController extends AbstractController
             ]);
         }
 
-        $this->isGranted("ROLE_EMPLOYE");
         return $this->render('collecte/show.html.twig', [
             'collecte' => $collecte,
             'collecteDetails' => $collecte->getCollecteDetailles(),
@@ -510,10 +529,10 @@ class CollecteController extends AbstractController
 
             if($this->getUser()){
                 $this->addFlash('success', 'La collecte a bien été modifiée');
-                return $this->redirectToRoute('collecte.index', [], Response::HTTP_SEE_OTHER);
+                return $this->redirectToRoute('collecte.index');
             }
             if(!$this->getUser()){
-                return $this->redirectToRoute('collecte.recap', ['id' => $collecte->getId()], Response::HTTP_SEE_OTHER);
+                return $this->redirectToRoute('collecte.recap', ['id' => $collecte->getId()]);
             }
         }
 
@@ -619,8 +638,10 @@ class CollecteController extends AbstractController
     }
 
     #[Route('/{collecte}/shipping', name: 'collecte.shipping', methods:['GET'] )]
-    public function shipping(Request $request, Collecte $collecte, EntityManagerInterface $entityManager)
+    public function shipping(Request $request, Collecte $collecte, EntityManagerInterface $entityManager, ShipeService $shipeService, UserProvider $userProvider)
     {
+        $user = $userProvider->connectedUser($this->getUser());
+
         if($collecte->getCollecteType() == "clothingType"){
 
             foreach ($collecte->getCollecteDetailles() as $key => $collecteD) {
@@ -632,17 +653,22 @@ class CollecteController extends AbstractController
             $collecte->getCollecteDetaillesPeas()[0]->setStatus('En cours de livraison');
         }
         
-        $collecte->setStatus('En cours de livraison');
+        $shipe = $shipeService->ship($collecte, "En cours", $user);
+        
+        $collecte->setStatus('En cours de livraison')
+            ->setShipe($shipe)
+        ;
 
         $customer = $collecte->getCustomer();
         
+        $entityManager->persist($shipe);
         $entityManager->flush();
 
         return $this->redirectToRoute('customer.show', ['id' => $customer->getId()]);
     }
 
     #[Route('/{collecte}/shipped', name: 'collecte.shipped', methods:['GET'] )]
-    public function shipped(Request $request, Collecte $collecte, EntityManagerInterface $entityManager)
+    public function shipped(Request $request, Collecte $collecte, EntityManagerInterface $entityManager, ShipeService $shipeService)
     {
         $secret = $request->query->get('secret');
 
@@ -663,7 +689,7 @@ class CollecteController extends AbstractController
 
         if($collecte->getCollecteType() == "clothingType"){
 
-            if($collecte->getPaymentChoice() == "online" and $collecte->getPayment()){
+            if($collecte->getPaymentChoice() == "online" and $collecte->getPayment() and $collecte->getShipe()){
                 $collecte->setStatus('Terminé');
             }
 
@@ -682,6 +708,8 @@ class CollecteController extends AbstractController
                 $collecte->setStatus('En attente de paiement');
             }
         }
+
+        $shipeService->ship($collecte, "Terminé", $this->getUser());
         
         $entityManager->flush();
 
@@ -724,7 +752,7 @@ class CollecteController extends AbstractController
                     return $this->redirectToRoute('collecte.show', ['id' => $collecte->getId()]);
                 }
 
-                if($collecte->getPaymentChoice() == "on-deliver"){
+                if($collecte->getPaymentChoice() == "on-deliver" and $collecte->getShipe()){
                     $collecte->setStatus('Terminé');
                 }
 
@@ -737,6 +765,7 @@ class CollecteController extends AbstractController
             $payment->setPaimentMode($paymentMethode)
                 ->setPaidAt(new DateTimeImmutable())
                 ->setAmount($amount)
+                ->setType("Service de pressing")
             ;
 
             if($user->getJob() and $user->getJob()->getPoste() == "caissier"){
@@ -788,6 +817,71 @@ class CollecteController extends AbstractController
 
         return $this->redirectToRoute('collecte.show', ['id' => $collecte->getId()]);
 
+    }
+
+    #[Route('/{collecte}/{transaction}/online-checkout-service', name: 'collecte.onlineCheckout', methods: ['POST', 'GET'])]
+    public function onlineCheckout(Request $request, EntityManagerInterface $entityManager, Collecte $collecte, string $transaction)
+    {
+        if(!$collecte){
+            $this->addFlash('error', "Une erreur c'est produit, veuillez reéssayer plus tard.");
+            return $this->redirect($request->headers->get('referer'));
+        }
+
+        if($collecte->getStatus() != "En attente de paiement" && $collecte->getPayment() != null){
+            $this->addFlash('error', "Une erreur c'est produit, la collecte a déja été payée.");
+        }
+
+        if($collecte->getPayment() != null){
+            $this->addFlash('warning', "La collecte as déjà été payé, veuillez verifier la reference et reéssayez !");
+            return $this->redirect($request->headers->get('referer'));
+        }
+        
+        $paymentMethode = "online";
+
+        $amount = $collecte->getTotale();
+
+        $payment = new Payment();
+
+        $payment->setPaimentMode($paymentMethode)
+            ->setPaidAt(new DateTimeImmutable())
+            ->setAmount($amount)
+            ->setCashedBy("Le client")
+            ->setStatus('Effectuée')
+            ->setConfirmation(true)
+            ->setTransactionId($transaction)
+            ->setType("Service de pressing")
+        ;
+
+        if($collecte->getPaymentChoice() == "online"){
+            $collecte->setStatus('En attente de lavage');
+            
+            if($collecte->getCollecteDetailles()){
+                foreach ($collecte->getCollecteDetailles() as $key => $cd) {
+                    $cd->setStatus('En attente de lavage');
+                }
+            }
+
+            if($collecte->getCollecteDetaillesPeas()){
+                foreach ($collecte->getCollecteDetaillesPeas() as $key => $cdp) {
+                    $cdp->setStatus('En attente de lavage');
+                }
+            }
+        }
+
+        if($collecte->getPaymentChoice() == "on-deliver" and $collecte->getShipe()){
+            $collecte->setStatus('Terminé');
+        }else{
+            $collecte->setStatus('En attente de livraison');
+        }
+
+        $collecte->setPayedAt(new DateTimeImmutable())
+            ->setPayment($payment)
+        ;
+
+        $entityManager->flush();
+
+        $this->addFlash('success', "Paiement effectué avec succés.");
+        return $this->redirectToRoute('home');
     }
 
     #[Route('/{id}', name: 'collecte.delete', methods: ['POST'])]

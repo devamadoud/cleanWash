@@ -3,7 +3,9 @@
 namespace App\Controller;
 
 use App\Entity\Collecte;
+use App\Entity\Customer;
 use App\Entity\Order;
+use App\Entity\Payment;
 use App\Entity\User;
 use App\Repository\CollecteRepository;
 use App\Repository\OrderRepository;
@@ -41,10 +43,20 @@ class HomeController extends AbstractController
                     $shop = $user->getJob()->getShop();
                 }
 
-                $chartByWeekService = new ChartByWeekService($entityManager,$shop);
+                $chartByWeekService = new ChartByWeekService($entityManager, $shop);
 
                 $weeklyOrders = $chartByWeekService->getOrderByWeek();
+                $weeklyTransactionsCount = $chartByWeekService->getTransactionCountTot();
+
+                $weeklyTransactionsPercentage = $calculatorService->percentage($weeklyTransactionsCount['transactionsLast7Days'], $weeklyTransactionsCount['transactionsPreviousLast7Days']);
+                
                 $weeklyCollectes = $chartByWeekService->getCollecteByWeek();
+                $customerCount = $chartByWeekService->getCustomerByWeek();
+
+                $customerLast7Days = $customerCount["customerCountLast7Days"];
+                $customerPreviousLast7Days = $customerCount["customerCountPrevious7Days"];
+
+                $customerPercentage = $calculatorService->percentage($customerLast7Days, $customerPreviousLast7Days);
 
                 $newCollectes = $entityManager->getRepository(Collecte::class)->getNewCollectes($shop);
                 $newOrders = $entityManager->getRepository(Order::class)->getNewOrders($shop);
@@ -71,8 +83,11 @@ class HomeController extends AbstractController
                 $transactionPercentageByPreviousAnLast7Dys = $calculatorService->percentage($totaleTransactionsAmount, $totalTransactionPreviousLast7days);
                 
                 $OrderPercentageTransaction = $calculatorService->percentage($orderLast7DaysAmount, $orderAmountPriviousLast7Days);
-        
+                
                 $CollectePercentageTransaction = $calculatorService->percentage($collecteLast7DaysAmount, $collecteAmountPreviousLast7Days);
+
+                $customerWaitingForCollecte = $entityManager->getRepository(Customer::class)->getCustomerWaitingForCollecteByShop($shop);
+                $paiementWaitingForConfirmation = $entityManager->getRepository(Payment::class)->findBy(['confirmation' => false]);
 
                 return $this->render('home/fullyAuthHome.html.twig', [
                     'orderChart' => $orderChart,
@@ -87,7 +102,15 @@ class HomeController extends AbstractController
                     'totalTransactionPreviousLast7days' => $totalTransactionPreviousLast7days,
                     'transactionPercentageByPreviousAnLast7Dys' => round($transactionPercentageByPreviousAnLast7Dys),
                     'newCollectes' => $newCollectes,
-                    'newOrders' => $newOrders
+                    'newOrders' => $newOrders,
+                    'customerCount' => $customerCount,
+                    "customerPercentage" => $customerPercentage,
+                    "transactionsCount" => $weeklyTransactionsCount,
+                    "transactionPercentage" => round($weeklyTransactionsPercentage),
+                    "customerWaitingForCollecte" => $customerWaitingForCollecte,
+                    "paiementWaitingForConfirmation" => $paiementWaitingForConfirmation,
+                    "weeklyOrders" => $weeklyOrders['transactionsByDay'],
+                    "weeklyCollectes" => $weeklyCollectes['transactionsByDay'],
                 ]);
             }
         }

@@ -65,9 +65,16 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(targetEntity: Collecte::class, mappedBy: 'collectedBy')]
     private Collection $collectes;
 
+    /**
+     * @var Collection<int, Shipe>
+     */
+    #[ORM\OneToMany(targetEntity: Shipe::class, mappedBy: 'shippedBy')]
+    private Collection $shipes;
+
     public function __construct()
     {
         $this->collectes = new ArrayCollection();
+        $this->shipes = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -268,6 +275,36 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
             // set the owning side to null (unless already changed)
             if ($collecte->getCollectedBy() === $this) {
                 $collecte->setCollectedBy(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Shipe>
+     */
+    public function getShipes(): Collection
+    {
+        return $this->shipes;
+    }
+
+    public function addShipe(Shipe $shipe): static
+    {
+        if (!$this->shipes->contains($shipe)) {
+            $this->shipes->add($shipe);
+            $shipe->setShippedBy($this);
+        }
+
+        return $this;
+    }
+
+    public function removeShipe(Shipe $shipe): static
+    {
+        if ($this->shipes->removeElement($shipe)) {
+            // set the owning side to null (unless already changed)
+            if ($shipe->getShippedBy() === $this) {
+                $shipe->setShippedBy(null);
             }
         }
 

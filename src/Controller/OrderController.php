@@ -7,20 +7,17 @@ use App\Entity\Customer;
 use App\Entity\Order;
 use App\Entity\OrderDetailles;
 use App\Entity\Payment;
-use App\Entity\Shop;
 use App\Entity\User;
-use App\Form\CheckoutType;
 use App\Form\CollecteFilterType;
-use App\Form\CustomerType;
 use App\Repository\OrderRepository;
 use App\Repository\ProductRepository;
 use App\Services\CartService;
 use App\Services\PayOutService;
+use App\Services\ShipeService;
 use App\Services\UniqueRefGenerator;
 use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -146,7 +143,7 @@ class OrderController extends AbstractController
         }
 
         if($paymentChoice == "online"){
-            return $this->redirectToRoute('payment.payout', ['order' => $order->getId()]);
+            return $this->redirectToRoute('payment.payout', ['ref' => $order->getReference()]);
         }
 
         $this->addFlash('success', 'Votre commande a bien été enregistrée, notre équipe vous contactera dans les meilleurs delais.');
@@ -241,7 +238,7 @@ class OrderController extends AbstractController
             return $this->redirectToRoute("app_login");
         }
 
-        if($user->getShop() != $orderdetaille->getTheOrder()->getShop()){
+        if($user->getShop() and $user->getShop() != $orderdetaille->getTheOrder()->getShop()){
             $this->addFlash("error", "Une erruer c'est produit, cette commande n'est pas lié a votre boutique; si vous pensez que c'est une erreur, merci de nous contacter !");
             return $this->redirect($referer);
         }
@@ -286,17 +283,17 @@ class OrderController extends AbstractController
     }
 
     #[Route('/{order}/shipping', name: 'order.shipping', methods: ['GET'])]
-    public function shipping(Request $request, Order $order, EntityManagerInterface $entityManager)
+    public function shipping(Request $request, Order $order, EntityManagerInterface $entityManager, ShipeService $shipeService)
     {
         $user = $this->getUser();
         $referer = $request->headers->get('referer');
 
         if(!($user instanceof User)){
-            $this->addFlash("error", "Vous devez vous identifier pour valider la disponibilité d'un produit dans une commande !");
+            $this->addFlash("error", "Vous devez vous identifier pour éffectuer une livraison !");
             return $this->redirectToRoute("app_login");
         }
 
-        if($user->getShop() != $order->getShop()){
+        if($user->getShop() and $user->getShop() != $order->getShop()){
             $this->addFlash("error", "Une erruer c'est produit, cette commande n'est pas lié a votre boutique; si vous pensez que c'est une erreur, merci de nous contacter !");
             return $this->redirect($referer);
         }
@@ -316,7 +313,17 @@ class OrderController extends AbstractController
             return $this->redirect($referer);
         }
 
-        $order->setStatus('En cours de livraison');
+        if($order->getShipe()){
+            $this->addFlash("error", "Une erreur c'est produit, cette commande à déjà été livré.");
+            return $this->redirect($referer);
+        }
+
+        $shipe = $shipeService->ship($order, "En cours", $user);
+        $order->setStatus('En cours de livraison')
+            ->setShipe($shipe);
+        ;
+
+        $entityManager->persist($shipe);
         $entityManager->flush();
 
         if($order->getPayment()){
@@ -328,15 +335,14 @@ class OrderController extends AbstractController
     }
 
     #[Route('/{order}/shipped', name: 'order.shipped', methods: ['POST', 'GET'])]
-    public function shipped(Request $request, Order $order, EntityManagerInterface $entityManager)
+    public function shipped(Request $request, Order $order, EntityManagerInterface $entityManager, ShipeService $shipeService)
     {
         $user = $this->getUser();
         $secret = $request->query->get('secret');
-
         $referer = $request->headers->get('referer');
 
         if($user instanceof User){
-            if($user->getShop() != $order->getShop()){
+            if($user->getShop() and $user->getShop() != $order->getShop()){
                 $this->addFlash("error", "Une erruer c'est produit, cette commande n'est pas lié a votre boutique; si vous pensez que c'est une erreur, merci de nous contacter !");
                 return $this->redirect($referer);
             }
@@ -346,7 +352,6 @@ class OrderController extends AbstractController
                 return $this->redirect($referer);
             }
         }
-
 
         if(!$order){
             $this->addFlash("error", "Une erreur c'est produit, veuillez reessayer plus tard, si le probléme persiste merci de nous contacter.");
@@ -375,6 +380,8 @@ class OrderController extends AbstractController
         if($order->getPaymentChoice() == "on-deliver" and !$order->getPayment()){
             $order->setStatus('En attente de paiement');
         }
+
+        $shipeService->ship($order, "Terminé", $this->getUser());
         
         $entityManager->flush();
 
@@ -438,6 +445,7 @@ class OrderController extends AbstractController
             $payment->setPaimentMode($paymentMethode)
                 ->setPaidAt(new DateTimeImmutable())
                 ->setAmount($amount)
+                ->setType("Commande de produit")
             ;
 
             if($user->getJob() and $user->getJob()->getPoste() == "caissier"){
@@ -492,11 +500,11 @@ class OrderController extends AbstractController
         }
 
         if($order->getPayment() != null){
-            $this->addFlash('warning', "Cette collecte as déjà été payé, veuillez verifier la reference et reéssayez !");
+            $this->addFlash('warning', "Cette commande as déjà été payé, veuillez verifier la reference et reéssayez !");
             return $this->redirect($request->headers->get('referer'));
         }
         
-        $paymentMethode = "Online";
+        $paymentMethode = "online";
 
         $amount = $order->getTotale();
 
@@ -509,6 +517,7 @@ class OrderController extends AbstractController
             ->setStatus('Effectuée')
             ->setConfirmation(true)
             ->setTransactionId($transaction)
+            ->setType("Commande de produit")
         ;
 
         if($order->getPaymentChoice() == "online"){

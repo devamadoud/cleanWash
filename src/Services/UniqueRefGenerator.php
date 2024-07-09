@@ -10,7 +10,8 @@ use Doctrine\ORM\EntityManagerInterface;
 
 class UniqueRefGenerator
 {
-     public function __construct(private  $em){
+    private EntityManagerInterface $em;
+     public function __construct(EntityManagerInterface $em){
         $this->em = $em;
     }
 
@@ -22,7 +23,7 @@ class UniqueRefGenerator
         $randomNumber = hexdec(bin2hex($randomBytes)); // Convertit les octets en un nombre décimal
 
         // Obtient une suite de 10 chiffres à partir du nombre généré
-        $length = strlen($randomNumber);
+        $length = strlen(strval($randomNumber));
         $desiredLength = $n;
 
         // On vérifie si le nombre généré est inférieur au nombre de chiffre souhaité
@@ -35,7 +36,7 @@ class UniqueRefGenerator
         $digiStartIdex = rand(0, $length - $desiredLength);
 
         // On retourne le nombre généré
-        $digitSequence = substr($randomNumber, $digiStartIdex, $desiredLength);
+        $digitSequence = substr(strval($randomNumber), strval($digiStartIdex), strval($desiredLength));
 
         return $digitSequence;
     }

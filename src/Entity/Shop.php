@@ -64,6 +64,18 @@ class Shop
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $PhoneNumber = null;
 
+    /**
+     * @var Collection<int, Shipe>
+     */
+    #[ORM\OneToMany(targetEntity: Shipe::class, mappedBy: 'shop')]
+    private Collection $shipes;
+
+    /**
+     * @var Collection<int, Invoice>
+     */
+    #[ORM\OneToMany(targetEntity: Invoice::class, mappedBy: 'shop', orphanRemoval: true)]
+    private Collection $invoices;
+
     public function __construct()
     {
         $this->customers = new ArrayCollection();
@@ -71,6 +83,8 @@ class Shop
         $this->employes = new ArrayCollection();
         $this->products = new ArrayCollection();
         $this->orders = new ArrayCollection();
+        $this->shipes = new ArrayCollection();
+        $this->invoices = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -296,6 +310,66 @@ class Shop
     public function setPhoneNumber(?string $PhoneNumber): static
     {
         $this->PhoneNumber = $PhoneNumber;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Shipe>
+     */
+    public function getShipes(): Collection
+    {
+        return $this->shipes;
+    }
+
+    public function addShipe(Shipe $shipe): static
+    {
+        if (!$this->shipes->contains($shipe)) {
+            $this->shipes->add($shipe);
+            $shipe->setShop($this);
+        }
+
+        return $this;
+    }
+
+    public function removeShipe(Shipe $shipe): static
+    {
+        if ($this->shipes->removeElement($shipe)) {
+            // set the owning side to null (unless already changed)
+            if ($shipe->getShop() === $this) {
+                $shipe->setShop(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Invoice>
+     */
+    public function getInvoices(): Collection
+    {
+        return $this->invoices;
+    }
+
+    public function addInvoice(Invoice $invoice): static
+    {
+        if (!$this->invoices->contains($invoice)) {
+            $this->invoices->add($invoice);
+            $invoice->setShop($this);
+        }
+
+        return $this;
+    }
+
+    public function removeInvoice(Invoice $invoice): static
+    {
+        if ($this->invoices->removeElement($invoice)) {
+            // set the owning side to null (unless already changed)
+            if ($invoice->getShop() === $this) {
+                $invoice->setShop(null);
+            }
+        }
 
         return $this;
     }

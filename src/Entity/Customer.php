@@ -46,10 +46,26 @@ class Customer
     #[ORM\OneToMany(targetEntity: Order::class, mappedBy: 'customer', orphanRemoval: true)]
     private Collection $orders;
 
+    /**
+     * @var Collection<int, Shipe>
+     */
+    #[ORM\OneToMany(targetEntity: Shipe::class, mappedBy: 'customer')]
+    private Collection $shipes;
+
+    #[ORM\Column(nullable: true)]
+    private ?\DateTimeImmutable $createdAt = null;
+
+    #[ORM\Column(nullable: true)]
+    private ?bool $forCollecte = null;
+
+    #[ORM\Column(nullable: true)]
+    private ?\DateTimeImmutable $waitingSins = null;
+
     public function __construct()
     {
         $this->collectes = new ArrayCollection();
         $this->orders = new ArrayCollection();
+        $this->shipes = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -188,4 +204,71 @@ class Customer
 
         return $this;
     }
+
+    /**
+     * @return Collection<int, Shipe>
+     */
+    public function getShipes(): Collection
+    {
+        return $this->shipes;
+    }
+
+    public function addShipe(Shipe $shipe): static
+    {
+        if (!$this->shipes->contains($shipe)) {
+            $this->shipes->add($shipe);
+            $shipe->setCustomer($this);
+        }
+
+        return $this;
+    }
+
+    public function removeShipe(Shipe $shipe): static
+    {
+        if ($this->shipes->removeElement($shipe)) {
+            // set the owning side to null (unless already changed)
+            if ($shipe->getCustomer() === $this) {
+                $shipe->setCustomer(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function getCreatedAt(): ?\DateTimeImmutable
+    {
+        return $this->createdAt;
+    }
+
+    public function setCreatedAt(?\DateTimeImmutable $createdAt): static
+    {
+        $this->createdAt = $createdAt;
+
+        return $this;
+    }
+
+    public function isForCollecte(): ?bool
+    {
+        return $this->forCollecte;
+    }
+
+    public function setForCollecte(?bool $forCollecte): static
+    {
+        $this->forCollecte = $forCollecte;
+
+        return $this;
+    }
+
+    public function getWaitingSins(): ?\DateTimeImmutable
+    {
+        return $this->waitingSins;
+    }
+
+    public function setWaitingSins(?\DateTimeImmutable $waitingSins): static
+    {
+        $this->waitingSins = $waitingSins;
+
+        return $this;
+    }
+
 }

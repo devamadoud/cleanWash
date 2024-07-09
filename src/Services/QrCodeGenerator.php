@@ -12,7 +12,7 @@ use Endroid\QrCode\Writer\PngWriter;
 class QrCodeGenerator
 {
 
-    public function generateQrCode($url)
+    public function generateQrCode(string $url): string
     {
         $writer = new PngWriter();
         $qrCode = new QrCode($url);
@@ -26,8 +26,8 @@ class QrCodeGenerator
             ->setBackgroundColor(new Color(255, 255, 255))
         ;
 
-        $logo = Logo::create('images/icons/setsetalLogo4.png')
-            ->setResizeToWidth(150)
+        $logo = Logo::create('images/icons/setseatalQrCodeLogo.png')
+            ->setResizeToWidth(120)
             ->setPunchoutBackground(true)
         ;
         

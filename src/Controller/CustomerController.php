@@ -8,6 +8,7 @@ use App\Entity\User;
 use App\Form\CustomerFilterType;
 use App\Form\CustomerType;
 use App\Repository\CustomerRepository;
+use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
@@ -69,7 +70,7 @@ class CustomerController extends AbstractController
         if($user instanceof User){
             // Verifier si un utilisateur est connecté et si son poste n'est pas gerant ou collecteur
             if($user->getShop() == null and $user->getJob()->getPoste() != 'collecteur'){
-                $this->addFlash('error', 'Vous devez être collecteur pour ajouter un nouveau client.');
+                $this->addFlash('error', 'Vous devez être collecteur, ou le chef d\'équipe pour ajouter un nouveau client.');
                 return $this->redirectToRoute('home', [], Response::HTTP_SEE_OTHER);
             }
 
@@ -79,28 +80,39 @@ class CustomerController extends AbstractController
         $telefone = $request->getSession()->get('telephone');
         $customer = $entityManager->getRepository(Customer::class)->findOneBy(['phoneNumber' => $telefone]);
 
+        $forCollecte = $request->getSession()->get('forCollecte');
+
         if(!$customer){
             $customer = new Customer();
             if($telefone != null){
-                $customer->setPhoneNumber($telefone);
+                $customer->setPhoneNumber($telefone)
+                    ->setCreatedAt(new DateTimeImmutable())
+                ;
             }
         }
-
 
         $form = $this->createForm(CustomerType::class, $customer);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+
+            if($forCollecte){
+                $customer->setWaitingSins(new DateTimeImmutable());
+            }
+
+            $customer->setForCollecte($forCollecte);
             $entityManager->persist($customer);
             $entityManager->flush();
 
             // Si c'est un employé qui a ajoute un nouveau client, notifier l'utilisateur
+            $request->getSession()->remove('telephone');
+            $request->getSession()->remove('forCollecte');
             if($isEmploye){
                 $this->addFlash('success', 'Le client a bien été ajouté.');
-                return $this->redirectToRoute('customer.index', [], Response::HTTP_SEE_OTHER);
+                return $this->redirectToRoute('customer.index');
             }else{
                 $this->addFlash('success', "Vous venez d'enregistrer vos informations. notre service vous contactera dans les plus brefs délais.");
-                return $this->redirectToRoute('home', [], Response::HTTP_SEE_OTHER);
+                return $this->redirectToRoute('home');
             }
         }
 
@@ -116,6 +128,8 @@ class CustomerController extends AbstractController
         $user = $this->getUser();
 
         $telefone = $request->getSession()->get('customerPhone');
+        $request->getSession()->remove('customerPhone');
+
         if(!$telefone){
             $telefone = "";
         }
@@ -167,12 +181,16 @@ class CustomerController extends AbstractController
 
             $url = $urlGenerator->generate('customer.new', [], UrlGeneratorInterface::ABSOLUTE_URL);
             if($waitForAgent === 'canDoIt'){
+                $forCollecte = false;
                 // Rediriger l'utilisateur vert la page de collecte avec l'id du client en parametre get
                 $url = $urlGenerator->generate('collecte.new', ['tel' => $telefone, 'type' => $form->get('collecteChoice')->getData()]);
             }else{
+                $forCollecte = true;
+
                 $url = $urlGenerator->generate('customer.new', [], UrlGeneratorInterface::ABSOLUTE_URL);
-                $request->getSession()->set('telephone', $telefone);
             }
+            $request->getSession()->set('telephone', $telefone);
+            $request->getSession()->set('forCollecte', $forCollecte);
 
 
             return $this->redirect($url);

@@ -34,10 +34,13 @@ class RegistrationFormType extends AbstractType
                 'label' => 'Adresse'
             ])
             ->add('userType', ChoiceType::class, [
-                'label' => 'Dans quel contexte vous-inscrivez vous sur notre plateforme ?',
+                'label' => 'Vous vous inscrivez en tant que ?',
+                'expanded' => true,
+                'multiple' => false,
+                'required' => true,
                 'choices' => [
-                    'Pour Gérer mon entreprise de pressing' => 'gerant',
-                    'Pour travailler dans une entreprise de pressing' => 'employe'
+                    "Gérant d'entreprise" => 'gerant',
+                    "Employée d'une entreprise" => 'employe'
                 ]
             ])
             ->add('telefone', TelType::class, [
@@ -79,6 +82,7 @@ class RegistrationFormType extends AbstractType
             ])
             ->add('agreeTerms', CheckboxType::class, [
                 'mapped' => false,
+                'label' => false,
                 'constraints' => [
                     new IsTrue([
                         'message' => 'Vous devez accepter nos conditions d\'utilisation',

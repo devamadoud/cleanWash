@@ -3,21 +3,23 @@
 namespace App\Services;
 
 use App\Entity\Collecte;
+use App\Entity\Customer;
 use App\Entity\Order;
+use App\Entity\Shop;
 use Carbon\Carbon;
 use Doctrine\ORM\EntityManagerInterface;
 
 class ChartByWeekService
 {
-    private $entityManager;
+    private EntityManagerInterface $entityManager;
 
-    public function __construct(EntityManagerInterface $entityManager, private $shop)
+    public function __construct(EntityManagerInterface $entityManager, private Shop $shop)
     {
         $this->entityManager = $entityManager;
         $this->shop = $shop;
     }
 
-    public function getOrderByWeek()
+    public function getOrderByWeek(): array
     {
         $results = $this->entityManager->getRepository(Order::class)->getTransactionsCountByDay($this->shop);
         $totalAmountLast7Days = $this->entityManager->getRepository(Order::class)->getTotalTransactionAmountLast7Days($this->shop);
@@ -59,7 +61,7 @@ class ChartByWeekService
         
     }
 
-    public function getCollecteByWeek()
+    public function getCollecteByWeek(): array
     {
         $results = $this->entityManager->getRepository(Collecte::class)->getTransactionsCountByDay($this->shop);
         $totalAmountLast7Days = $this->entityManager->getRepository(Collecte::class)->getTotalTransactionAmountLast7Days($this->shop);
@@ -84,7 +86,7 @@ class ChartByWeekService
 
         // Merge the actual results with the initialized array
         foreach ($results as $result) {
-            $dates[$result['dayDate']]['orderCount'] = $result['orderCount'];
+            $dates[$result['dayDate']]['orderCount'] = $result['collecteCount'];
             $dates[$result['dayDate']]['totalAmount'] = $result['totalAmount'];
         }
 
@@ -101,7 +103,76 @@ class ChartByWeekService
         
     }
 
-    public function getDashboardData()
+    public function getOrderCountLast7Days(): array
+    {
+        $orderCountByDay = $this->entityManager->getRepository(Order::class)->getTransactionsCountByDay($this->shop);
+        $orderCountPreviousLast7Days = $this->entityManager->getRepository(Order::class)->getTransactionCountPrevious7Days($this->shop);
+
+        $orderCount = 0;
+        foreach ($orderCountByDay as $key => $orderC) {
+            $orderCount = $orderCount + $orderC["orderCount"];
+        }
+
+        $orderCountTot = [
+            "orderCountByDay" => $orderCount,
+            "orderCountPreviousLast7Days" => $orderCountPreviousLast7Days
+        ];
+
+        return $orderCountTot;
+    }
+
+    public function getCollecteCountLast7Days(): array
+    {
+        $collecteCountByDay = $this->entityManager->getRepository(Collecte::class)->getTransactionsCountByDay($this->shop);
+        $collecteCountPreviousLast7Days = $this->entityManager->getRepository(Collecte::class)->getTransactionCountPrevious7Days($this->shop);
+
+        $collecteCount = 0;
+        foreach ($collecteCountByDay as $key => $collecteC) {
+            $collecteCount = $collecteCount + $collecteC["collecteCount"];
+        }
+
+        $collecteCountTot = [
+            "collecteCountByDay" => $collecteCount,
+            "collecteCountPreviousLast7Days" => $collecteCountPreviousLast7Days
+        ];
+
+        return $collecteCountTot;
+    }
+
+    public function getTransactionCountTot(): array
+    {
+        $orderCount = $this->getOrderCountLast7Days();
+        $collecteCount = $this->getCollecteCountLast7Days();
+
+        $transactionsLast7Days = $orderCount['orderCountByDay'] + $collecteCount['collecteCountByDay'];
+        $transactionsPreviousLast7Days = $orderCount['orderCountPreviousLast7Days'] + $collecteCount['collecteCountPreviousLast7Days'];
+
+        $transactionsCount = [
+            "transactionsLast7Days" => $transactionsLast7Days,
+            "transactionsPreviousLast7Days" => $transactionsPreviousLast7Days
+        ];
+
+        return $transactionsCount;
+    }
+
+    public function getCustomerByWeek(): array
+    {
+        $customerCountLast7Days = $this->entityManager->getRepository(Customer::class)->getCustomersCountByDay($this->shop);
+        $customerCountPrevious7Days = $this->entityManager->getRepository(Customer::class)->getCustomersCountPreviousLast7Days($this->shop);
+        //$orderByDay = $this->getDashboardData($this->shop);
+        
+        // Initialize an array to hold transactions by day
+        $customerCount = [
+            "customerCountLast7Days" => $customerCountLast7Days,
+            "customerCountPrevious7Days" => $customerCountPrevious7Days
+        ];
+
+
+         return $customerCount;
+        
+    }
+
+    public function getDashboardData(): object
     {
         $query = $this->entityManager->createQuery(
             'SELECT 

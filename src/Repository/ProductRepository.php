@@ -18,22 +18,19 @@ use Knp\Component\Pager\PaginatorInterface;
  */
 class ProductRepository extends ServiceEntityRepository
 {
-    private $paginator;
+    private PaginatorInterface $paginator;
     public function __construct(ManagerRegistry $registry, PaginatorInterface $paginator)
     {
         parent::__construct($registry, Product::class);
         $this->paginator = $paginator;
     }
 
-    /**
-    * Récuperer les produits en lien avec une recherche
-    * @return PaginationInrface
-    */
-    public function findBySearch($search): PaginationInterface
+    public function findBySearch(object $search): PaginationInterface
     {
         $query = $this->createQueryBuilder('p')
             ->select('c', 'p')
             ->join('p.category', 'c')
+            ->where('p.quantityStocke > 0')
         ;
         
         if(!empty($search->q)) {
@@ -58,7 +55,7 @@ class ProductRepository extends ServiceEntityRepository
     }
 
     // Trouver les produits en lien avec une catégorie
-    public function findByCategory($category, $page): PaginationInterface
+    public function findByCategory(string $category, int $page): PaginationInterface
     {
         $query = $this->createQueryBuilder('p')
             ->select('c', 'p')

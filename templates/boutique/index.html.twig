@@ -10,8 +10,8 @@
   <div class="py-5 lg:py-8 max-w-screen-2xl flex gap-6">
 
     <div class="w-2/6 text-center hidden lg:block">
-      <div class="flex flex-col gap-4 rounded-lg border sticky top-4">
-        <div class="text-white bg-purple-800 w-full py-2">
+      <div class="flex flex-col gap-4 bg-white rounded-lg border sticky top-4 shadow-md">
+        <div class="text-white bg-purple-800 w-full py-2 rounded-t-lg">
           <h2 class="uppercase text-lg">Votre panier</h2>
         </div>
         <div class="flex flex-col gap-4 pb-4 px-2">
@@ -29,7 +29,7 @@
       </div>
     </div>
 
-    <div class="md:pl-2 md:border-l max-w-full">
+    <div class="md:pl-6 md:border-l max-w-full">
 
       <div class="mx-auto w-screen max-w-full md:max-w-screen-md py-4 leading-6 px-4 md:px-0">
         {{ form_start(searchForm, {attr: {class: "relative mx-auto flex w-full max-w-full md:max-w-2xl items-center justify-between rounded-md shadow-lg"}}) }}
@@ -45,7 +45,7 @@
         {{ form_end(searchForm) }}
       </div>
 
-      <section class="bg-white py-4 text-gray-700">
+      <section class="bg-white py-4 text-gray-700 rounded-lg shadow-md">
         <div class="mx-auto max-w-screen-xl px-4 sm:px-6 lg:px-8">
           <div id="products" class="mt-10 grid grid-cols-2 gap-6 sm:grid-cols-4 sm:gap-4 lg:mt-16">
             {{ include('card/_product.html.twig', { 'product': products }) }}

@@ -7,6 +7,7 @@ import './js/universal.js';
 import './js/cart.js';
 import './js/datepicker.js';
 import './js/weeklyTransactionChart.js';
+import './js/charts.js';
 /*
  * Welcome to your app's main JavaScript file!
  *

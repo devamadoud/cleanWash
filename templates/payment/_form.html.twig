@@ -1,6 +1,6 @@
-<form action="{{ path('payment.checkout') }}" method="post" class="flex flex-col gap-2 py-4 px-6 justify-center w-full lg:w-2/4 mx-auto">
+<form action="{{ path('payment.checkout') }}" method="post" class="flex flex-col gap-2">
   <div class="flex flex-col gap-1">
-    <label for="ref" class="text-md font-normal text-gray-800 dark:text-gray-400">Référence de la collecte ou de la commande.</label>
+    <label for="ref" class="text-sm font-medium text-gray-800 dark:text-gray-400">Référence de la collecte ou de la commande.</label>
     <input type="number" name="ref" id="ref" placeholder="# Référence :" required class="block w-full rounded-md border border-gray-300 bg-white px-2 py-2 text-xs text-gray-700 placeholder-gray-400 font-medium focus:border-purple-500 focus:ring focus:ring-purple-200 focus:ring-opacity-50" />
   </div>
   <p class="mt-2 text-sm font-normal text-gray-800 dark:text-gray-400 mx-auto">Pour quel service allez-vous efféctuer un encaissement ?</p>
@@ -25,7 +25,7 @@
       <label for="mobil-money" class="block text-sm cursor-pointer font-medium leading-6 text-gray-700">Mobile money</label>
     </div>
   </div>
-  <div class="flex gap-4 justify-end">
-    <button type="submit" class="text-white bg-purple-700 hover:bg-purple-800 focus:ring-4 focus:outline-none focus:ring-red-300 dark:focus:ring-purple-800 font-medium rounded-lg text-sm inline-flex items-center px-5 py-2.5 text-center">Valider</button>
+  <div class="flex gap-4 justify-end mt-4">
+    <button type="submit" class="text-white bg-purple-700 hover:bg-purple-800 focus:ring-4 focus:outline-none focus:ring-red-300 dark:focus:ring-purple-800 font-medium rounded-lg text-sm inline-flex items-center px-5 py-2.5 text-center">Encaisser</button>
   </div>
 </form>

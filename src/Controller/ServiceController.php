@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\ClothingPea;
 use App\Entity\ClothingType;
 use App\Entity\Contact;
 use App\Form\ContactType;
@@ -22,40 +23,21 @@ class ServiceController extends AbstractController
         ]);
     }
 
-    #[Route('/service/checkout/', name: 'service.checkout')]
-    public function checkout(Request $request, HttpClientInterface $httpClient): Response
-    {   
-        dd($request, 'checkout');
-
-        $this->addFlash('success', 'Le paiment a bien été effectue, votre commande sera traitée dans les plus brefs delais !');
-        return $this->redirectToRoute('home');
-    }
-
-    #[Route('/service/checkout/callback', name: 'service.checkout.callback')]
-    public function checkoutCallback(Request $request): Response
-    {
-        $data = json_decode($request->getContent(), true);
-
-        if($data['status'] === 'succeeded') {
-            
-        }
-
-        $this->addFlash('success', 'Le paiment a bien été effectue, votre commande sera traitée dans les plus brefs delais !');
-        return $this->redirectToRoute('home');
-    }
     #[Route('/pricing', name: 'pricing')]
     public function pricing(EntityManagerInterface $entityManager): Response
     {
         $clothingTypes = $entityManager->getRepository(ClothingType::class)->findAll();
+        $clothingPeas = $entityManager->getRepository(ClothingPea::class)->findAll();
         return $this->render('service/pricing.html.twig', [
             'clothingTypes' => $clothingTypes,
+            'clothingPeas' => $clothingPeas
         ]);
     }
 
     #[Route('/propos', name: 'propos')]
     public function propos(): Response
     {
-        return $this->render('service/index.html.twig', [
+        return $this->render('service/propos.html.twig', [
             'controller_name' => 'ServiceController',
         ]);
     }

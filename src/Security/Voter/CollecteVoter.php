@@ -2,6 +2,7 @@
 
 namespace App\Security\Voter;
 
+use App\Entity\Collecte;
 use App\Entity\User;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
@@ -23,12 +24,12 @@ class CollecteVoter extends Voter
             in_array($attribute, [self::CREATE, self::LIST, self::CONFIRME]) ||
             (
                 in_array($attribute, [self::EDIT, self::VIEW])
-                && $subject instanceof \App\Entity\Collecte
+                && $subject instanceof Collecte
             );
     }
 
     /**
-    * @param Collecte|null $subject
+    * @param Collecte $subject
     */
     protected function voteOnAttribute(string $attribute, mixed $subject, TokenInterface $token): bool
     {

@@ -19,12 +19,12 @@
       {% endblock %}
     {% endblock %}
   </head>
-  <body>
-    <header>
+  <body class="min-h-svh">
+    <header class="z-40 sticky top-0 left-0 w-full">
       {% include 'nav/_navbar.html.twig' %}
     </header>
 
-    <main>
+    <main class="{{ app.current_route == 'home' ? "bg-white" : "bg-purple-50" }} min-h-svh z-30">
         <div class="flex flex-col w-full mx-auto">
           {% for message in app.flashes('success') %}
             <div class="flex mt-4 self-center items-center p-4 mb-4 text-sm w-4/5 md:w-2/4 text-green-800 border border-green-300 rounded-lg bg-green-50 dark:bg-gray-800 dark:text-green-400 dark:border-green-800" role="alert">
@@ -88,7 +88,7 @@
         </div>
       {% block cta %}
       {% endblock %}
-      <div class="container min-h-dvh items-center px-2 max-w-screen-xl mx-auto md:px-8 {{ app.user ? 'md:ml-64' : '' }}">
+      <div class="container items-center px-2 max-w-screen-xl mx-auto md:px-8 {{ app.user ? 'md:ml-64' : '' }}">
         <div>
           {% block body %}
 
@@ -99,6 +99,5 @@
     <footer class="p-4 bg-purple-100">
       {% include 'nav/_footer.html.twig' %}
     </footer>
-    <script src="https://cdn.kkiapay.me/k.js"></script>
   </body>
 </html>

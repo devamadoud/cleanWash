@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\Customer;
+use App\Entity\Shop;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 use Knp\Component\Pager\Pagination\PaginationInterface;
@@ -18,7 +19,7 @@ use Knp\Component\Pager\PaginatorInterface;
  */
 class CustomerRepository extends ServiceEntityRepository
 {
-    private $paginator;
+    private PaginatorInterface $paginator;
     public function __construct(ManagerRegistry $registry, PaginatorInterface $paginator)
     {
         parent::__construct($registry, Customer::class);
@@ -50,7 +51,7 @@ class CustomerRepository extends ServiceEntityRepository
     //        ;
     //    }
 
-    public function findAllAndPaginate($shop, $page): PaginationInterface
+    public function findAllAndPaginate(Shop $shop, int $page) : PaginationInterface
     {
         $query = $this->createQueryBuilder('c')
             ->select('s', 'c')
@@ -63,7 +64,7 @@ class CustomerRepository extends ServiceEntityRepository
         return $this->paginator->paginate($query, $page, 10);
     }
 
-    public function findByFilter($search)
+    public function findByFilter(object $search) : PaginationInterface
     {
         $query = $this->createQueryBuilder('c')
             ->select('s', 'c')
@@ -86,5 +87,51 @@ class CustomerRepository extends ServiceEntityRepository
         }
 
         return $this->paginator->paginate($query, $search->page, 10);
+    }
+
+    public function getCustomersCountByDay(Shop $shop) : int
+    {
+        $query = $this->createQueryBuilder('c')
+            ->select('COUNT(c) as customerCount')
+            ->join('c.shop', 's')
+            ->andWhere('s = :shop')
+            ->setParameter('shop', $shop)  
+            ->andWhere('c.createdAt >= :startDate')
+            ->andWhere('c.createdAt < :endDate')
+            ->setParameter('startDate', (new \DateTimeImmutable('now'))->modify('-7 days')->setTime(23, 59, 59))
+            ->setParameter('endDate', (new \DateTimeImmutable('now'))->setTime(23, 59, 59))
+            ->getQuery();
+
+        return $query->getSingleScalarResult();
+    }
+
+    public function getCustomersCountPreviousLast7Days(Shop $shop) : int
+    {
+        $query = $this->createQueryBuilder('c')
+            ->select('COUNT(c) as customerCount')
+            ->join('c.shop', 's')
+            ->andWhere('s = :shop')
+            ->setParameter('shop', $shop)  
+            ->andWhere('c.createdAt >= :startDate')
+            ->andWhere('c.createdAt <= :endDate')
+            ->setParameter('startDate', (new \DateTimeImmutable('now'))->modify('-14 days')->setTime(23, 59, 59))
+            ->setParameter('endDate', (new \DateTimeImmutable('now'))->modify('-7 days')->setTime(23, 59, 59))
+            ->getQuery();
+
+        return $query->getSingleScalarResult();
+    }
+
+    public function getCustomerWaitingForCollecteByShop(Shop $shop) : array
+    {
+        $query = $this->createQueryBuilder('c')
+            ->select('s', 'c')
+            ->join('c.shop', 's')
+            ->andWhere('c.forCollecte = 1')
+            ->andWhere('s = :shop')
+            ->setParameter('shop', $shop)
+            ->getQuery()
+        ;
+
+        return $query->getResult();
     }
 }

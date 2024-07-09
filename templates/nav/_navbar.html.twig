@@ -1,4 +1,4 @@
-<nav class="{{ app.user ? 'fixed top-0 left-0 right-0 border-b bg-white' : ' bg-gradient-to-r from-yellow-400 to-purple-400 lg:py-4' }} z-50 px-4 lg:px-2 py-2 dark:bg-gray-800">
+<nav class="{{ app.user ? 'fixed top-0 left-0 right-0 border-b bg-purple-800' : ' bg-gradient-to-r from-yellow-400 to-purple-400 lg:py-4' }} z-50 px-4 lg:px-2 py-2 dark:bg-gray-800">
   <div class="flex flex-wrap justify-between items-center mx-auto max-w-screen-xl">
     <div class="flex item-center">
       {% if (app.user != null and app.user.job != null and app.user.job.revokedAt == null) or (app.user and app.user.shop != null) %}
@@ -12,12 +12,12 @@
           </button>
         </div>
       {% endif %}
-      <a href="{{ path('home') }}" class="flex items-center ml-2"><img src="{{ asset('/images/icons/setsetalLogo4.png') }}" class="w-36 hidden md:flex" alt="Logo" /></a>
-      <a href="{{ path('home') }}" class="flex items-center ml-2"><img src="{{ asset('/images/icons/LogoRound192x192.png') }}" class="w-16 md:hidden" alt="Logo" /></a>
+      <a href="{{ path('home') }}" class="flex items-center ml-2"><img src="{{ asset('/images/icons/setsetalDesktopLogo2.png') }}" class="h-20 hidden md:flex" alt="Logo" /></a>
+      <a href="{{ path('home') }}" class="flex items-center ml-2"><img src="{{ asset('/images/icons/setsetalMobileLogo.png') }}" class="w-16 md:hidden" alt="Logo" /></a>
     </div>
     {% if app.user %}
       <div class="flex sm:text-auto text-right sm:self-auto items-center lg:order-2">
-        <button type="button" class="flex mx-2 text-4xl bg-gray-50 rounded-full md:mr-0 text-gray-500" id="user-menu-button" aria-expanded="false" data-dropdown-toggle="dropdown">
+        <button type="button" class="flex mx-2 text-4xl rounded-full md:mr-0 text-white" id="user-menu-button" aria-expanded="false" data-dropdown-toggle="dropdown">
           <span class="sr-only">Open user menu</span>
           <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="bi bi-person-circle h-8" viewBox="0 0 16 16">
             <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0" />

@@ -5,7 +5,7 @@ namespace App\Data;
 class collecteSearchData
 {
     /**
-    * @var null|int
+    * @var Shop|int
     */
     public $shop;
 

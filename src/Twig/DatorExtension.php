@@ -15,7 +15,7 @@ class DatorExtension extends AbstractExtension
         ];
     }
 
-    public function daysBetween(DateTimeInterface $date1, DateTimeInterface $date2): int
+    public function daysBetween(DateTimeInterface $date1, DateTimeInterface $date2): int|null
     {
         $interval = $date1->diff($date2);
 

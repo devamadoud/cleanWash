@@ -8,6 +8,7 @@ use App\Repository\UserRepository;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Event\PostSubmitEvent;
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvents;
@@ -32,12 +33,12 @@ class CustomerType extends AbstractType
             ->add('adress', null, [
                 'label' => 'Adresse',
             ])
-            ->add('coordLng', TextType::class, [
+            ->add('coordLng', HiddenType::class, [
                 'attr' => ['placeholder' => 'Longitude'],
                 'label' => false,
                 'required' => true
             ])
-            ->add('coordLat', TextType::class, [
+            ->add('coordLat', HiddenType::class, [
                 'attr' => ['placeholder' => 'Latitude'],
                 'label' => false,
                 'required' => true

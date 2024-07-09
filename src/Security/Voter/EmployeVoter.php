@@ -24,12 +24,12 @@ class EmployeVoter extends Voter
             in_array($attribute, [self::CREATE, self::LIST, self::REVOKE]) ||
             (
                 in_array($attribute, [self::EDIT, self::VIEW])
-                && $subject instanceof \App\Entity\Employe
+                && $subject instanceof Employe
             );
     }
 
     /**
-    * @param Employe|null $subject
+    * @param Employe $subject
     */
     protected function voteOnAttribute(string $attribute, mixed $subject, TokenInterface $token): bool
     {
@@ -45,7 +45,7 @@ class EmployeVoter extends Voter
         // ... (check conditions and return true to grant permission) ...
         switch ($attribute) {
             case self::EDIT:
-                return $user->getShop() == $employe->getShop();
+                return $user->getShop() === $employe->getShop();
                 break;
 
             case self::VIEW:
@@ -58,7 +58,7 @@ class EmployeVoter extends Voter
                 break;
 
             case self::REVOKE:
-                return $user->getShop() == $employe->getShop();
+                return $user->getShop() === $employe->getShop();
                 break;
         }
 

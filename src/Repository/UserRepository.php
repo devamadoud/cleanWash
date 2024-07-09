@@ -63,7 +63,7 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
     //        ;
     //    }
 
-    public function findOneByTelefone($tel): ?User
+    public function findOneByTelefone(string $tel): ?User
     {
         return $this->createQueryBuilder('u')
             ->andWhere('u.telefone = :val')

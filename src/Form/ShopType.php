@@ -3,8 +3,6 @@
 namespace App\Form;
 
 use App\Entity\Shop;
-use App\Entity\User;
-use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Event\PostSubmitEvent;
@@ -27,7 +25,8 @@ class ShopType extends AbstractType
         ;
     }
 
-    public function dator(PostSubmitEvent $event){
+    public function dator(PostSubmitEvent $event): void
+    {
         $data = $event->getData();
 
         if(!($data instanceof Shop)){

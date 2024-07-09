@@ -32,7 +32,8 @@ class CollecteType extends AbstractType
         ;
     }
 
-    public static function typeCollecte($type = null){
+    public static function typeCollecte(string $type = null): string
+    {
         return $type;
     }
 

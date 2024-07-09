@@ -4,19 +4,20 @@ namespace App\Services;
 use GuzzleHttp\Client;
 use Kkiapay\Kkiapay;
 use Paydunya\Paydunya;
+use Symfony\Component\HttpFoundation\Response;
 
 class PayOutService
 {
-    private $dunyaMasterApiKey;
-    private $dunyaPrivateApiKey;
-    private $dunyaPublicApiKey;
-    private $dunyaBaseUrl;
-    private $dunyaToken;
-    private $client;
+    private string $dunyaMasterApiKey;
+    private string $dunyaPrivateApiKey;
+    private string $dunyaPublicApiKey;
+    private string $dunyaBaseUrl;
+    private string $dunyaToken;
+    private object $client;
 
-    private $kkiapayPublicKey;
-    private $kkiapayPrivateKey;
-    private $kkiapaySecret;
+    private string $kkiapayPublicKey;
+    private string $kkiapayPrivateKey;
+    private string $kkiapaySecret;
 
     public function __construct(
         string $kkiapayPublicKey, string $kkiapayPrivateKey, string $kkiapaySecret, 
@@ -35,7 +36,7 @@ class PayOutService
         $this->kkiapayPrivateKey = $kkiapayPrivateKey;
         $this->kkiapaySecret = $kkiapaySecret;
     }
-    public function payDunyaOut($phoneNumber, $amount, )
+    public function payDunyaOut(string $phoneNumber, string $amount): Response
     {
         $body = [
             "recipient_phone" => $phoneNumber,
@@ -59,7 +60,8 @@ class PayOutService
         return $response;
     }
 
-    public function config(){
+    public function config(): object
+    {
         $paydunyaSetup = new \Paydunya\Setup();
 
         $paydunyaSetup::setMasterKey('Y19LihFj-ktjg-6oM9-7v6j-wnjdUTCJqtcO');
@@ -71,7 +73,8 @@ class PayOutService
         return $paydunyaSetup;
     }
 
-    public function setStore(){
+    public function setStore(): object
+    {
         $paydunyaStore = new \Paydunya\Checkout\Store();
 
         $paydunyaStore::setName('Setsetal service');
@@ -84,7 +87,8 @@ class PayOutService
         return $paydunyaStore;
     }
 
-    public function kkiaPayOut(){
+    public function kkiaPayOut(): object
+    {
         $kkiapay = new Kkiapay($this->kkiapayPublicKey, $this->kkiapayPrivateKey, $this->kkiapaySecret, true);
         return $kkiapay;
     }

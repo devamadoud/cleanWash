@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\Collecte;
+use App\Entity\Shop;
 use DateTime;
 use DateTimeImmutable;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
@@ -52,7 +53,7 @@ class CollecteRepository extends ServiceEntityRepository
     //        ;
     //    }
 
-    public function findByShop($searche): PaginationInterface
+    public function findByShop(object $searche): PaginationInterface
     {
         $query = $this->createQueryBuilder('c')
             ->select('s', 'c')
@@ -102,15 +103,15 @@ class CollecteRepository extends ServiceEntityRepository
         return $this->paginator->paginate($query, $searche->page, 10);
     }
 
-    public function getTransactionsCountByDay($shop)
+    public function getTransactionsCountByDay(Shop $shop) : array
     {
         $query = $this->createQueryBuilder('c')
-            ->select('DATE(c.collectedAt) as dayDate, COUNT(c) as orderCount, SUM(c.totale) as totalAmount')
+            ->select('DATE(c.collectedAt) as dayDate, COUNT(c) as collecteCount, SUM(c.totale) as totalAmount')
             ->join('c.shop', 's')
             ->andWhere('s = :shop')
             ->setParameter('shop', $shop)
             ->andWhere('c.collectedAt >= :startDate')
-            ->andWhere('c.collectedAt < :endDate')
+            ->andWhere('c.collectedAt <= :endDate')
             ->andWhere('c.status = :status')
             ->setParameter('status', 'Terminé')
             ->setParameter('startDate', (new \DateTimeImmutable('now'))->modify('-7 days')->setTime(23, 59, 59))
@@ -122,7 +123,7 @@ class CollecteRepository extends ServiceEntityRepository
         return $query->getResult();
     }
 
-    public function getTotalTransactionAmountLast7Days($shop)
+    public function getTotalTransactionAmountLast7Days(Shop $shop) : float|null
     {
         $query = $this->createQueryBuilder('c')
             ->select('SUM(c.totale) as totalAmount')
@@ -130,7 +131,7 @@ class CollecteRepository extends ServiceEntityRepository
             ->andWhere('s = :shop')
             ->setParameter('shop', $shop)
             ->andWhere('c.collectedAt >= :startDate')
-            ->andWhere('c.collectedAt < :endDate')
+            ->andWhere('c.collectedAt <= :endDate')
             ->andWhere('c.status = :status')
             ->setParameter('status', 'Terminé')
             ->setParameter('startDate', (new \DateTimeImmutable('now'))->modify('-7 days')->setTime(23, 59, 59))
@@ -140,7 +141,7 @@ class CollecteRepository extends ServiceEntityRepository
         return $query->getSingleScalarResult();
     }
 
-    public function getTotalTransactionAmountPrevious7Days($shop)
+    public function getTotalTransactionAmountPrevious7Days(Shop $shop) : float
     {
         $query = $this->createQueryBuilder('c')
             ->select('SUM(c.totale) as totalAmount')
@@ -148,7 +149,7 @@ class CollecteRepository extends ServiceEntityRepository
             ->andWhere('s = :shop')
             ->setParameter('shop', $shop)
             ->andWhere('c.collectedAt >= :startDate')
-            ->andWhere('c.collectedAt < :endDate')
+            ->andWhere('c.collectedAt <= :endDate')
             ->andWhere('c.status = :status')
             ->setParameter('status', 'Terminé')
             ->setParameter('startDate', (new \DateTimeImmutable('now'))->modify('-14 days')->setTime(23, 59, 59))
@@ -158,7 +159,25 @@ class CollecteRepository extends ServiceEntityRepository
         return $query->getSingleScalarResult();
     }
 
-    public function getNewCollectes($shop)
+    public function getTransactionCountPrevious7Days(Shop $shop) : int
+    {
+        $query = $this->createQueryBuilder('c')
+            ->select('COUNT(c) as collectCount')
+            ->join('c.shop', 's')
+            ->andWhere('s = :shop')
+            ->setParameter('shop', $shop)
+            ->andWhere('c.collectedAt >= :startDate')
+            ->andWhere('c.collectedAt <= :endDate')
+            ->andWhere('c.status = :status')
+            ->setParameter('status', 'Terminé')
+            ->setParameter('startDate', (new \DateTimeImmutable('now'))->modify('-14 days')->setTime(23, 59, 59))
+            ->setParameter('endDate', (new \DateTimeImmutable('now'))->modify('-7 days')->setTime(23, 59, 59))
+            ->getQuery();
+
+        return $query->getSingleScalarResult();
+    }
+
+    public function getNewCollectes(Shop $shop) : array
     {
         $query = $this->createQueryBuilder('c')
             ->select('c')
@@ -174,4 +193,6 @@ class CollecteRepository extends ServiceEntityRepository
 
         return $query->getResult();
     }
+
+
 }

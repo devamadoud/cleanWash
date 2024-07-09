@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\Order;
+use App\Entity\Shop;
 use DateTimeImmutable;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
@@ -19,7 +20,7 @@ use Knp\Component\Pager\PaginatorInterface;
  */
 class OrderRepository extends ServiceEntityRepository
 {
-    private $paginator;
+    private PaginatorInterface $paginator;
     public function __construct(ManagerRegistry $registry, PaginatorInterface $paginator)
     {
         parent::__construct($registry, Order::class);
@@ -51,7 +52,7 @@ class OrderRepository extends ServiceEntityRepository
     //        ;
     //    }
 
-    public function findOrderByShop($searche): PaginationInterface
+    public function findOrderByShop(object $searche): PaginationInterface
     {
         $query = $this->createQueryBuilder('o')
             ->select('s', 'o')
@@ -92,7 +93,7 @@ class OrderRepository extends ServiceEntityRepository
         return $this->paginator->paginate($query, $searche->page, 10);
     }
 
-    public function findByWeek($shop)
+    public function findByWeek(Shop $shop) : array
     {
 
         $query = $this->createQueryBuilder('o')
@@ -110,7 +111,7 @@ class OrderRepository extends ServiceEntityRepository
         return $query->getQuery()->getResult();
     }
 
-    public function getTransactionsCountByDay($shop)
+    public function getTransactionsCountByDay(Shop $shop) : array
     {
         $query = $this->createQueryBuilder('o')
             ->select('DATE(o.createdAt) as dayDate, COUNT(o) as orderCount, SUM(o.totale) as totalAmount')
@@ -118,7 +119,7 @@ class OrderRepository extends ServiceEntityRepository
             ->andWhere('s = :shop')
             ->setParameter('shop', $shop)
             ->andWhere('o.createdAt >= :startDate')
-            ->andWhere('o.createdAt < :endDate')
+            ->andWhere('o.createdAt <= :endDate')
             ->andWhere('o.status = :status')
             ->setParameter('status', 'Terminé')
             ->setParameter('startDate', (new \DateTimeImmutable('now'))->modify('-7 days')->setTime(23, 59, 59))
@@ -130,7 +131,7 @@ class OrderRepository extends ServiceEntityRepository
         return $query->getResult();
     }
 
-    public function getTotalTransactionAmountLast7Days($shop)
+    public function getTotalTransactionAmountLast7Days(Shop $shop) : float
     {
         $query = $this->createQueryBuilder('o')
             ->select('SUM(o.totale) as totalAmount')
@@ -138,7 +139,7 @@ class OrderRepository extends ServiceEntityRepository
             ->andWhere('s = :shop')
             ->setParameter('shop', $shop)
             ->andWhere('o.createdAt >= :startDate')
-            ->andWhere('o.createdAt < :endDate')
+            ->andWhere('o.createdAt <= :endDate')
             ->andWhere('o.status = :status')
             ->setParameter('status', 'Terminé')
             ->setParameter('startDate', (new \DateTimeImmutable('now'))->modify('-7 days')->setTime(0, 0, 0))
@@ -148,7 +149,7 @@ class OrderRepository extends ServiceEntityRepository
         return $query->getSingleScalarResult();
     }
 
-    public function getTotalTransactionAmountPrevious7Days($shop)
+    public function getTotalTransactionAmountPrevious7Days(Shop $shop) : float
     {
         $query = $this->createQueryBuilder('o')
             ->select('SUM(o.totale) as totalAmount')
@@ -156,7 +157,7 @@ class OrderRepository extends ServiceEntityRepository
             ->andWhere('s = :shop')
             ->setParameter('shop', $shop)
             ->andWhere('o.createdAt >= :startDate')
-            ->andWhere('o.createdAt < :endDate')
+            ->andWhere('o.createdAt <= :endDate')
             ->andWhere('o.status = :status')
             ->setParameter('status', 'Terminé')
             ->setParameter('startDate', (new \DateTimeImmutable('now'))->modify('-14 days')->setTime(0, 0, 0))
@@ -166,7 +167,25 @@ class OrderRepository extends ServiceEntityRepository
         return $query->getSingleScalarResult();
     }
 
-    public function getNewOrders($shop)
+    public function getTransactionCountPrevious7Days(Shop $shop) : int
+    {
+        $query = $this->createQueryBuilder('o')
+            ->select('COUNT(o) as orderCount')
+            ->join('o.shop', 's')
+            ->andWhere('s = :shop')
+            ->setParameter('shop', $shop)
+            ->andWhere('o.createdAt >= :startDate')
+            ->andWhere('o.createdAt <= :endDate')
+            ->andWhere('o.status = :status')
+            ->setParameter('status', 'Terminé')
+            ->setParameter('startDate', (new \DateTimeImmutable('now'))->modify('-14 days')->setTime(0, 0, 0))
+            ->setParameter('endDate', (new \DateTimeImmutable('now'))->modify('-7 days')->setTime(23, 59, 59))
+            ->getQuery();
+
+        return $query->getSingleScalarResult();
+    }
+
+    public function getNewOrders(Shop $shop) : array
     {
         $query = $this->createQueryBuilder('o')
             ->select('o')
@@ -182,4 +201,6 @@ class OrderRepository extends ServiceEntityRepository
 
         return $query->getResult();
     }
+
+
 }
