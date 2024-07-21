@@ -12,12 +12,14 @@
         "doctrine/doctrine-bundle": "^2.12",
         "doctrine/doctrine-migrations-bundle": "^3.3",
         "doctrine/orm": "^3.1",
+        "dompdf/dompdf": "^3.0",
         "easycorp/easyadmin-bundle": "^4.10",
         "endroid/qr-code": "^5.0",
         "guzzlehttp/guzzle": "^7.8",
         "hautelook/alice-bundle": "^2.14",
         "kkiapay/kkiapay-php": "dev-master",
         "knplabs/knp-paginator-bundle": "^6.3",
+        "kwn/number-to-words": "^2.9",
         "mbezhanov/faker-provider-collection": "^2.0",
         "nesbot/carbon": "^3.5",
         "paydunya/paydunya": "^1.0",
@@ -41,6 +43,7 @@
         "symfony/process": "7.0.*",
         "symfony/property-access": "7.0.*",
         "symfony/property-info": "7.0.*",
+        "symfony/requirements-checker": "^2.0",
         "symfony/runtime": "7.0.*",
         "symfony/security-bundle": "7.0.*",
         "symfony/serializer": "7.0.*",
@@ -89,7 +92,8 @@
         "auto-scripts": {
             "cache:clear": "symfony-cmd",
             "assets:install %PUBLIC_DIR%": "symfony-cmd",
-            "importmap:install": "symfony-cmd"
+            "importmap:install": "symfony-cmd",
+            "requirements-checker": "script"
         },
         "post-install-cmd": [
             "@auto-scripts"

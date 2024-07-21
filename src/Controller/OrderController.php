@@ -12,6 +12,7 @@ use App\Form\CollecteFilterType;
 use App\Repository\OrderRepository;
 use App\Repository\ProductRepository;
 use App\Services\CartService;
+use App\Services\InvoiceService;
 use App\Services\PayOutService;
 use App\Services\ShipeService;
 use App\Services\UniqueRefGenerator;
@@ -64,7 +65,7 @@ class OrderController extends AbstractController
     }
 
     #[Route('/new/{customer}', name: 'order.new', methods: ['GET', 'POST'])]
-    public function new(CartService $cartService, PayOutService $payOutService, UrlGeneratorInterface $urlGenerator, Request $request, ProductRepository $productRepository, EntityManagerInterface $entityManager, Customer $customer): Response
+    public function new(CartService $cartService, PayOutService $payOutService, UrlGeneratorInterface $urlGenerator, Request $request, ProductRepository $productRepository, EntityManagerInterface $entityManager, Customer $customer, InvoiceService $invoiceService): Response
     {
 
         if(!($customer instanceof Customer)) {
@@ -113,6 +114,7 @@ class OrderController extends AbstractController
             $caracteres = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
             $code = substr(str_shuffle($caracteres), 0, 4);
             $orderRef = $referenceGenerator->generateOrderReference(5);
+
             $order->setCreatedAt(new \DateTimeImmutable())
                 ->setUpdatedAt(new \DateTimeImmutable())
                 ->setStatus('En attente')
@@ -123,6 +125,11 @@ class OrderController extends AbstractController
                 ->setSecret($code)
                 ->setPaymentChoice($paymentChoice)
             ;
+
+            $invoice = $invoiceService->createInvoice($order);
+
+            $order->setInvoice($invoice);
+
 
             // $resp = $payOutService->payOut($customer->getPhoneNumber(), $cartTot);
 

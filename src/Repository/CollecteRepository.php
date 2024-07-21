@@ -53,7 +53,7 @@ class CollecteRepository extends ServiceEntityRepository
     //        ;
     //    }
 
-    public function findByShop(object $searche): PaginationInterface
+    public function findByShop(object $searche): ?PaginationInterface
     {
         $query = $this->createQueryBuilder('c')
             ->select('s', 'c')
@@ -103,7 +103,7 @@ class CollecteRepository extends ServiceEntityRepository
         return $this->paginator->paginate($query, $searche->page, 10);
     }
 
-    public function getTransactionsCountByDay(Shop $shop) : array
+    public function getTransactionsCountByDay(Shop $shop) : ?array
     {
         $query = $this->createQueryBuilder('c')
             ->select('DATE(c.collectedAt) as dayDate, COUNT(c) as collecteCount, SUM(c.totale) as totalAmount')
@@ -123,7 +123,7 @@ class CollecteRepository extends ServiceEntityRepository
         return $query->getResult();
     }
 
-    public function getTotalTransactionAmountLast7Days(Shop $shop) : float|null
+    public function getTotalTransactionAmountLast7Days(Shop $shop) : ?float
     {
         $query = $this->createQueryBuilder('c')
             ->select('SUM(c.totale) as totalAmount')
@@ -141,7 +141,7 @@ class CollecteRepository extends ServiceEntityRepository
         return $query->getSingleScalarResult();
     }
 
-    public function getTotalTransactionAmountPrevious7Days(Shop $shop) : float
+    public function getTotalTransactionAmountPrevious7Days(Shop $shop) : ?float
     {
         $query = $this->createQueryBuilder('c')
             ->select('SUM(c.totale) as totalAmount')
@@ -159,7 +159,7 @@ class CollecteRepository extends ServiceEntityRepository
         return $query->getSingleScalarResult();
     }
 
-    public function getTransactionCountPrevious7Days(Shop $shop) : int
+    public function getTransactionCountPrevious7Days(Shop $shop) : ?int
     {
         $query = $this->createQueryBuilder('c')
             ->select('COUNT(c) as collectCount')
@@ -177,7 +177,7 @@ class CollecteRepository extends ServiceEntityRepository
         return $query->getSingleScalarResult();
     }
 
-    public function getNewCollectes(Shop $shop) : array
+    public function getNewCollectes(Shop $shop) : ?array
     {
         $query = $this->createQueryBuilder('c')
             ->select('c')

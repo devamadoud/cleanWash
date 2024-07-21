@@ -14,7 +14,7 @@ class CartService
         $this->request = $request;
         $this->productRepository = $productRepository;
     }
-    public function add(int $id, int $quantity): Response|null
+    public function add(int $id, int $quantity): ?Response
     {
         $product = $this->productRepository->findOneBy(['id' => $id]);
 
@@ -60,7 +60,7 @@ class CartService
         return new Response (count($cart), Response::HTTP_OK);
     }
 
-    public function getProduct(array $cart): array
+    public function getProduct(array $cart)
     {
         $products = [];
 
@@ -77,7 +77,7 @@ class CartService
         return $products;
     }
 
-    public function getCart(): object
+    public function getCart()
     {
         return $this->request->getSession()->get('cart');
     }
@@ -96,7 +96,7 @@ class CartService
         return new Response('', Response::HTTP_OK);
     }
 
-    public function getTotal(): float
+    public function getTotal()
     {
         return $this->request->getSession()->get('cartTot');
     }

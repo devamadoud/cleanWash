@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <style>
+      .container {
+        width: 100%;
+        font-size: 14px;
+      }
+      
+      table {
+        width: 100%;
+        border-radius: 2px;
+        border-collapse: collapse;
+      }
+
+      .table {
+        width: 90%;
+        margin: auto;
+      }
+
+      thead tr th {
+        background-color: #d1d8ec;
+        padding: 5px;
+      }
+      
+      tr {
+        page-break-inside: avoid;
+        text-align: left;
+      }
+
+      .cel {
+        font-size: 0.8rem;
+        padding: 6px;
+        border-bottom: 1px solid #3e426e;
+      }
+
+      .productName {
+        font-size: 0.7rem;
+        word-wrap: wrap;
+      }
+      
+      tr th {
+        text-align: left;
+      }
+      .total {
+        font-weight: bold;
+        text-align: left;
+        border-bottom: none;
+      }
+
+      .totalTTC {
+        border: none;
+        padding: 5px;
+        font-size: 16px;
+        color: white;
+        background-color: #3e426e;
+
+      }
+
+      .sumTowords {
+        font-weight: normal;
+        font-style: italic;
+        font-size: 0.8rem;
+      }
+      
+      .head {
+        width: 100%;
+        height: 270px;
+        display: block;
+      }
+      
+      .title {
+        width: 100%;
+        display: block;
+        position: relative;
+        height: 50px;
+      }
+      
+      .title .d1 {
+        float: left;
+      }
+
+      .d1 .d1s1 {
+        font-size: 1.1rem;
+        padding: 2px;
+        border: 1px solid #3e426e;
+        background-color: #3e426e;
+        border-radius: 4px;
+        text-align: center;
+        color: white;
+      }
+      
+      .title .d2 {
+        float: right;
+      }
+      
+      .infos {
+        width: 80%;
+        margin: auto;
+        padding: 10px;
+        display: block;
+        position: relative;
+        margin-bottom: 10px;
+      }
+      
+      .infos .customer {
+        display: inline-block;
+        font-style: italic;
+      }
+      
+      .infos .shop {
+        float: right;
+        top: 0;
+        right: 0;
+        font-style: italic;
+      }
+      .infos .customer .name {
+        font-style: normal;
+      }
+      .infos .shop .name {
+        font-style: normal;
+      }
+      .title div span {
+        display: block;
+      }
+      
+      .infos div span {
+        display: block;
+      }
+      
+      .s-title {
+        font-weight: bold;
+        font-style: normal;
+      }
+      
+      .text-center {
+        text-align: center;
+      }
+
+      .branding {
+        width: 100%;
+        height: 120px;
+      }
+
+      .brand {
+        font-size: 1.5rem;
+        color: #3e426e;
+        text-decoration: underline;
+      }
+
+      .qrCode {
+        width: 100px;
+        height: 100px;
+        float: right;
+        top: 0;
+      }
+
+      .qrCode img {
+        height: 100%;
+      }
+
+      .qrCode span {
+        width: 60%;
+        margin: auto;
+        text-align: center;
+        font-size: 0.5rem;
+        color: #3e426e;
+        background-color: #d1d8ec;
+        padding: 2px;
+        border: 1px solid #d1d8ec;
+        border-radius: 4px;
+        display: block;
+        margin-top: 2px;
+      }
+
+      .brand-infos {
+        font-size: 0.6rem;
+        font-style: italic;
+        float: left;
+      }
+
+      .brand-infos span {
+        display: block;
+      }
+    </style>
+  </head>
+  <body>
+    {{ include("invoice/_invoice_temp.html.twig") }}
+  </body>
+</html>

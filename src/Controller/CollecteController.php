@@ -15,6 +15,7 @@ use App\Form\CollecteType;
 use App\Form\CustomerType;
 use App\Repository\CollecteRepository;
 use App\Security\Voter\CollecteVoter;
+use App\Services\InvoiceService;
 use App\Services\QrCodeGenerator;
 use App\Services\ShipeService;
 use App\Services\UniqueRefGenerator;
@@ -140,7 +141,7 @@ class CollecteController extends AbstractController
     */
     #[Route('/{tel}/{type}/new', name: 'collecte.new', methods: ['GET', 'POST'])]
     #[IsGranted(CollecteVoter::CREATE)]
-    public function new(Request $request, EntityManagerInterface $entityManager, UrlGeneratorInterface $urlGenerator, $tel, $type): Response
+    public function new(Request $request, EntityManagerInterface $entityManager, UrlGeneratorInterface $urlGenerator, InvoiceService $invoiceService, $tel, $type): Response
     {
         // Initialiser l'utilisateur courant
         $user = $this->getUser();
@@ -278,6 +279,9 @@ class CollecteController extends AbstractController
                 ->setReference($collecteRef)
             ;
 
+            $invoice = $invoiceService->createInvoice($collecte);
+            $collecte->setInvoice($invoice);
+            
             $entityManager->persist($collecte);
             $entityManager->flush();
 

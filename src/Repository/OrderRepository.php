@@ -52,7 +52,7 @@ class OrderRepository extends ServiceEntityRepository
     //        ;
     //    }
 
-    public function findOrderByShop(object $searche): PaginationInterface
+    public function findOrderByShop(object $searche): ?PaginationInterface
     {
         $query = $this->createQueryBuilder('o')
             ->select('s', 'o')
@@ -93,7 +93,7 @@ class OrderRepository extends ServiceEntityRepository
         return $this->paginator->paginate($query, $searche->page, 10);
     }
 
-    public function findByWeek(Shop $shop) : array
+    public function findByWeek(Shop $shop) : ?array
     {
 
         $query = $this->createQueryBuilder('o')
@@ -111,7 +111,7 @@ class OrderRepository extends ServiceEntityRepository
         return $query->getQuery()->getResult();
     }
 
-    public function getTransactionsCountByDay(Shop $shop) : array
+    public function getTransactionsCountByDay(Shop $shop) : ?array
     {
         $query = $this->createQueryBuilder('o')
             ->select('DATE(o.createdAt) as dayDate, COUNT(o) as orderCount, SUM(o.totale) as totalAmount')
@@ -131,7 +131,7 @@ class OrderRepository extends ServiceEntityRepository
         return $query->getResult();
     }
 
-    public function getTotalTransactionAmountLast7Days(Shop $shop) : float
+    public function getTotalTransactionAmountLast7Days(Shop $shop) : ?float
     {
         $query = $this->createQueryBuilder('o')
             ->select('SUM(o.totale) as totalAmount')
@@ -149,7 +149,7 @@ class OrderRepository extends ServiceEntityRepository
         return $query->getSingleScalarResult();
     }
 
-    public function getTotalTransactionAmountPrevious7Days(Shop $shop) : float
+    public function getTotalTransactionAmountPrevious7Days(Shop $shop) : ?float
     {
         $query = $this->createQueryBuilder('o')
             ->select('SUM(o.totale) as totalAmount')
@@ -167,7 +167,7 @@ class OrderRepository extends ServiceEntityRepository
         return $query->getSingleScalarResult();
     }
 
-    public function getTransactionCountPrevious7Days(Shop $shop) : int
+    public function getTransactionCountPrevious7Days(Shop $shop) : ?int
     {
         $query = $this->createQueryBuilder('o')
             ->select('COUNT(o) as orderCount')
@@ -185,7 +185,7 @@ class OrderRepository extends ServiceEntityRepository
         return $query->getSingleScalarResult();
     }
 
-    public function getNewOrders(Shop $shop) : array
+    public function getNewOrders(Shop $shop) : ?array
     {
         $query = $this->createQueryBuilder('o')
             ->select('o')

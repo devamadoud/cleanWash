@@ -22,6 +22,12 @@ class ProductController extends AbstractController
         ]);
     }
 
+    #[Route('/add', name: 'product.add', methods: ['GET', 'POST'])]
+    public function add(Request $request, CartService $cartService): Response
+    {
+        $form = $this->createForm();
+    }
+
     #[Route('/{id}', name: 'product.show')]
     public function show(Product $product, ProductRepository $productRepository, Request $request, CartService $cartService): Response
     {   

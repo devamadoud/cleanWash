@@ -3,8 +3,11 @@
 namespace App\Repository;
 
 use App\Entity\Invoice;
+use App\Entity\Shop;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
+use Knp\Component\Pager\Pagination\PaginationInterface;
+use Knp\Component\Pager\PaginatorInterface;
 
 /**
  * @extends ServiceEntityRepository<Invoice>
@@ -16,9 +19,11 @@ use Doctrine\Persistence\ManagerRegistry;
  */
 class InvoiceRepository extends ServiceEntityRepository
 {
-    public function __construct(ManagerRegistry $registry)
+    private PaginatorInterface $paginator;
+    public function __construct(ManagerRegistry $registry, PaginatorInterface $paginator)
     {
         parent::__construct($registry, Invoice::class);
+        $this->paginator = $paginator;
     }
 
     //    /**
@@ -45,4 +50,15 @@ class InvoiceRepository extends ServiceEntityRepository
     //            ->getOneOrNullResult()
     //        ;
     //    }
+
+    public function getByShop(object $searche): ?PaginationInterface
+    {
+        $query = $this->createQueryBuilder('i')
+            ->andWhere('i.shop = :shop')
+            ->setParameter('shop', $searche->shop)
+            ->getQuery();
+        ;
+
+        return $this->paginator->paginate($query, $searche->page, 10);
+    }
 }
