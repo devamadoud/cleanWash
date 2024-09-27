@@ -1,0 +1,108 @@
+{% extends 'fullyAuthLayout.html.twig' %}
+
+  {% form_theme resetPasswordForm 'form/theme.html.twig' %}
+
+{% block title %}
+  Commandes
+{% endblock %}
+
+{% block body %}
+  <div class="customer-index flex flex-col justify-start mx-auto lg:px-8">
+    <div class="max-w-full h-screen w-screen px-4 py-8 md:px-8 mx-auto">
+      <div class="flex justify-between">
+        <nav class="flex" aria-label="Breadcrumb">
+          <ol class="inline-flex items-center space-x-1 md:space-x-2 rtl:space-x-reverse">
+            <li class="inline-flex items-center">
+              <a href="{{ path('home') }}" class="inline-flex gap-1 items-center text-sm font-medium text-gray-700 hover:text-purple-600 dark:text-gray-400 dark:hover:text-white">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-4">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="m2.25 12 8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25" />
+                </svg>
+                <span>Dashboard</span>
+              </a>
+            </li>
+            <li>
+              <div class="flex items-center">
+                <svg class="rtl:rotate-180 w-3 h-3 text-gray-400 mx-1" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 6 10">
+                  <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 9 4-4-4-4" />
+                </svg>
+                <span class="ms-1 text-sm font-medium text-gray-500 md:ms-2 dark:text-gray-400 dark:hover:text-white">Profile</span>
+              </div>
+            </li>
+          </ol>
+        </nav>
+      </div>
+
+      <div class="bg-white mt-5 w-full shadow-lg border px-4 rounded-lg">
+        <div class="mb-4 border-b border-gray-200 dark:border-gray-700">
+          <ul class="flex flex-wrap -mb-px text-sm font-medium text-center" id="default-styled-tab" data-tabs-toggle="#default-styled-tab-content" data-tabs-active-classes="text-purple-600 hover:text-purple-600 dark:text-purple-500 dark:hover:text-purple-500 border-purple-600 dark:border-purple-500" data-tabs-inactive-classes="dark:border-transparent text-gray-500 hover:text-gray-600 dark:text-gray-400 border-gray-100 hover:border-gray-300 dark:border-gray-700 dark:hover:text-gray-300" role="tablist">
+            <li class="me-2" role="presentation">
+              <button class="inline-block p-4 border-b-2 rounded-t-lg" id="profile-styled-tab" data-tabs-target="#styled-profile" type="button" role="tab" aria-controls="profile" aria-selected="false">Profile</button>
+            </li>
+            <li class="me-2" role="presentation">
+              <button class="inline-block p-4 border-b-2 rounded-t-lg hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300" id="settings-styled-tab" data-tabs-target="#styled-settings" type="button" role="tab" aria-controls="settings" aria-selected="false">Settings</button>
+            </li>
+          </ul>
+        </div>
+        <div id="default-styled-tab-content w-full">
+          <div class="hidden p-4 dark:bg-gray-800" id="styled-profile" role="tabpanel" aria-labelledby="profile-tab">
+            <div class="flex gap-6 justify-start">
+              <div class="w-1/4 items-start">
+                <svg class="w-full my-auto mx-auto text-purple-200" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 512 512" xml:space="preserve" fill="#5d69b3"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> 
+                  <path style="fill:#f4f6fa;" d="M256,508C117.04,508,4,394.96,4,256S117.04,4,256,4s252,113.04,252,252S394.96,508,256,508z"></path> <path style="fill:#8c9ece;" d="M256,8c136.752,0,248,111.248,248,248S392.752,504,256,504S8,392.752,8,256S119.248,8,256,8 M256,0 C114.608,0,0,114.608,0,256s114.608,256,256,256s256-114.608,256-256S397.392,0,256,0L256,0z"></path> <g> <ellipse style="fill:#5d69b3;" cx="256" cy="175.648" rx="61.712" ry="60.48"></ellipse> <path style="fill:#5d69b3;" d="M362.592,360.624c0-57.696-47.728-104.464-106.592-104.464s-106.592,46.768-106.592,104.464H362.592 z"></path> </g> </g>
+                </svg>
+              </div>
+              <div class="flex gap-6 flex-col my-auto">
+                <div class="flex flex-col gap-2 justify-start">
+                  <span class="text-md font-semibold text-gray-800">Nom & prénom</span>
+                  <span class="text-sm font-medium text-gray-600">{{ user.fullName }}</span>
+                </div>
+                <div class="flex flex-col gap-2 justify-start">
+                  <span class="text-md font-semibold text-gray-800">Téléfone</span>
+                  <span class="text-sm font-medium text-gray-600">{{ user.telefone }}</span>
+                </div>
+                <div class="flex flex-col gap-2 justify-start">
+                  <span class="text-md font-semibold text-gray-800">Statut</span>
+                  {% if user.shop %}
+                    <span class="text-sm font-medium text-gray-600">Gérant de <span class="uppercase">{{ user.shop.comName }}</span></span>
+                  {% else %}
+                    <span class="text-sm font-medium text-gray-600">Employé de chez <span class="uppercase">{{ user.job.shop.comName }} au poste de <span class="capitalise">{{ user.job.poste }}</span></span></span>
+                  {% endif %}
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="hidden p-4 rounded-lg dark:bg-gray-800" id="styled-settings" role="tabpanel" aria-labelledby="settings-tab">
+            <div class="flex gap-6 justify-start">
+              <div class="w-1/4 items-start">
+                <svg class="w-full my-auto mx-auto text-purple-200" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 512 512" xml:space="preserve" fill="#5d69b3"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> 
+                  <path style="fill:#f4f6fa;" d="M256,508C117.04,508,4,394.96,4,256S117.04,4,256,4s252,113.04,252,252S394.96,508,256,508z"></path> <path style="fill:#8c9ece;" d="M256,8c136.752,0,248,111.248,248,248S392.752,504,256,504S8,392.752,8,256S119.248,8,256,8 M256,0 C114.608,0,0,114.608,0,256s114.608,256,256,256s256-114.608,256-256S397.392,0,256,0L256,0z"></path> <g> <ellipse style="fill:#5d69b3;" cx="256" cy="175.648" rx="61.712" ry="60.48"></ellipse> <path style="fill:#5d69b3;" d="M362.592,360.624c0-57.696-47.728-104.464-106.592-104.464s-106.592,46.768-106.592,104.464H362.592 z"></path> </g> </g>
+                </svg>
+              </div>
+              <div class="flex gap-6 flex-col my-auto">
+                <div class="flex flex-col gap-2 justify-start">
+                  <span class="text-md font-semibold text-gray-800">Nom & prénom</span>
+                  <span class="text-sm font-medium text-gray-600">{{ user.fullName }}</span>
+                </div>
+                {{ form_start(resetPasswordForm, {attr: {class: "w-2/6"}}) }}
+                <div class="flex flex-col gap-2 mb-6 justify-start">
+                    {{ form_row(resetPasswordForm.telefone, { widget_class: "block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-purple-600 sm:text-sm sm:leading-6", row_class: "mb-0" }) }}
+                    <p class="text-xs pl-4 text-gray-500">Pour modifier votre numéro de téléfone, merci de contacter le support.</p>
+                </div>
+                <div class="flex flex-col gap-2 justify-start">{{ form_row(resetPasswordForm.setPassword.previous, { widget_class: "block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-purple-600 sm:text-sm sm:leading-6" }) }}</div>
+                <div class="flex flex-col gap-2 justify-start">{{ form_row(resetPasswordForm.setPassword.new, { widget_class: "block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-purple-600 sm:text-sm sm:leading-6" }) }}</div>
+                <div class="flex flex-col gap-2 justify-start">{{ form_row(resetPasswordForm.setPassword.confirm, { widget_class: "block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-purple-600 sm:text-sm sm:leading-6" }) }}</div>
+                <div class="flex gap-2 justify-end">
+                    <button type="submit" class="text-white px-5 py-2.5 bg-purple-700 hover:bg-purple-600 text-sm font-medium rounded-md">Modifier</button>
+                </div>
+                {{ form_end(resetPasswordForm) }}
+                <div class="flex flex-col gap-2 justify-start">
+                    <span class="text-sm font-medium text-gray-700">Pour<span class="text-red-500"> suprimer</span> votre compte veuillez contacter notre équipe au <span class="text-purple-900">support@setsetal.com,</span> <br>Vous êtes seul propriétaire de vos informations personnel, pour en savoir plus veuillez consulter notre <a href="{{ path('politique.conf') }}" class="text-purple-700 hover:underline">politique de confidentialité.</a></span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}

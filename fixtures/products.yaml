@@ -1,0 +1,51 @@
+App\Entity\Product:
+  product_{1..100}:
+    name: <productName()>
+    price: <numberBetween(500, 40000)>
+    purchasePrice: <numberBetween(500, 40000)>
+    promo: <numberBetween(0, 50)>
+    productDescription: <text(100)>
+    productImage: http://picsum.photos/id/<numberBetween(400, 800)>/200/300
+    category: '<numberBetween(1, 3)>x @category_*'
+    customer: '<numberBetween(1, 150)>x @customer_*'
+    shop: '<numberBetween(1, 10)>x @shop_*'
+    isPublished: <numberBetween(0, 1)>
+
+App\Entity\Categories:
+  category_{1..10}:
+    name: <creature()>
+    categoryDescription: <text(100)>
+
+App\Entity\Customer:
+  customer_{1..150}:
+    fullName: <creature()>
+    phoneNumber: <phoneNumber()>
+    adress: <address()>
+    shop: '<numberBetween(1, 9)>x @shop_*'
+    coordLng: <numberBetween(-180, 180)>
+    coordLat: <numberBetween(-90, 90)>
+  
+App\Entity\Employe:
+  employe_{1..90}:
+    user: '<numberBetween(10, 100)>x @user_*'
+    adress: <address()>
+    post: <text(10)>
+    shop: '<numberBetween(1, 9)>x @shop_*'
+    isActive: <numberBetween(0, 1)>
+
+
+App\Entity\Shop:
+  shop_{1..10}:
+    comName: <creature()>
+    adress: <address()>
+    owner: '<numberBetween(10, 100)>x @user_*'
+
+App\Entity\User:
+  user_{1..100}:
+    telefone: <numberBetween(100000000, 999999999)>
+    password: <text(20)>
+    fullName: <creature()>
+    adress: <address()>
+    userType: '10% ? owner : employee'
+    shop: '<numberBetween(0, 9)>x @shop_*'
+    job: '<numberBetween(1, 90)>x @employe_*'

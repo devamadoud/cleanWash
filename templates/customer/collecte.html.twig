@@ -1,0 +1,76 @@
+{% extends 'base.html.twig' %}
+
+{% form_theme form 'tailwind_2_layout.html.twig' %}
+
+{% block title %}
+  Nouveau ccollecte
+{% endblock %}
+
+{% block body %}
+  <div class="customer-form items-center flex min-h-full px-8">
+    <div class="px-4 lg:w-max mt-5 md:px-8">
+      <div class="items-start justify-between md:flex border-b pb-6 text-gray-600">
+        <div class="max-w-lg">
+          <h3 class="text-purple-800 text-xl font-semibold sm:text-2xl">Nouvelle collecte</h3>
+
+          {% if app.user %} 
+            <p class="text-gray-500 mt-2">Veuillez entrer le numéro de téléfone du client pour commencer.</p>
+          {% endif %}
+          <p class="text-gray-500 mt-2">Veuillez entrer votre numéro de téléfone pour commencer.</p>
+        </div>
+      </div>
+      {{ form_start(form, {attr: {class: 'mt-5'}}) }}
+        {{ form_row(form.telefone, {row_class: 'col-span-1 mb-4',
+                label_class: 'block text-sm font-medium leading-6 mb-2 text-gray-900',
+                error_item_class: 'text-red-500 text-sm font-medium',
+                widget_class: 'block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-purple-600 sm:text-sm sm:leading-6',
+                widget_disabled_class: 'my disabled widget classes',
+                widget_errors_class: 'ring-1 ring-inset ring-orange-600',
+            }) }}
+          <div class="flex flex-col">
+            {{ form_label(form.waiteForAgentChoice) }}
+            <span class="text-sm font-medium">Vous pouvez effectuer la collecte vous-même ou attendre notre collecteur pour vous aider.</span>
+          </div>
+          <div class="flex gap-4 justify-center mb-4 py-4">
+            {{ form_row(form.waiteForAgentChoice.children[0], {row_class: 'flex items-center ps-4 pe-4 border border-gray-200 rounded dark:border-gray-700',
+                  label_class: 'w-full py-4 ms-2 text-sm font-medium text-gray-500 hover:text-gray-800 cursor-pointer dark:text-gray-300',
+                  error_item_class: 'text-red-500 text-sm font-medium',
+                  widget_class: 'w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600',
+                  widget_disabled_class: 'my disabled widget classes',
+                  widget_errors_class: 'ring-1 ring-inset ring-orange-600',
+              }) }}
+            {{ form_row(form.waiteForAgentChoice.children[1], {row_class: 'flex items-center ps-4 pe-4 border border-gray-200 rounded dark:border-gray-700',
+                  label_class: 'w-full py-4 ms-2 text-sm font-medium text-gray-500 hover:text-gray-800 cursor-pointer dark:text-gray-300',
+                  error_item_class: 'text-red-500 text-sm font-medium',
+                  widget_class: 'w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600',
+                  widget_disabled_class: 'my disabled widget classes',
+                  widget_errors_class: 'ring-1 ring-inset ring-orange-600',
+              }) }}
+          </div>
+          <div id="form-canDoIt" class="flex-col gap-4 mb-4 py-4 hidden">
+            <div class="flex flex-col">
+              {{ form_label(form.collecteChoice) }}
+              <span class="text-sm font-medium">Quelle type de collecte souhaitez-vous effectuer ?</span>
+            </div>
+            <div class="flex gap-4 justify-center mb-4 py-4">
+              {{ form_row(form.collecteChoice.children[0], {row_class: 'flex items-center ps-4 pe-4 border border-gray-200 rounded dark:border-gray-700',
+                    label_class: 'w-full py-4 ms-2 text-sm font-medium text-gray-500 hover:text-gray-800 cursor-pointer dark:text-gray-300',
+                    error_item_class: 'text-red-500 text-sm font-medium',
+                    widget_class: 'w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600',
+                    widget_disabled_class: 'my disabled widget classes',
+                    widget_errors_class: 'ring-1 ring-inset ring-orange-600',
+                }) }}
+              {{ form_row(form.collecteChoice.children[1], {row_class: 'flex items-center ps-4 pe-4 border border-gray-200 rounded dark:border-gray-700',
+                    label_class: 'w-full py-4 ms-2 text-sm font-medium text-gray-500 hover:text-gray-800 cursor-pointer dark:text-gray-300',
+                    error_item_class: 'text-red-500 text-sm font-medium',
+                    widget_class: 'w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600',
+                    widget_disabled_class: 'my disabled widget classes',
+                    widget_errors_class: 'ring-1 ring-inset ring-orange-600',
+                }) }}
+            </div>
+          </div>
+        <button class="inline-flex items-center justify-center px-5 py-3 mr-3 text-base font-medium text-center text-white rounded-lg bg-purple-600 hover:bg-purple-700 focus:ring-4 focus:ring-purple-300 dark:focus:ring-purple-900" type="submit">Suivant</button>
+      {{ form_end(form) }}
+    </div>
+  </div>
+{% endblock %}

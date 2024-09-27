@@ -1,0 +1,32 @@
+{{ form_start(productAddForm) }}
+<div class="grid grid-cols-2 gap-2">
+  {% if product.id %}
+    <div class="col-span-1">
+      <div class="w-full mx-auto my-auto rounded border">
+        <div class="mx-auto rounded my-4">
+          <img src="{{ asset('/images/uploads/products/' ~ product.productImage) }}" alt="Image du produit" />
+        </div>
+      </div>
+    </div>
+  {% endif %}
+  <div class="{{ product.id ? 'col-span-1' : 'col-span-2' }}">
+    <label for="productImage" class="block text-sm font-medium text-gray-700 dark:text-gray-400">{{ product.id ? "Remplacer l'image actuelle du produit" : 'Ajouter une image' }}</label>
+    {{ form_widget(productAddForm.productImage) }}
+  </div>
+  <div class="col-span-2">{{ form_label(productAddForm.name) }}
+    {{ form_widget(productAddForm.name, { label_class: 'block text-sm font-medium leading-6 text-gray-900', error_item_class: 'text-red-500 text-sm font-medium', widget_class: 'block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-purple-600 sm:text-sm sm:leading-6', widget_disabled_class: 'my disabled widget classes', widget_errors_class: 'ring-1 ring-inset ring-orange-600' }) }}</div>
+  <div class="col-span-2">{{ form_label(productAddForm.category) }}
+    {{ form_widget(productAddForm.category, { label_class: 'block text-sm font-medium leading-6 text-gray-900', error_item_class: 'text-red-500 text-sm font-medium', widget_disabled_class: 'my disabled widget classes', widget_errors_class: 'ring-1 ring-inset ring-orange-600' }) }}</div>
+  <div class="col-span-1">{{ form_label(productAddForm.purchasePrice) }}
+    {{ form_widget(productAddForm.purchasePrice, { label_class: 'block text-sm font-medium leading-6 text-gray-900', error_item_class: 'text-red-500 text-sm font-medium', widget_class: 'block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-purple-600 sm:text-sm sm:leading-6', widget_disabled_class: 'my disabled widget classes', widget_errors_class: 'ring-1 ring-inset ring-orange-600' }) }}</div>
+  <div class="col-span-1">{{ form_row(productAddForm.price, { label_class: 'block text-sm font-medium leading-6 text-gray-900', error_item_class: 'text-red-500 text-sm font-medium', widget_class: 'block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-purple-600 sm:text-sm sm:leading-6', widget_disabled_class: 'my disabled widget classes', widget_errors_class: 'ring-1 ring-inset ring-orange-600' }) }}</div>
+  <div class="col-span-1">{{ form_row(productAddForm.quantityStocke, { label_class: 'block text-sm font-medium leading-6 text-gray-900', error_item_class: 'text-red-500 text-sm font-medium', widget_class: 'block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-purple-600 sm:text-sm sm:leading-6', widget_disabled_class: 'my disabled widget classes', widget_errors_class: 'ring-1 ring-inset ring-orange-600' }) }}</div>
+  <div class="col-span-1">{{ form_row(productAddForm.promo, { label_class: 'block text-sm font-medium leading-6 text-gray-900', error_item_class: 'text-red-500 text-sm font-medium', widget_class: 'block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-purple-600 sm:text-sm sm:leading-6', widget_disabled_class: 'my disabled widget classes', widget_errors_class: 'ring-1 ring-inset ring-orange-600' }) }}</div>
+  <div class="col-span-2">{{ form_row(productAddForm.productDescription, { label_class: 'block text-sm font-medium leading-6 text-gray-900', error_item_class: 'text-red-500 text-sm font-medium', widget_class: 'block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-purple-600 sm:text-sm sm:leading-6', widget_disabled_class: 'my disabled widget classes', widget_errors_class: 'ring-1 ring-inset ring-orange-600' }) }}</div>
+  <div class="col-span-2">
+    <div class="w-full flex justify-end">
+      <button type="submit" class="inline-flex rounded-md bg-purple-600 px-8 py-2 font-medium text-white outline-none hover:opacity-80 focus:ring">{{ button_label|default('Valider') }}</button>
+    </div>
+  </div>
+</div>
+{{ form_end(productAddForm) }}

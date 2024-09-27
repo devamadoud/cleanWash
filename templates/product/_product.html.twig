@@ -1,0 +1,113 @@
+<div class="flex flex-col md:grid grid-cols-2 gap-4 {{ app.user ? 'w-full' : '' }}">
+  <div class="relative col-span-1 p-2 border rounded inline-flex">
+    <img src="{{ product.productImage }}" class="w-full" alt="Image du produit" />
+    <div class="absolute w-16 left-2 top-2 flex flex-col gap-1">
+      <button class="w-16 focus:border-2 focus:border-purple-800 cursor-pointer rounded-md p-2"><img src="{{ product.productImage }}" alt="Image du produit" /></button>
+      <button class="w-16 focus:border-2 focus:border-purple-800 rounded-md p-2"><img src="{{ product.productImage }}" alt="Image du produit" /></button>
+      <button class="w-16 focus:border-2 focus:border-purple-800 rounded-md p-2"><img src="{{ product.productImage }}" alt="Image du produit" /></button>
+    </div>
+  </div>
+
+  <div class="col-span-1 flex flex-col gap-4">
+    <div class="mb-2">
+      <div class="max-w-xs mx-auto flex flex-col">
+        <h2 class="text-lg capitalize font-semibold text-gray-700">{{ product.name }}</h2>
+        {% if app.user %}
+            <div class="flex w-full justify-end">
+                <a href="{{ path('product.edit', {id: product.id}) }}" class="text-purple-700 hover:underline hover:text-purple-800">Modifier le produit</a>
+            </div>
+        {% endif %}
+        {% if product.quantityStocke > 10 %}
+          <span class="text-sm font-medium text-green-600">Produit en stock</span>
+        {% endif %}
+        {% if product.quantityStocke < 10 and product.quantityStocke > 1 %}
+          <span class="text-sm font-medium text-yellow-500">Il ne reste que {{ product.quantityStocke }} articles en stock</span>
+        {% endif %}
+        {% if product.quantityStocke < 1 %}
+          <span class="text-sm font-medium text-red-800">Stock epuisée revenez plus-tard</span>
+        {% endif %}
+
+        <span class="text-sm font-medium">
+          Trouvez des articles similaires
+          <a href="{{ path('boutique', { category: product.category[0].id }) }}" class="text-purple-700 hover:underline hover:text-purple-800">#{{ product.category[0].name }}</a>
+        </span>
+      </div>
+    </div>
+    <div class="mb-2 border-t">
+      <div class="max-w-xs mx-auto">
+        {% if product.promo > 0 %}
+          <div class="text-lg font-bold text-gray-600 flex flex-col gap-2">
+            <span>{{ product.promoPrice|format_currency('XOF', locale='fr') }}</span>
+            <span class="flex items-center text-sm font-medium text-yellow-600 dark:text-white me-3">
+              <span class="flex w-2.5 h-2.5 bg-yellow-800 rounded-full me-1.5 flex-shrink-0"></span>
+              En promo de -{{ product.promo }}%
+            </span>
+            <del class="text-md text-gray-500 font-medium">{{ product.price|format_currency('XOF', locale='fr') }}</del>
+          </div>
+        {% else %}
+          <div class="text-lg font-semibold text-gray-600 flex flex-col gap-2">
+            <span>{{ product.price|format_currency('XOF', locale='fr') }}</span>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+    <div class="mb-2">
+      <form action="{{ path('product.addToCart', { id: product.id }) }}" method="post" class="max-w-xs mx-auto">
+        <label for="quantity-input" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Choisire la quantité:</label>
+        <div class="relative flex items-center max-w-[8rem]">
+          <button type="button" id="decrement-button" data-input-counter-decrement="quantity-input" class="bg-gray-100 dark:bg-gray-700 dark:hover:bg-gray-600 dark:border-gray-600 hover:bg-gray-200 border border-gray-300 rounded-s-lg p-3 h-11 focus:ring-gray-100 dark:focus:ring-gray-700 focus:ring-2 focus:outline-none">
+            <svg class="w-3 h-3 text-gray-900 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 18 2">
+              <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 1h16" />
+            </svg>
+          </button>
+          <input type="text" name="quantity" id="quantity-input" data-input-counter aria-describedby="helper-text-explanation" class="bg-gray-50 border-x-0 border-gray-300 h-11 text-center text-gray-900 text-sm focus:ring-blue-500 focus:border-blue-500 block w-full py-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" min="1" value="1" step="1" />
+          <button type="button" id="increment-button" data-input-counter-increment="quantity-input" class="bg-gray-100 dark:bg-gray-700 dark:hover:bg-gray-600 dark:border-gray-600 hover:bg-gray-200 border border-gray-300 rounded-e-lg p-3 h-11 focus:ring-gray-100 dark:focus:ring-gray-700 focus:ring-2 focus:outline-none">
+            <svg class="w-3 h-3 text-gray-900 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 18 18">
+              <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 1v16M1 9h16" />
+            </svg>
+          </button>
+        </div>
+        <p id="helper-text-explanation" class="mt-2 text-sm text-gray-500 dark:text-gray-400">Ajustez la quantité selons vos besoins.</p>
+        <div class="py-4 px-2">
+          <div class="text-sm font-medium text-gray-500 flex gap-4 justify-start">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-7 h-7">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 18.75a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m3 0h6m-9 0H3.375a1.125 1.125 0 0 1-1.125-1.125V14.25m17.25 4.5a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m3 0h1.125c.621 0 1.129-.504 1.09-1.124a17.902 17.902 0 0 0-3.213-9.193 2.056 2.056 0 0 0-1.58-.86H14.25M16.5 18.75h-2.25m0-11.177v-.958c0-.568-.422-1.048-.987-1.106a48.554 48.554 0 0 0-10.026 0 1.106 1.106 0 0 0-.987 1.106v7.635m12-6.677v6.677m0 4.5v-4.5m0 0h-12" />
+            </svg>
+            <span class="text-gray-800">Livrée a votre porte</span>
+          </div>
+          <div class="text-sm font-medium text-gray-500 flex gap-4 justify-start">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 18.75a60.07 60.07 0 0 1 15.797 2.101c.727.198 1.453-.342 1.453-1.096V18.75M3.75 4.5v.75A.75.75 0 0 1 3 6h-.75m0 0v-.375c0-.621.504-1.125 1.125-1.125H20.25M2.25 6v9m18-10.5v.75c0 .414.336.75.75.75h.75m-1.5-1.5h.375c.621 0 1.125.504 1.125 1.125v9.75c0 .621-.504 1.125-1.125 1.125h-.375m1.5-1.5H21a.75.75 0 0 0-.75.75v.75m0 0H3.75m0 0h-.375a1.125 1.125 0 0 1-1.125-1.125V15m1.5 1.5v-.75A.75.75 0 0 0 3 15h-.75M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Zm3 0h.008v.008H18V10.5Zm-12 0h.008v.008H6V10.5Z" />
+            </svg>
+            <span class="text-gray-800">Payez à la livraison</span>
+          </div>
+        </div>
+        <div class="w-full">
+          <button type="submit" class="text-lg w-full font-medium text-white bg-purple-700 hover:bg-purple-800 uppercase py-5 justify-center inline-flex rounded-md shadow-md">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="bi bi-bag-plus mr-2 w-6 h-6" viewBox="0 0 16 16">
+              <path fill-rule="evenodd" d="M8 7.5a.5.5 0 0 1 .5.5v1.5H10a.5.5 0 0 1 0 1H8.5V12a.5.5 0 0 1-1 0v-1.5H6a.5.5 0 0 1 0-1h1.5V8a.5.5 0 0 1 .5-.5" />
+              <path d="M8 1a2.5 2.5 0 0 1 2.5 2.5V4h-5v-.5A2.5 2.5 0 0 1 8 1m3.5 3v-.5a3.5 3.5 0 1 0-7 0V4H1v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V4zM2 5h12v9a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1z" />
+            </svg>Acheter
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+<div class="w-full p-4">
+  <div class="mb-4 border-b border-gray-200 dark:border-gray-700">
+    <ul class="flex flex-wrap -mb-px text-sm font-medium text-center" id="default-tab" data-tabs-toggle="#default-tab-content" role="tablist">
+      <li class="me-2" role="presentation">
+        <button class="inline-block text-gray-600 bg-gray-100 p-2 rounded-t-lg" id="profile-tab" data-tabs-target="#description" type="button" role="tab" aria-controls="profile" aria-selected="false">Description</button>
+      </li>
+    </ul>
+  </div>
+  <div id="default-tab-content">
+    <div class="hidden p-4 rounded-lg bg-gray-100 dark:bg-gray-800" id="description" role="tabpanel" aria-labelledby="profile-tab">
+      <p>
+        <strong class="font-medium text-gray-800 dark:text-white">{{ product.name }}</strong>
+      </p>
+      <p class="text-sm text-gray-500 dark:text-gray-400">{{ product.productDescription }}</p>
+    </div>
+  </div>
+</div>

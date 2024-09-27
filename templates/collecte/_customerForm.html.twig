@@ -1,0 +1,35 @@
+<div class="flex flex-col max-w-sm my-3 px-4 mx-auto">
+  {% if customer != null %}
+    {% if app.user %}
+      <div class="flex flex-col gap-4 p-2 text-sm">
+        <p>Le client à dejas utilisé la plateforme.</p>
+      </div>
+    {% endif %}
+    {{ form_row(form.customer, { row_class: 'mb-2', label_class: 'block text-sm font-medium leading-6 text-gray-900', error_item_class: 'text-red-500 text-sm font-medium', widget_class: 'block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-purple-600 sm:text-sm sm:leading-6', widget_disabled_class: 'my disabled widget classes', widget_errors_class: 'ring-1 ring-inset ring-orange-600' }) }}
+  {% else %}
+    {{ form_row(form.phoneNumber, { row_class: 'mb-2', label_class: 'block text-sm font-medium leading-6 text-gray-900', error_item_class: 'text-red-500 text-sm font-medium', widget_class: 'block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-purple-600 sm:text-sm sm:leading-6', widget_disabled_class: 'my disabled widget classes', widget_errors_class: 'ring-1 ring-inset ring-orange-600' }) }}
+    {{ form_row(form.fullName, { row_class: 'mb-2', label_class: 'block text-sm font-medium leading-6 text-gray-900', error_item_class: 'text-red-500 text-sm font-medium', widget_class: 'block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-purple-600 sm:text-sm sm:leading-6', widget_disabled_class: 'my disabled widget classes', widget_errors_class: 'ring-1 ring-inset ring-orange-600' }) }}
+    {{ form_row(form.adress, { row_class: 'mb-2', label_class: 'block text-sm font-medium leading-6 text-gray-900', error_item_class: 'text-red-500 text-sm font-medium', widget_class: 'block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-purple-600 sm:text-sm sm:leading-6', widget_disabled_class: 'my disabled widget classes', widget_errors_class: 'ring-1 ring-inset ring-orange-600' }) }}
+    <div class="flex flex-col gap-4 p-2">
+      <p class="text-sm font-medium text-purple-950" id="localisation-message">Veuillez autoriser la localisation afin que notre équipe puisse vous trouver plus facilement.</p>
+      <div class="flex gap-2">
+        {{ form_row(form.coordLng, { row_class: 'flex-2', label_class: 'block text-sm font-medium leading-6 text-gray-900', error_item_class: 'text-red-500 text-sm font-medium', widget_class: 'block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-purple-600 sm:text-sm sm:leading-6', widget_disabled_class: 'my disabled widget classes', widget_errors_class: 'ring-1 ring-inset ring-orange-600', attr: { disabled: true } }) }}
+        {{ form_row(form.coordLat, { row_class: 'flex-2', label_class: 'block text-sm font-medium leading-6 text-gray-900', error_item_class: 'text-red-500 text-sm font-medium', widget_class: 'block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-purple-600 sm:text-sm sm:leading-6', widget_disabled_class: 'my disabled widget classes', widget_errors_class: 'ring-1 ring-inset ring-orange-600', attr: { disabled: true } }) }}
+        <button type="button" id="localise" class="flex-1 inline-flex items-center justify-center px-3 py-1 text-base font-medium text-center text-white rounded-lg bg-yellow-600 hover:bg-yellow-700 focus:ring-4 focus:ring-yellow-300 dark:focus:ring-yellow-900">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="w-7 h-7" viewBox="0 0 384 512">
+            <!-- !Font Awesome Free 6.5.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc. -->
+            <path d="M215.7 499.2C267 435 384 279.4 384 192C384 86 298 0 192 0S0 86 0 192c0 87.4 117 243 168.3 307.2c12.3 15.3 35.1 15.3 47.4 0zM192 128a64 64 0 1 1 0 128 64 64 0 1 1 0-128z" />
+          </svg>
+        </button>
+      </div>
+    </div>
+  {% endif %}
+  <div class="flex justify-end gap-4 px-4">
+    <a href="{{ path('home') }}" class="inline-flex items-center justify-center px-3 py-1.5 text-base font-medium border text-center text-purple-700 rounded-lg bg-gray-100 hover:bg-gray-200 focus:ring-4 focus:ring-gray-300 dark:focus:ring-gray-400">Retour</a>
+    {% if app.user %}
+      <button class="inline-flex items-center justify-center px-3 py-1.5 text-base font-medium text-center text-white rounded-lg bg-purple-600 hover:bg-purple-700 focus:ring-4 focus:ring-purple-300 dark:focus:ring-purple-900">{{ button_label|default('Save') }}</button>
+    {% else %}
+      <button class="inline-flex items-center justify-center px-3 py-1.5 text-base font-medium text-center text-white rounded-lg bg-purple-600 hover:bg-purple-700 focus:ring-4 focus:ring-purple-300 dark:focus:ring-purple-900">Suivant</button>
+    {% endif %}
+  </div>
+</div>

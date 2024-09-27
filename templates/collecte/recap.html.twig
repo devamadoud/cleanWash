@@ -1,0 +1,28 @@
+{% extends 'base.html.twig' %}
+
+{% form_theme form 'tailwind_2_layout.html.twig' %}
+
+{% block title %}
+  Recap du collecte
+{% endblock %}
+
+{% block body %}
+  <div class="customer-form items-center min-h-full lg:px-8">
+    <div class="max-w-screen-xl px-4 py-0 md:py-8 md:px-8">
+      <div class="items-start justify-between md:flex border-b pb-6 text-gray-600">
+        <div class="max-w-lg">
+          <h3 class="text-purple-800 text-xl font-semibold sm:text-2xl">Recapitulatif du collecte</h3>
+
+          {% if app.user %}
+            <p class="text-gray-700 mt-2 text-sm font-semibold sm:text-md">Voici les detailles de la collecte, veillez renseigner le client le montant de la facture.</p>
+          {% else %}
+            <p class="text-gray-700 mt-2 text-sm font-semibold sm:text-md">Voici les detailles de la collecte, veuillez choisir le mode de payment que vous souhaitez.</p>
+          {% endif %}
+        </div>
+      </div>
+      <div class="lg:w-max mt-5 lg:px-8 lg:mx-auto">
+        <div class="flex flex-col">{{ include('collecte/_recap.html.twig', { collecte: collecte }) }}</div>
+      </div>
+    </div>
+  </div>
+{% endblock %}

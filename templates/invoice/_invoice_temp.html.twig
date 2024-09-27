@@ -1,0 +1,424 @@
+<style>
+      .container {
+        width: 100%;
+        font-size: 14px;
+        padding-left: 15px;
+        padding-right: 15px;
+        padding-top: 10px;
+        padding-bottom: 10px;
+      }
+      
+      table {
+        width: 100%;
+        border-radius: 2px;
+        border-collapse: collapse;
+      }
+
+      .table {
+        width: 90%;
+        margin: auto;
+      }
+
+      thead tr th {
+        background-color: #d1d8ec;
+        padding: 5px;
+      }
+      
+      tr {
+        page-break-inside: avoid;
+        text-align: left;
+      }
+
+      .cel {
+        font-size: 0.8rem;
+        padding: 6px;
+        border-bottom: 1px solid #3e426e;
+      }
+
+      .tot {
+        text-align: right;
+      }
+
+      .productName {
+        font-size: 0.7rem;
+        word-wrap: wrap;
+      }
+      
+      tr th {
+        text-align: left;
+      }
+      .total {
+        font-weight: bold;
+        text-align: right;
+        border-bottom: none;
+      }
+
+      .total td {
+        padding: 7px;
+      }
+
+      .totalTTC {
+        border: none;
+        padding: 5px;
+        font-size: 16px;
+        color: white;
+        background-color: #3e426e;
+
+      }
+
+      .sumTowords {
+        font-weight: normal;
+        font-style: italic;
+        font-size: 0.8rem;
+      }
+      
+      .head {
+        width: 100%;
+        height: 290px;
+        display: block;
+      }
+      
+      .title {
+        width: 100%;
+        display: block;
+        position: relative;
+        height: 50px;
+      }
+      
+      .title .d1 {
+        float: left;
+      }
+
+      .d1 .d1s1 {
+        font-size: 1.1rem;
+        padding: 2px;
+        border: 1px solid #3e426e;
+        background-color: #3e426e;
+        border-radius: 4px;
+        text-align: center;
+        color: white;
+      }
+
+      .debordLeft{
+        margin-left: -80px;
+      }
+      
+      .title .d2 {
+        float: right;
+        font-size: 0.8rem;
+        padding-left: 6px;
+        padding-right: 6px;
+        padding-top: 2px;
+        padding-bottom: 2px;
+        border: 1px solid #3e426e;
+        background-color: #3e426e;
+        border-radius: 4px;
+        text-align: center;
+        color: white;
+        font-style: italic;
+      }
+      
+      .infos {
+        width: 80%;
+        margin: auto;
+        padding: 10px;
+        display: block;
+        position: relative;
+        margin-bottom: 10px;
+      }
+      
+      .infos .customer {
+        display: inline-block;
+        font-style: italic;
+      }
+      
+      .infos .shop {
+        float: right;
+        top: 0;
+        right: 0;
+        font-style: italic;
+      }
+      .infos .customer .name {
+        font-style: normal;
+      }
+      .infos .shop .name {
+        font-style: normal;
+      }
+      .title div span {
+        display: block;
+      }
+      
+      .infos div span {
+        display: block;
+      }
+      
+      .s-title {
+        font-weight: bold;
+        font-style: normal;
+      }
+      
+      .text-center {
+        text-align: center;
+      }
+
+      .branding {
+        width: 100%;
+        height: 140px;
+      }
+
+      .brand {
+        font-size: 1.5rem;
+        color: #3e426e;
+        text-decoration: underline;
+      }
+
+      .qrCode {
+        width: 100px;
+        height: 100px;
+        float: right;
+        top: 0;
+      }
+
+      .qrCode img {
+        height: 100%;
+      }
+
+      .qrCode span {
+        width: 60%;
+        margin: auto;
+        text-align: center;
+        font-size: 0.5rem;
+        color: #3e426e;
+        background-color: #d1d8ec;
+        padding: 2px;
+        border: 1px solid #d1d8ec;
+        border-radius: 4px;
+        display: block;
+        margin-top: 2px;
+      }
+
+      .brand-infos {
+        font-size: 0.6rem;
+        font-style: italic;
+        float: left;
+      }
+
+      .brand-infos span {
+        display: block;
+      }
+
+      .brand-infos img {
+        height: 50px;
+        margin-bottom: 5px;
+      }
+    </style>
+<div class="container">
+  <div class="head">
+    <div class="branding">
+      <div class="brand-infos">
+        <img src="{{ logo}}" alt="Logo setsetal">
+        <span>RCC N° : SN DKR 2020 A 15404</span>
+        <span>NINEA : 008059116</span>
+        <span>Adress : Sénégal, Dakar, Rue 59 X 54 Gueule Tapee</span>
+        <span>Téléphone : +221 33 888 88 88</span>
+        <span>Email : contact@setsetalservice.com</span>
+      </div>
+      <div class="qrCode">
+        <img src="{{ qrCode }}" alt="QrCode" />
+        <span>[Scanez-moi]</span>
+      </div>
+    </div>
+    <div class="title">
+      <div class="d1">
+        <span class="d1s1  {{ app.current_route == 'invoice.download' ? 'debordLeft' : '' }}">Facture N° {{ invoice.type == 'order' ? invoice.orderInvoice.reference : invoice.collecte.reference }}</span>
+        <span class="d1s2">Date : {{ invoice.createdAt|format_datetime(locale='fr') }}</span>
+      </div>
+      <div class="d2">
+        <span class="d2s1">{{ invoice.type == 'order' ? 'Commande de produit N° ' ~ invoice.orderInvoice.reference : 'Collecte pour le service de pressing N° ' ~ invoice.collecte.reference }}</span>
+      </div>
+    </div>
+    <div class="infos">
+      <div class="customer">
+        <span class="s-title">Client(e)</span>
+        <span class="name">{{ invoice.type == 'order' ? invoice.orderInvoice.customer.fullName : invoice.collecte.customer.fullName }}</span>
+        <span>{{ invoice.type == 'order' ? invoice.orderInvoice.customer.adress : invoice.collecte.customer.adress }}</span>
+        <span>{{ invoice.type == 'order' ? invoice.orderInvoice.customer.phoneNumber : invoice.collecte.customer.phoneNumber }}</span>
+      </div>
+      <div class="shop">
+        <span class="s-title">Boutique</span>
+        <span class="name">{{ invoice.shop.comName }}</span>
+        <span>{{ invoice.shop.adress }}</span>
+        <span>{{ invoice.shop.phoneNumber }}</span>
+      </div>
+    </div>
+  </div>
+  <div class="table">
+    <table class="w-full text-sm text-left">
+      {% if invoice.type == 'order' %}
+        <thead>
+          <tr>
+            <th class="py-3 px-3">#Ref</th>
+            <th class="py-3 px-3">Produit</th>
+            <th class="py-3 px-3">Q.té</th>
+            <th class="py-3 px-3">Prix Unitaire</th>
+            <th class="py-3 px-3">Remise</th>
+            <th class="py-3 px-3 tot">Total</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% set totale = 0 %}
+          {% set price = 0 %}
+          {% for order in invoice.orderInvoice.orderDetailles %}
+            {% if order.product.promo != null %}
+              {% set price = order.product.promoPrice %}
+              {% set totale = price * order.quantity %}
+            {% else %}
+              {% set price = order.product.price %}
+              {% set totale = price * order.quantity %}
+            {% endif %}
+            <tr>
+              <td class="cel">#{{ order.reference }}</td>
+              <td class="cel productName">{{ order.product.name }}</td>
+              <td class="cel">{{ order.quantity }}</td>
+              <td class="cel">{{ order.product.price|format_currency('XOF', locale='fr') }}</td>
+              <td class="cel">-{{ order.product.promo ? order.product.promo : '0' }}%</td>
+              <td class="cel tot">{{ totale|format_currency('XOF', locale='fr') }}</td>
+            </tr>
+          {% endfor %}
+          <tr class="total ftotal">
+            <td colspan="4" class="sumTowords"></td>
+            <td class="">Total HT</td>
+            <td class="">{{ invoice.orderInvoice.totale|format_currency('XOF', locale='fr') }}</td>
+          </tr>
+          <tr class="total">
+            <td colspan="4" class="sumTowords"></td>
+            <td class="">Taxes</td>
+            <td class="">{{ '0'|format_currency('XOF', locale='fr') }}</td>
+          </tr>
+          <tr class="total">
+            <td colspan="4" class="sumTowords"></td>
+            <td class="">TVA</td>
+            <td class="">{{ '0'|format_currency('XOF', locale='fr') }}</td>
+          </tr>
+          <tr class="total">
+            <td colspan="4" class="sumTowords"></td>
+            <td class="">Livraison</td>
+            <td class=""> {{ 2000|format_currency('XOF', locale='fr') }}</td>
+          </tr>
+          <tr class="total">
+            <td colspan="4" class="sumTowords"></td>
+            <td class="totalTTC">Total TTC</td>
+            {% set totalTTC = 0 %}
+            {% set totalTTC = 2000 + invoice.orderInvoice.totale %}
+            <td class="totalTTC">{{ totalTTC|format_currency('XOF', locale='fr') }}</td>
+          </tr>
+        </tbody>
+      {% endif %}
+
+      {% if invoice.type == 'collecte' %}
+        {% if invoice.collecte.collecteType == 'clothingType' %}
+          <thead>
+            <tr>
+              <th class="py-3 px-3">#Ref</th>
+              <th class="py-3 px-3">Vêtement</th>
+              <th class="py-3 px-3">Q.té</th>
+              <th class="py-3 px-3">Prix Unitaire</th>
+              <th class="py-3 px-3 tot">Total</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% set total = 0 %}
+            {% for collecteDetaille in invoice.collecte.collecteDetailles %}
+              {% set price = collecteDetaille.clothingType.price %}
+              {% set totale = price * collecteDetaille.quantity %}
+              <tr>
+                <td class="cel">#{{ collecteDetaille.reference }}</td>
+                <td class="cel productName">{{ collecteDetaille.clothingType.name }}</td>
+                <td class="cel">{{ collecteDetaille.quantity }}</td>
+                <td class="cel">{{ price|format_currency('XOF', locale='fr') }}</td>
+                <td class="cel tot">{{ totale|format_currency('XOF', locale='fr') }}</td>
+              </tr>
+            {% endfor %}
+            <tr class="total ftotal">
+              <td class="sumTowords"></td>
+              <td colspan="2" class=""></td>
+              <td class="">Total HT</td>
+              <td class="">{{ invoice.collecte.totale|format_currency('XOF', locale='fr') }}</td>
+            </tr>
+            <tr class="total">
+              <td class="sumTowords"></td>
+              <td colspan="2" class=""></td>
+              <td class="">Taxes</td>
+              <td class="">{{ '0'|format_currency('XOF', locale='fr') }}</td>
+            </tr>
+            <tr class="total">
+              <td class="sumTowords"></td>
+              <td colspan="2" class=""></td>
+              <td class="">TVA</td>
+              <td class="">{{ '0'|format_currency('XOF', locale='fr') }}</td>
+            </tr>
+            <tr class="total">
+              <td class="sumTowords"></td>
+              <td colspan="2" class=""></td>
+              <td class="">Ramassage & Livraison</td>
+              <td class="">*Gratuit</td>
+            </tr>
+            <tr class="total">
+              <td class="sumTowords"></td>
+              <td colspan="2" class=""></td>
+              <td class="totalTTC">Total TTC</td>
+              <td class="totalTTC">{{ invoice.collecte.totale|format_currency('XOF', locale='fr') }}</td>
+            </tr>
+          </tbody>
+        {% endif %}
+
+        {% if invoice.collecte.collecteType == 'clothingPea' %}
+          <thead>
+            <tr>
+              <th class="py-3 px-3">#Ref</th>
+              <th class="py-3 px-3">Pois</th>
+              <th class="py-3 px-3">Tranche de prix</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="cel">#{{ invoice.collecte.collecteDetaillesPeas[0].reference }}</td>
+              <td class="cel">{{ invoice.collecte.collecteDetaillesPeas[0].pea }}</td>
+              <td class="cel tot">{{ invoice.collecte.collecteDetaillesPeas[0].peaMin }}</td>
+            </tr>
+            <tr class="total ftotal">
+              <td class="sumTowords"></td>
+              <td colspan="2" class=""></td>
+              <td class="">Total HT</td>
+              <td class="">{{ invoice.collecte.totale|format_currency('XOF', locale='fr') }}</td>
+            </tr>
+            <tr class="total">
+              <td class="sumTowords"></td>
+              <td colspan="2" class=""></td>
+              <td class="">Taxes</td>
+              <td class="">{{ '0'|format_currency('XOF', locale='fr') }}</td>
+            </tr>
+            <tr class="total">
+              <td class="sumTowords"></td>
+              <td colspan="2" class=""></td>
+              <td class="">TVA</td>
+              <td class="">{{ '0'|format_currency('XOF', locale='fr') }}</td>
+            </tr>
+            <tr class="total">
+              <td class="sumTowords"></td>
+              <td colspan="2" class=""></td>
+              <td class="">Ramassage & Livraison</td>
+              <td class="">*Gratuit</td>
+            </tr>
+            <tr class="total">
+              <td class="sumTowords"></td>
+              <td colspan="2" class=""></td>
+              <td class="totalTTC">Total TTC</td>
+              <td class="totalTTC">{{ invoice.collecte.totale|format_currency('XOF', locale='fr') }}</td>
+            </tr>
+          </tbody>
+        {% endif %}
+      {% endif %}
+    </table>
+  </div>
+</div>

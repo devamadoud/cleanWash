@@ -1,0 +1,14 @@
+{
+  "devDependencies": {
+    "@tailwindcss/forms": "^0.5.7",
+    "eslint": "^9.4.0",
+    "eslint-plugin-tailwindcss": "^3.17.0"
+  },
+  "dependencies": {
+    "@zxing/browser": "^0.1.4",
+    "apexcharts": "^3.49.1",
+    "bootstrap-icons": "^1.11.3",
+    "flowbite": "^2.3.0",
+    "flowbite-datepicker": "^1.2.6"
+  }
+}

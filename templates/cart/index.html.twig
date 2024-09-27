@@ -1,0 +1,164 @@
+{% extends 'base.html.twig' %}
+
+{% form_theme form 'tailwind_2_layout.html.twig' %}
+
+{% block title %}
+  Hello CartController!
+{% endblock %}
+
+{% block body %}
+  <div class="py-5 lg:py-8 max-w-screen-2xl">
+    {% if products is defined and products is not empty %} 
+    <div id="cartTable" class="mt-5 max-w-3xl border rounded-lg overflow-x-auto mx-auto">
+      <table class="w-full sm:w-full table-auto text-sm text-left">
+            <thead class="bg-gray-50 text-purple-950 w-80 font-medium border-b">
+            <tr>
+                <th class="py-2 px-4"></th>
+                <th class="py-2 px-4">Produit</th>
+                <th class="py-2 px-4">P.Unitaire</th>
+                <th class="py-2 px-4">Qté</th>
+                <th class="py-2 px-4 text-center">P.Totale</th>
+            </tr>
+            </thead>
+        <tbody id="cart-container" class="text-gray-600 divide-y bg-white">
+          {% for product in products %}
+            {% set total = product.unitPrice * product.quantity %}
+            <tr class="transition-all duration-500">
+              <td id="{{ product.id }}" class="px-4 py-2 whitespace-nowrap">
+                <button id="{{ product.id }}" title="Supprimer cette article" class="text-red-700 remove-from-cart focus:ring focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-3 py-1.5 text-center me-2 mb-2 dark:border-red-500 dark:text-red-500 dark:hover:text-whit dark:focus:ring-red-900">
+                    <svg id="{{ product.id }}" xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="bi bi-x-lg w-5 h-5" viewBox="0 0 16 16">
+                        <path id="{{ product.id }}" d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z"/>
+                    </svg>
+                </button>
+                </td>
+              <td class="px-4 pr-10 py-2 whitespace-wrap flex items-center gap-4"> <a href="{{ path('product.show', {id: product.id}) }}" class="text-purple-700 hover:underline"><img class="w-12 h-12 rounded-full" src="{{ product.img }}" alt="produit"> {{ product.name }}</a></td>
+              <td class="px-4 py-2 whitespace-nowrap">{{ product.unitPrice|format_currency('XOF', locale='fr') }}</td>
+              <td class="px-4 py-2 whitespace-nowrap">{{ product.quantity }}</td>
+              <td class="px-4 py-2 whitespace-nowrap text-right">{{ total|format_currency('XOF', locale='fr') }}</td>
+            </tr>
+          {% endfor %}
+          {% if products is defined and products is not empty %}
+            <tr>
+                <td colspan="4" class="font-bold px-4 py-4 whitespace-nowrap text-gray-500">Sous total :</td>
+                <td id="cartSubTot" class="px-4 py-4 whitespace-nowrap font-bold text-right">{{ app.session.get('cartTot')|format_currency('XOF', locale='fr') }}</td>
+            </tr>
+          {% endif %}
+        </tbody>
+      </table>
+    </div>
+    {% endif %}
+    {% if products is empty or products is not defined %}
+        <div id="empty-cart">
+            {{ include("cart/_empty_cart.html.twig") }}
+        </div>
+    {% endif %}
+    <div id="empty-cart" class="hidden">
+        {{ include("cart/_empty_cart.html.twig") }}
+    </div>
+    {% if products is defined and products is not empty %}  
+        <div id="cart-infos" class="max-w-3xl mx-auto my-3 px-4 py-4 flex rounded-lg border bg-white">
+            <div class="flex flex-col gap-2 md:gap-4 w-full justify-between">
+                <div class="flex justify-between w-full">
+                    <div class="flex items-center">
+                        <input disabled checked id="disabled-checked-checkbox" type="checkbox" value="" class="w-4 h-4 text-gray-700 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+                        <label for="disabled-checked-checkbox" class="ms-2 text-sm font-medium text-gray-600 dark:text-gray-500">Frais de livraison :</label>
+                    </div>
+                    <div class="font-bold text-right">
+                        {{ "2000"|format_currency('XOF', locale='fr') }}
+                    </div>
+                </div>
+                <div class="flex justify-between w-full">
+                    <span class="font-bold text-gray-500">Totale :</span>
+                    <span id="cartTot" data-delivery="2000" class="font-bold text-right">{{ (app.session.get('cartTot') + 2000)|format_currency('XOF', locale='fr') }}</span>
+                </div>
+                <div class="flex justify-end w-full">
+                    <button id="validateCommande" class="px-5 py-2.5 m-1 text-lg uppercase font-medium text-center border text-white bg-yellow-400 rounded-md hover:bg-yellow-500 focus:ring-none focus:outline-none focus:bg-purple-600 dark:bg-purple-600 dark:hover:bg-purple-700 dark:focus:ring-none">
+                        Valider la commande
+                    </button>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+    {% if products is defined and products is not empty %}
+        <div id="checkout-form" class="hidden flex-col max-w-3xl mx-auto my-3 px-4 py-4 rounded-lg border bg-white">
+            {{ form_start(form) }}
+                <div class="flex flex-col gap-4 justify-center mb-4">
+                    <div class="w-full flex flex-col justify-center text-center">
+                        <h3 class="text-purple-800 font-bold text-md md:text-lg my-2">Choisissez un mode de paiement</h3>
+                    </div>
+                    <div class="flex gap-4 justify-center">
+                        {{ form_row(form.paymentMethodes.children[0], {row_class: 'flex items-center ps-4 pe-4 border border-gray-200 rounded paymentMethod_0',
+                            label_class: 'w-full py-4 ms-2 text-sm font-medium text-gray-500 hover:text-gray-800 cursor-pointer dark:text-gray-300 flex justify-center',
+                            error_item_class: 'text-red-500 text-sm font-medium',
+                            widget_class: 'w-4 h-4 text-purple-700 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600',
+                            widget_disabled_class: 'my disabled widget classes',
+                            widget_errors_class: 'ring-1 ring-inset ring-orange-600',
+                        }) }}
+                        {{ form_row(form.paymentMethodes.children[1], {row_class: 'flex items-center ps-4 pe-4 border border-gray-200 rounded paymentMethod_1',
+                            label_class: 'w-full py-4 ms-2 text-sm font-medium text-gray-500 hover:text-gray-800 cursor-pointer dark:text-gray-300',
+                            error_item_class: 'text-red-500 text-sm font-medium',
+                            widget_class: 'w-4 h-4 text-purple-700 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600',
+                            widget_disabled_class: 'my disabled widget classes',
+                            widget_errors_class: 'ring-1 ring-inset ring-orange-600',
+                        }) }}
+                    </div>
+                </div>
+                <div id="asMobileMoney" class="hidden flex-col transition-all duration-200 gap-4 justify-center mb-4 py-2 px-0 md:px-4">
+                    <div class="w-full flex flex-col justify-center text-center">
+                        <h3 class="text-purple-800 font-bold text-md md:text-lg my-2">Payez avec votre compte Mobile Money</h3>
+                        <div class="font-light text-md flex flex-col md:flex-row gap-2 md:gap-4 justify-center my-2">
+                            <span class="font-semibold">Nous acceptons :</span>
+                            <span class="text-yellow-400">Orange Money</span>
+                            <span class="text-red-700">Free Money</span>
+                            <span class="text-blue-500 font-bold">WAVE</span>
+                        </div>
+                    </div>
+                    <img class="md:my-2" src="{{ asset('/images/illustrations/icons/bouton-dunyapay-sn.png') }}" alt="Mode de payments">
+                </div>
+                <div id="atDelivery" class="hidden flex-col transition-all duration-200 gap-4 justify-center mb-4 py-2 px-4">
+                    <div class="w-full flex flex-col justify-center text-center">
+                        <h3 class="text-purple-800 font-bold text-md md:text-lg my-2">Payez a la livraison</h3>
+                    </div>
+                    <div class="w-full text-purple-900 text-4xl bg-gray-200 text-center py-4 rounded-3xl">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-9 h-9 mx-auto">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 18.75a60.07 60.07 0 0 1 15.797 2.101c.727.198 1.453-.342 1.453-1.096V18.75M3.75 4.5v.75A.75.75 0 0 1 3 6h-.75m0 0v-.375c0-.621.504-1.125 1.125-1.125H20.25M2.25 6v9m18-10.5v.75c0 .414.336.75.75.75h.75m-1.5-1.5h.375c.621 0 1.125.504 1.125 1.125v9.75c0 .621-.504 1.125-1.125 1.125h-.375m1.5-1.5H21a.75.75 0 0 0-.75.75v.75m0 0H3.75m0 0h-.375a1.125 1.125 0 0 1-1.125-1.125V15m1.5 1.5v-.75A.75.75 0 0 0 3 15h-.75M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Zm3 0h.008v.008H18V10.5Zm-12 0h.008v.008H6V10.5Z" />
+                        </svg>
+                        <div class="font-medium text-sm justify-center my-2 px-6">
+                            <span class="text-purple-600">Effectuez le paiment en argent comptant avec notre agent de livraison.</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="w-full md:w-6/12 px-4 mx-auto">
+                    <div class="w-full flex flex-col justify-center text-center py-4 px-2">
+                        <h3 class="text-purple-800 font-bold text-md md:text-lg my-2">Vos informations personelles</h3>
+                        <p class="text-sm font-medium text-purple-950" id="localisation-message">Veuillez renseigner vos informations personelles pour valider la commande.</p>
+                    </div>
+                    {{ form_row(form.customer.phoneNumber, { row_class: 'mb-2', label_class: 'block text-sm font-medium leading-6 text-gray-900', error_item_class: 'text-red-500 text-sm font-medium', widget_class: 'block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-purple-600 sm:text-sm sm:leading-6', widget_disabled_class: 'my disabled widget classes', widget_errors_class: 'ring-1 ring-inset ring-orange-600' }) }}
+                    {{ form_row(form.customer.fullName, { row_class: 'mb-2', label_class: 'block text-sm font-medium leading-6 text-gray-900', error_item_class: 'text-red-500 text-sm font-medium', widget_class: 'block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-purple-600 sm:text-sm sm:leading-6', widget_disabled_class: 'my disabled widget classes', widget_errors_class: 'ring-1 ring-inset ring-orange-600' }) }}
+                    {{ form_row(form.customer.adress, { row_class: 'mb-2', label_class: 'block text-sm font-medium leading-6 text-gray-900', error_item_class: 'text-red-500 text-sm font-medium', widget_class: 'block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-purple-600 sm:text-sm sm:leading-6', widget_disabled_class: 'my disabled widget classes', widget_errors_class: 'ring-1 ring-inset ring-orange-600' }) }}
+                    <div class="flex flex-col gap-4 p-2 justify-center mx-auto">
+                        <p class="text-sm font-medium text-purple-950" id="localisation-message">Veuillez autoriser la localisation afin que notre équipe puisse vous trouver plus facilement.</p>
+                        <div class="flex gap-2">
+                            {{ form_row(form.customer.coordLng, { row_class: 'flex-2', label_class: 'block text-sm font-medium leading-6 text-gray-900', error_item_class: 'text-red-500 text-sm font-medium', widget_class: 'block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-purple-600 sm:text-sm sm:leading-6', widget_disabled_class: 'my disabled widget classes', widget_errors_class: 'ring-1 ring-inset ring-orange-600' }) }}
+                            {{ form_row(form.customer.coordLat, { row_class: 'flex-2', label_class: 'block text-sm font-medium leading-6 text-gray-900', error_item_class: 'text-red-500 text-sm font-medium', widget_class: 'block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-purple-600 sm:text-sm sm:leading-6', widget_disabled_class: 'my disabled widget classes', widget_errors_class: 'ring-1 ring-inset ring-orange-600' }) }}
+                            <button type="button" id="localise" class="flex-1 inline-flex items-center justify-between px-4 py-3 text-base font-medium text-center text-white rounded-lg bg-yellow-600 hover:bg-yellow-700 focus:ring-4 focus:ring-yellow-300 dark:focus:ring-yellow-900">
+                            Autoriser la géolocalisation
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="w-7 h-7" viewBox="0 0 384 512">
+                                <!-- !Font Awesome Free 6.5.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc. -->
+                                <path d="M215.7 499.2C267 435 384 279.4 384 192C384 86 298 0 192 0S0 86 0 192c0 87.4 117 243 168.3 307.2c12.3 15.3 35.1 15.3 47.4 0zM192 128a64 64 0 1 1 0 128 64 64 0 1 1 0-128z" />
+                            </svg>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="flex flex-col py-4">
+                        {{ form_row(form.adress, { row_class: 'mb-2', label_class: 'block text-sm font-medium leading-6 text-gray-900', error_item_class: 'text-red-500 text-sm font-medium', widget_class: 'block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-purple-600 sm:text-sm sm:leading-6', widget_disabled_class: 'my disabled widget classes', widget_errors_class: 'ring-1 ring-inset ring-orange-600' }) }}
+                    </div>
+                </div>
+                <div class="flex justify-center mb-4 md:py-4">
+                    <button type="submit" class="px-5 py-2.5 m-1 uppercase text-lg font-medium text-center border text-white bg-purple-700 rounded-md hover:bg-purple-800 focus:ring-none focus:outline-none focus:bg-purple-600 dark:bg-purple-600 dark:hover:bg-purple-700 dark:focus:ring-none">Confirmer la commande</button>
+                </div>
+            {{ form_end(form) }}
+        </div>
+    {% endif %}
+  </div>
+{% endblock %}

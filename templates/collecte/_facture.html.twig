@@ -1,0 +1,238 @@
+{% if app.user == null %}
+  <div class="text-sm font-medium text-purple-950 p-4">
+    <p>L'aperçus de votre prochaine facture, notre collecteur le confirmeras avec vous.</p>
+  </div>
+{% endif %}
+<div class="flex justify-between border rounded-lg lg:p-5">
+  <div class="text-sm">
+    <h2>Client</h2>
+    <div class="text-left">
+      <span class="text-semibold text-purple-950">Nom :</span>
+      <span>{{ collecte.customer.fullName }}</span>
+    </div>
+    <div class="text-left">
+      <span class="text-semibold text-purple-950">Téléfone :</span>
+      <span>{{ collecte.customer.phoneNumber }}</span>
+    </div>
+    <div class="text-left">
+      <span class="text-semibold text-purple-950">Adresse :</span>
+      <span>{{ collecte.customer.adress }}</span>
+    </div>
+  </div>
+  <div class="text-sm">
+    <h2>Collecte</h2>
+    <div class="text-left">
+      <span class="text-semibold text-purple-950">Pressing :</span>
+      <span class="text-semibold font-extralight">{{ collecte.shop.comName }}</span>
+    </div>
+    <div class="text-left">
+      <span class="text-semibold text-purple-950">Téléfone :</span>
+      <span class="">{{ collecte.shop.owner.telefone }}</span>
+    </div>
+    <div class="text-left">
+      <span class="text-semibold text-purple-950">Adresse :</span>
+      <span>{{ collecte.shop.adress }}</span>
+    </div>
+    <div class="text-left">
+      <span class="text-semibold text-purple-950">Date :</span>
+      <span>{{ collecte.collectedAt|format_datetime(locale='fr') }}</span>
+    </div>
+  </div>
+  <div class="text-sm border rounded-lg border-purple-800 p-2 flex justify-center">
+    <img src="{{ qrCode }}" alt="Qr code" width="120" height="120" />
+  </div>
+</div>
+<div class="mt-5 max-w-2xl shadow-sm border rounded-lg overflow-x-auto">
+  {% if collecte.collecteType == 'clothingPea' %}
+    <table class="w-full sm:w-full table-auto text-sm text-left">
+      <thead class="bg-gray-50 text-purple-950 w-80 font-medium border-b">
+        <tr>
+          <th class="py-2 px-2">Pois du collecte</th>
+          <th class="py-2 px-2">Status</th>
+          <th class="py-2 px-2">Palier de prix</th>
+          {% if app.user %}
+            <th class="py-2 px-2"></th>
+          {% endif %}
+        </tr>
+      </thead>
+      <tbody class="text-gray-600 divide-y bg-white">
+        {% set total = 0 %}
+        {% for collecteItem in collecte.collecteDetaillespeas %}
+          <tr>
+            <td class="px-2 py-2 text-ellipsis overflow-hidden">{{ collecteItem.pea }} Kg</td>
+            <td class="px-2 py-2 text-ellipsis overflow-hidden">{{ collecteItem.status }}</td>
+            <td class="px-2 py-2 whitespace-wrap text-right">{{ collecteItem.clothingPea.priceMin|format_currency('XOF', locale='de') }}</td>
+            <td class="px-2 py-2 whitespace-wrap"></td>
+          </tr>
+          <tr>
+            <td colspan="3" class="text-right px-2 py-4 whitespace-nowrap">
+              {% if (app.user and app.user.shop and collecte.status == 'En attente de lavage') or (app.user and app.user.job and app.user.job.poste == 'laveur' and collecteItem.status == 'En attente de lavage') %}
+                <a href="{{ path('collecte.wash', { collecte: collecte.id }) }}" class="text-white py-2 whitespace-nowrap px-4 rounded-md bg-purple-700" role="link">Laver</a>
+              {% endif %}
+              {% if (app.user and app.user.shop and collecte.status == 'En cours de lavage') or (app.user and app.user.job and app.user.job.poste == 'laveur' and collecteItem.status == 'En cours de lavage') %}
+                <a href="{{ path('collecte.ready', { collecte: collecte.id }) }}" class="text-white py-2 whitespace-nowrap px-4 rounded-md bg-purple-700" role="link">Lavage terminé</a>
+              {% endif %}
+              {% if (app.user and app.user.shop and collecte.status == 'En attente de livraison') or (app.user and app.user.job and app.user.job.poste == 'collecteur' and collecteItem.status == 'En attente de livraison') %}
+                <a href="{{ path('collecte.shipping', { collecte: collecte.id }) }}" class="text-white py-2 whitespace-nowrap px-4 rounded-md bg-purple-700" role="link">Livrer</a>
+              {% endif %}
+              {% if (app.user.shop and collecte.status == 'En attente de paiement') or (app.user.job and app.user.job.poste == 'collecteur' and collecte.status == 'En attente de paiement') or (app.user.job and app.user.job.poste == 'caissier' and collecteItem.status == 'En attente de paiement') %}
+                <button type="button" class="text-white flex gap-1 justify-center uppercase py-2 whitespace-nowrap px-4 rounded-md bg-purple-700" data-modal-target="popup-modal" data-modal-toggle="popup-modal">
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="bg-transparen size-7 dark:text-gray-200">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 8.25h19.5M2.25 9h19.5m-16.5 5.25h6m-6 2.25h3m-3.75 3h15a2.25 2.25 0 0 0 2.25-2.25V6.75A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25v10.5A2.25 2.25 0 0 0 4.5 19.5Z" />
+                  </svg>
+                  Confirmer le paiement
+                </button>
+                <div id="popup-modal" tabindex="-1" class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%+1rem)] max-h-full">
+                  {{ include("collecte/_paiement_modal.html.twig") }}
+                </div>
+              {% endif %}
+              {% if (app.user and app.user.shop and collecte.status == 'En cours de livraison') or (app.user and app.user.job and app.user.job.poste == 'collecteur' and collecte.status == 'En cours de livraison') %}
+                <button type="button" class="text-white py-2 whitespace-nowrap px-4 rounded-md bg-purple-700" data-modal-target="popup-modal" data-modal-toggle="popup-modal">Confirmer la livraison</button>
+
+                <div id="popup-modal" tabindex="-1" class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%+1rem)] max-h-full">
+                  <div class="relative p-4 w-full max-w-md max-h-full">
+                    <div class="relative bg-white rounded-lg shadow dark:bg-gray-700">
+                      <button type="button" class="absolute top-3 end-2.5 text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white" data-modal-hide="popup-modal">
+                        <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
+                          <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6" />
+                        </svg>
+                        <span class="sr-only">Close modal</span>
+                      </button>
+                      <div class="p-4 md:p-5 text-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="mx-auto mb-4 text-green-700 bg-transparen w-12 h-12 dark:text-gray-200">
+                          <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 18.75a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m3 0h6m-9 0H3.375a1.125 1.125 0 0 1-1.125-1.125V14.25m17.25 4.5a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m3 0h1.125c.621 0 1.129-.504 1.09-1.124a17.902 17.902 0 0 0-3.213-9.193 2.056 2.056 0 0 0-1.58-.86H14.25M16.5 18.75h-2.25m0-11.177v-.958c0-.568-.422-1.048-.987-1.106a48.554 48.554 0 0 0-10.026 0 1.106 1.106 0 0 0-.987 1.106v7.635m12-6.677v6.677m0 4.5v-4.5m0 0h-12" />
+                        </svg>
+                        <div class="text-center m-3 w-full max-w-full overflow-x-hidden whitespace-wrap">
+                          {% if app.user %}
+                            <p class="text-sm whitespace-wrap font-medium text-gray-700 dark:text-gray-400">Êtes vous arrivé sur le point de livraison ?</p>
+                          {% else %}
+                            <p class="text-sm whitespace-wrap font-medium text-gray-700 dark:text-gray-400">Vous confirmez la reception de votre colis ?</p>
+                          {% endif %}
+                        </div>
+                        <form action="{{ path('collecte.shipped', { collecte: collecte.id }) }}" method="get">
+                          <label for="secret" class="block text-sm font-medium leading-6 text-gray-900 cursor-pointer">Veuillez saisir le code de la collecte</label>
+                          <input name="secret" id="secret" type="text" class="block w-3/4 mx-auto mb-4 rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-purple-600 sm:text-sm sm:leading-6" />
+                          <button data-modal-hide="popup-modal" type="button" class="py-2.5 px-5 ms-3 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-purple-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700">Retour</button>
+                          <button type="submit" class="text-white bg-purple-700 hover:bg-purple-800 focus:ring-4 focus:outline-none focus:ring-red-300 dark:focus:ring-purple-800 font-medium rounded-lg text-sm inline-flex items-center px-5 py-2.5 text-center">Valider</button>
+                        </form>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              {% endif %}
+            </td>
+          </tr>
+          {% set total = collecteItem.clothingPea.priceMin %}
+        {% endfor %}
+        <tr>
+          <td class="text-center text-xs md:text-sm px-2 py-2 whitespace-wrap">Frais de sèchage et de pliage non compris.</td>
+          <td class="font-bold px-4 py-4 whitespace-nowrap">Total :</td>
+          <td class="px-4 py-4 whitespace-nowrap font-bold text-right">{{ total|format_currency('XOF', locale='de') }}</td>
+        </tr>
+      </tbody>
+    </table>
+  {% else %}
+    <table class="w-full sm:w-full table-auto text-sm text-left">
+      <thead class="bg-gray-50 text-purple-950 w-80 font-medium border-b">
+        <tr>
+          <th class="py-2 px-2">Ref</th>
+          <th class="py-2 px-2">Pièces</th>
+          <th class="py-2 px-2">Status</th>
+          <th class="py-2 px-2">P.U</th>
+          <th class="py-2">Qté</th>
+          <th class="py-2 px-2">P.T</th>
+
+          {% if app.user %}
+            <th class="py-2 px-2"></th>
+          {% endif %}
+        </tr>
+      </thead>
+      <tbody class="text-gray-600 divide-y bg-white">
+        {% set total = 0 %}
+        {% set priceTot = 0 %}
+
+        {% for collecteItem in collecte.collecteDetailles %}
+          {% set priceTot = collecteItem.clothingType.price * collecteItem.quantity %}
+          <tr>
+            <td class="px-2 py-2 whitespace-wrap">
+              <span class="p-2 rounded bg-yellow-200">#{{ collecteItem.reference }}</span>
+            </td>
+            <td class="px-2 py-2 whitespace-nowrap">{{ collecteItem.clothingType.name }}</td>
+            <td class="px-2 py-2 whitespace-nowrap">{{ collecteItem.status }}</td>
+            <td class="px-2 py-2 whitespace-nowrap">{{ collecteItem.clothingType.price|format_currency('XOF', locale='fr') }}</td>
+            <td class="py-2 whitespace-wrap">{{ collecteItem.quantity }}</td>
+            <td class="px-2 py-2 whitespace-wrap">{{ priceTot|format_currency('XOF', locale='fr') }}</td>
+            {% set total = total + priceTot %}
+          </tr>
+        {% endfor %}
+        <tr>
+          <td colspan="4" class="text-center text-xs md:text-sm px-2 py-2 whitespace-wrap">Les frais de collecte et de livraison sont gratuit.</td>
+          <td class="font-bold px-2 py-4 whitespace-nowrap">Total :</td>
+          <td class="px-2 py-4 text-left whitespace-nowrap font-bold">{{ total|format_currency('XOF', locale='fr') }}</td>
+          <td class="px-4 py-2"></td>
+        </tr>
+        <tr>
+          <td colspan="5" class="text-left text-xs md:text-sm px-2 py-2 whitespace-wrap">
+            <span class="text-gray-600 bg-gray-200 px-2 py-1 rounded-md font-italique text-sm">{{ collecte.status }}</span>
+          </td>
+          <td colspan="2" class="text-right px-2 py-4 whitespace-nowrap">
+            {% if (app.user and app.user.shop and collecte.status == 'En attente de lavage') or (app.user and app.user.job and app.user.job.poste == 'laveur' and collecte.status == 'En attente de lavage') %}
+              <a href="{{ path('collecte.wash', { collecte: collecte.id }) }}" class="text-white py-2 whitespace-nowrap px-4 rounded-md bg-purple-700" role="link">Laver</a>
+            {% endif %}
+            {% if (app.user and app.user.shop and collecte.status == 'En cours de lavage') or (app.user and app.user.job and app.user.job.poste == 'laveur' and collecte.status == 'En cours de lavage') %}
+              <a href="{{ path('collecte.ready', { collecte: collecte.id }) }}" class="text-white py-2 whitespace-nowrap px-4 rounded-md bg-purple-700" role="link">Lavage terminé</a>
+            {% endif %}
+            {% if (app.user and app.user.shop and collecte.status == 'En attente de livraison') or (app.user and app.user.job and app.user.job.poste == 'collecteur' and collecte.status == 'En attente de livraison') %}
+              <a href="{{ path('collecte.shipping', { collecte: collecte.id }) }}" class="text-white py-2 whitespace-nowrap px-4 rounded-md bg-purple-700" role="link">Livrer</a>
+            {% endif %}
+            {% if (app.user.shop and collecte.status == 'En attente de paiement') or (app.user.job and app.user.job.poste == 'collecteur' and collecte.status == 'En attente de paiement') or (app.user.job and app.user.job.poste == 'caissier' and collecteItem.status == 'En attente de paiement') %}
+              <button type="button" class="text-white flex gap-1 justify-center uppercase py-2 whitespace-nowrap px-4 rounded-md bg-purple-700" data-modal-target="popup-modal" data-modal-toggle="popup-modal">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="bg-transparen size-7 dark:text-gray-200">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 8.25h19.5M2.25 9h19.5m-16.5 5.25h6m-6 2.25h3m-3.75 3h15a2.25 2.25 0 0 0 2.25-2.25V6.75A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25v10.5A2.25 2.25 0 0 0 4.5 19.5Z" />
+              </svg>
+              Confirmer le paiement
+            </button>
+            <div id="popup-modal" tabindex="-1" class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%+1rem)] max-h-full">
+              {{ include("collecte/_paiement_modal.html.twig") }}
+            </div>
+            {% endif %}
+            {% if (app.user and app.user.shop and collecte.status == 'En cours de livraison') or (app.user and app.user.job and app.user.job.poste == 'collecteur' and collecte.status == 'En cours de livraison') %}
+              <button type="button" class="text-white py-2 whitespace-nowrap px-4 rounded-md bg-purple-700" data-modal-target="popup-modal" data-modal-toggle="popup-modal">Confirmer la livraison</button>
+
+              <div id="popup-modal" tabindex="-1" class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%+1rem)] max-h-full">
+                <div class="relative p-4 w-full max-w-md max-h-full">
+                  <div class="relative bg-white rounded-lg shadow dark:bg-gray-700">
+                    <button type="button" class="absolute top-3 end-2.5 text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white" data-modal-hide="popup-modal">
+                      <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6" />
+                      </svg>
+                      <span class="sr-only">Close modal</span>
+                    </button>
+                    <div class="p-4 md:p-5 text-center">
+                      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="mx-auto mb-4 text-green-700 bg-transparen w-12 h-12 dark:text-gray-200">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 18.75a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m3 0h6m-9 0H3.375a1.125 1.125 0 0 1-1.125-1.125V14.25m17.25 4.5a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m3 0h1.125c.621 0 1.129-.504 1.09-1.124a17.902 17.902 0 0 0-3.213-9.193 2.056 2.056 0 0 0-1.58-.86H14.25M16.5 18.75h-2.25m0-11.177v-.958c0-.568-.422-1.048-.987-1.106a48.554 48.554 0 0 0-10.026 0 1.106 1.106 0 0 0-.987 1.106v7.635m12-6.677v6.677m0 4.5v-4.5m0 0h-12" />
+                      </svg>
+                      <div class="text-center m-3 w-full max-w-full overflow-x-hidden whitespace-wrap">
+                        {% if app.user %}
+                          <p class="text-sm whitespace-wrap font-medium text-gray-700 dark:text-gray-400">Êtes vous arrivé sur le point de livraison ?</p>
+                        {% else %}
+                          <p class="text-sm whitespace-wrap font-medium text-gray-700 dark:text-gray-400">Vous confirmez la reception de votre colis ?</p>
+                        {% endif %}
+                      </div>
+                      <form action="{{ path('collecte.shipped', { collecte: collecte.id }) }}" method="get">
+                        <label for="secret" class="block text-sm font-medium leading-6 text-gray-900 cursor-pointer">Veuillez saisir le code de la collecte</label>
+                        <input name="secret" id="secret" type="text" class="block w-3/4 mx-auto mb-4 rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-purple-600 sm:text-sm sm:leading-6" />
+                        <button data-modal-hide="popup-modal" type="button" class="py-2.5 px-5 ms-3 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-purple-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700">Retour</button>
+                        <button type="submit" class="text-white bg-purple-700 hover:bg-purple-800 focus:ring-4 focus:outline-none focus:ring-red-300 dark:focus:ring-purple-800 font-medium rounded-lg text-sm inline-flex items-center px-5 py-2.5 text-center">Valider</button>
+                      </form>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            {% endif %}
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  {% endif %}
+</div>
