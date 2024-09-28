@@ -43,18 +43,17 @@
               <path d="M2 2a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2zM1 4a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1v8a1 1 0 0 1-1 1H8.96q.04-.245.04-.5C9 10.567 7.21 9 5 9c-2.086 0-3.8 1.398-3.984 3.181A1 1 0 0 1 1 12z" />
             </svg>
             <span class="flex-1 ms-3 whitespace-nowrap">Employés</span>
-            <span class="inline-flex items-center justify-center w-3 h-3 p-3 ms-3 text-sm font-medium text-blue-800 bg-blue-100 rounded-full dark:bg-blue-900 dark:text-blue-300">3</span>
+            {#<span class="inline-flex items-center justify-center w-3 h-3 p-3 ms-3 text-sm font-medium text-blue-800 bg-blue-100 rounded-full dark:bg-blue-900 dark:text-blue-300">3</span>#}
           </a>
         </li>
 
         <li>
-          <a href="{{ path('product.index') }}" class="flex items-center p-2 {{ app.current_route starts with 'employes' ? 'bg-purple-800 hover:bg-purple-700 text-white' : 'text-gray-800 hover:bg-gray-200' }} rounded-lg dark:text-white dark:hover:bg-gray-700 group">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="bi bi-person-vcard flex-shrink-0 w-5 h-5 {{ app.current_route starts with 'employes' ? 'bg-purple-800 hover:bg-transparent text-white' : 'text-gray-500' }} transition duration-75 dark:text-gray-400 dark:group-hover:text-white" viewBox="0 0 16 16">
-              <path d="M5 8a2 2 0 1 0 0-4 2 2 0 0 0 0 4m4-2.5a.5.5 0 0 1 .5-.5h4a.5.5 0 0 1 0 1h-4a.5.5 0 0 1-.5-.5M9 8a.5.5 0 0 1 .5-.5h4a.5.5 0 0 1 0 1h-4A.5.5 0 0 1 9 8m1 2.5a.5.5 0 0 1 .5-.5h3a.5.5 0 0 1 0 1h-3a.5.5 0 0 1-.5-.5" />
-              <path d="M2 2a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2zM1 4a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1v8a1 1 0 0 1-1 1H8.96q.04-.245.04-.5C9 10.567 7.21 9 5 9c-2.086 0-3.8 1.398-3.984 3.181A1 1 0 0 1 1 12z" />
+          <a href="{{ path('product.index') }}" class="flex items-center p-2 {{ app.current_route starts with 'product' ? 'bg-purple-800 hover:bg-purple-700 text-white' : 'text-gray-800 hover:bg-gray-200' }} rounded-lg dark:text-white dark:hover:bg-gray-700 group">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6 {{ app.current_route starts with 'product' ? 'bg-purple-800 hover:bg-transparent text-white' : 'text-gray-500' }}">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 0 0-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 0 0-16.536-1.84M7.5 14.25 5.106 5.272M6 20.25a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Zm12.75 0a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Z" />
             </svg>
             <span class="flex-1 ms-3 whitespace-nowrap">Produits</span>
-            <span class="inline-flex items-center justify-center w-3 h-3 p-3 ms-3 text-sm font-medium text-blue-800 bg-blue-100 rounded-full dark:bg-blue-900 dark:text-blue-300">3</span>
+            {#<span class="inline-flex items-center justify-center w-3 h-3 p-3 ms-3 text-sm font-medium text-blue-800 bg-blue-100 rounded-full dark:bg-blue-900 dark:text-blue-300">3</span>#}
           </a>
         </li>
       {% endif %}

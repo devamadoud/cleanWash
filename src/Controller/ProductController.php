@@ -15,6 +15,7 @@ use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\UX\Cropperjs\Factory\CropperInterface;
 use Symfony\UX\Cropperjs\Form\CropperType;
 
@@ -215,5 +216,17 @@ class ProductController extends AbstractController
             'productAddForm' => $productEditForm->createView(),
             'product' => $product,
         ]);
+    }
+
+    #[Route('/{id}/delete', name: 'product.delete', methods: ['POST'])]
+    #[IsGranted('ROLE_OWNER')]
+    public function delete(Request $request, Product $product, EntityManagerInterface $entityManager): Response
+    {
+        if($this->isCsrfTokenValid('delete'.$product->getId(), $request->getPayload()->get('_token'))) {
+            $entityManager->remove($product);
+            $entityManager->flush();
+        }
+
+        return $this->redirectToRoute('product.index');
     }
 }

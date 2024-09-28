@@ -28,13 +28,12 @@ class ProductRepository extends ServiceEntityRepository
     public function findBySearch(object $search): PaginationInterface
     {
         $query = $this->createQueryBuilder('p')
-            ->select('c', 'p')
-            ->join('p.category', 'c')
+            ->select('p')
             ->where('p.quantityStocke > 0')
         ;
         
         if(!empty($search->q)) {
-            $query = $this->createQueryBuilder('p')
+            $query = $query
                 ->andWhere('p.name LIKE :search')
                 ->setParameter('search', '%' . $search->q . '%')
             ;
@@ -42,7 +41,7 @@ class ProductRepository extends ServiceEntityRepository
 
         if(!empty($search->category)) {
             $query = $query
-                ->andWhere('c.id IN (:category)')
+                ->andWhere('p.category IN (:category)')
                 ->setParameter('category', $search->category)
             ;
         }
@@ -58,9 +57,9 @@ class ProductRepository extends ServiceEntityRepository
     public function findByCategory(string $category, int $page): PaginationInterface
     {
         $query = $this->createQueryBuilder('p')
-            ->select('c', 'p')
-            ->join('p.category', 'c')
-            ->andWhere('c.id IN (:category)')
+            ->select('p')
+            ->where('p.quantityStocke > 0')
+            ->andWhere(':category MEMBER OF p.category')
             ->setParameter('category', $category)
             ->getQuery()
         ;

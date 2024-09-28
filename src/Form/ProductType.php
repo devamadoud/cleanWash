@@ -126,7 +126,7 @@ class ProductType extends AbstractType
         }
 
         // On calcule le prix de la promotion
-        $data->setPurchasePrice($this->calculatorService->getPriceOfPromo($data->getPrice(), $data->getPromo()))
+        $data->setPromoPrice($this->calculatorService->getPriceOfPromo($data->getPrice(), $data->getPromo()))
             ->setUpdatedAt(new DateTimeImmutable())
         ;
 

@@ -1,0 +1,58 @@
+{
+    "lang": "fr-FR",
+    "name": "SetSetal-Services",
+    "short_name": "SetSetal",
+    "description": "SetSetal-Services, votre partenaire pour vos services de pressing, repassage, blanchisserie, etc.",
+    "start_url": "/",
+    "id": "/",
+    "display_override": ["standalone", "minimal-ui"],
+    "display": "standalone",
+    "background_color": "#7081c1",
+    "theme_color": "#3e426e",
+    "orientation": "portrait-primary",
+    "prefer_related_applications": true,
+    "categories": [
+        "e-commerce",
+        "shopping",
+        "services"
+    ],
+    "screenshots": [
+        {
+            "src": "images/illustrations/Screenshot2.png",
+            "sizes": "1366x579",
+            "type": "image/png"
+        },
+        {
+            "src": "images/illustrations/Screenshot1.png",
+            "sizes": "1366x579",
+            "type": "image/png"
+        }
+    ],
+    "icons": [
+        {
+            "src": "images/icons/48x48-SSSLogo.png",
+            "sizes": "48x48",
+            "type": "image/png"
+        },
+        {
+            "src": "images/icons/72x72-SSSLogo.png",
+            "sizes": "72x72",
+            "type": "image/png"
+        },
+        {
+            "src": "images/icons/96x96-SSSLogo.png",
+            "sizes": "96x96",
+            "type": "image/png"
+        },
+        {
+            "src": "images/icons/192x192-SSSLogo.png",
+            "sizes": "192x192",
+            "type": "image/png"
+        },
+        {
+            "src": "images/icons/512x512-SSSLogo.png",
+            "sizes": "512x512",
+            "type": "image/png"
+        }
+    ]
+}

@@ -3,7 +3,7 @@
 {% form_theme form 'tailwind_2_layout.html.twig' %}
 
 {% block title %}
-  Hello CartController!
+  Mon panier
 {% endblock %}
 
 {% block body %}
@@ -13,7 +13,7 @@
       <table class="w-full sm:w-full table-auto text-sm text-left">
             <thead class="bg-gray-50 text-purple-950 w-80 font-medium border-b">
             <tr>
-                <th class="py-2 px-4"></th>
+                <th class="py-2 px-4">#</th>
                 <th class="py-2 px-4">Produit</th>
                 <th class="py-2 px-4">P.Unitaire</th>
                 <th class="py-2 px-4">Qté</th>
@@ -31,7 +31,7 @@
                     </svg>
                 </button>
                 </td>
-              <td class="px-4 pr-10 py-2 whitespace-wrap flex items-center gap-4"> <a href="{{ path('product.show', {id: product.id}) }}" class="text-purple-700 hover:underline"><img class="w-12 h-12 rounded-full" src="{{ product.img }}" alt="produit"> {{ product.name }}</a></td>
+              <td class="px-4 pr-10 py-2 whitespace-wrap flex items-center gap-4"> <a href="{{ path('product.show', {id: product.id}) }}" class="text-purple-700 hover:underline"><img class="w-12 h-12 rounded-full" src="{{ asset('images/uploads/products/' ~ product.img) }}" alt="produit"> {{ product.name }}</a></td>
               <td class="px-4 py-2 whitespace-nowrap">{{ product.unitPrice|format_currency('XOF', locale='fr') }}</td>
               <td class="px-4 py-2 whitespace-nowrap">{{ product.quantity }}</td>
               <td class="px-4 py-2 whitespace-nowrap text-right">{{ total|format_currency('XOF', locale='fr') }}</td>

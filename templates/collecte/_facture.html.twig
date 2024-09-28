@@ -61,7 +61,7 @@
           <tr>
             <td class="px-2 py-2 text-ellipsis overflow-hidden">{{ collecteItem.pea }} Kg</td>
             <td class="px-2 py-2 text-ellipsis overflow-hidden">{{ collecteItem.status }}</td>
-            <td class="px-2 py-2 whitespace-wrap text-right">{{ collecteItem.clothingPea.priceMin|format_currency('XOF', locale='de') }}</td>
+            <td class="px-2 py-2 whitespace-wrap text-right">{{ collecteItem.clothingPea.priceMin ? collecteItem.clothingPea.priceMin|format_currency('XOF', locale='de'): "0"|format_currency('XOF', locale='de') }}</td>
             <td class="px-2 py-2 whitespace-wrap"></td>
           </tr>
           <tr>
@@ -185,7 +185,7 @@
             {% if (app.user and app.user.shop and collecte.status == 'En attente de livraison') or (app.user and app.user.job and app.user.job.poste == 'collecteur' and collecte.status == 'En attente de livraison') %}
               <a href="{{ path('collecte.shipping', { collecte: collecte.id }) }}" class="text-white py-2 whitespace-nowrap px-4 rounded-md bg-purple-700" role="link">Livrer</a>
             {% endif %}
-            {% if (app.user.shop and collecte.status == 'En attente de paiement') or (app.user.job and app.user.job.poste == 'collecteur' and collecte.status == 'En attente de paiement') or (app.user.job and app.user.job.poste == 'caissier' and collecteItem.status == 'En attente de paiement') %}
+            {% if (app.user and app.user.shop and collecte.status == 'En attente de paiement') or (app.user and app.user.job and app.user.job.poste == 'collecteur' and collecte.status == 'En attente de paiement') or (app.user and app.user.job and app.user.job.poste == 'caissier' and collecteItem.status == 'En attente de paiement') %}
               <button type="button" class="text-white flex gap-1 justify-center uppercase py-2 whitespace-nowrap px-4 rounded-md bg-purple-700" data-modal-target="popup-modal" data-modal-toggle="popup-modal">
               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="bg-transparen size-7 dark:text-gray-200">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 8.25h19.5M2.25 9h19.5m-16.5 5.25h6m-6 2.25h3m-3.75 3h15a2.25 2.25 0 0 0 2.25-2.25V6.75A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25v10.5A2.25 2.25 0 0 0 4.5 19.5Z" />

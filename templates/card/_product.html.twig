@@ -2,7 +2,7 @@
   {% if product.published == true and product.quantityStocke > 0 %}
     <article class="relative flex flex-col overflow-hidden rounded-lg border">
       <div class="aspect-square overflow-hidden p-2">
-        <a href="{{ path('product.show', { id: product.id }) }}"><img class="h-full w-full object-cover transition-all duration-300 group-hover:scale-125" src="{{ product.productImage }}" alt="Product image" /></a>
+        <a href="{{ path('product.show', { id: product.id }) }}"><img class="h-full w-full object-cover transition-all duration-300 group-hover:scale-125" src="{{ asset('images/uploads/products/' ~ product.productImage) }}" alt="Product image" /></a>
       </div>
       {% if product.promo > 0 %}
         <div class="absolute top-0 m-2 rounded-full bg-white">

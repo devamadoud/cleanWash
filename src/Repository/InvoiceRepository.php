@@ -56,6 +56,7 @@ class InvoiceRepository extends ServiceEntityRepository
         $query = $this->createQueryBuilder('i')
             ->andWhere('i.shop = :shop')
             ->setParameter('shop', $searche->shop)
+            ->orderBy('i.createdAt', 'DESC')
             ->getQuery();
         ;
 

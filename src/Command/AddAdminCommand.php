@@ -91,6 +91,7 @@ class AddAdminCommand extends Command
             ;
         }
 
+        $this->entityManager->persist($shop);
         $this->entityManager->persist($user);
         $this->entityManager->flush();
 

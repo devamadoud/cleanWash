@@ -30,13 +30,15 @@
         </ol>
       </nav>
 
+      <div class="w-full flex justify-end">
+        <a href="{{ path('product.add') }}" class="flex items-center w-auto p-2 bg-purple-800 hover:bg-purple-700 text-white rounded-lg dark:text-white dark:hover:bg-gray-700 group">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="size-6">
+            <path fill-rule="evenodd" d="M12 3.75a.75.75 0 0 1 .75.75v6.75h6.75a.75.75 0 0 1 0 1.5h-6.75v6.75a.75.75 0 0 1-1.5 0v-6.75H4.5a.75.75 0 0 1 0-1.5h6.75V4.5a.75.75 0 0 1 .75-.75Z" clip-rule="evenodd" />
+          </svg>
+          <span class="flex-1 ms-3 text-left rtl:text-right whitespace-nowrap">Ajouter un produit</span>
+        </a>
+      </div>
       <div class="bg-white mt-5 w-full shadow-lg border rounded-lg overflow-x-auto overflow-y-hidden">
-      <a href="{{ path('product.add') }}" class="flex items-center p-2 bg-purple-800 hover:bg-purple-700 text-white rounded-lg dark:text-white dark:hover:bg-gray-700 group">
-        <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="bi bi-cart-plus flex-shrink-0 w-5 h-5 text-white" viewBox="0 0 16 16">
-          <path fill-rule="evenodd" d="M0 1.5A.5.5 0 0 1 .5 1H2a.5.5 0 0 1 .485.379L2.89 8H14.5a.5.5 0 0 1 .491.592l-4.5 4.5a.5.5 0 0 1-.866.49l-4.5-4.5A.5.5 0 0 1 14.5 13H2.89l3.83-3.83A.5.5 0 0 1 6 10.5V2.5A.5.5 0 0 1 5.5 2h-1A.5.5 0 0 1 4 2.5v8.777L5.165 8.633A.5.5 0 0 1 6 8.5V6.5a.5.5 0 0 1 .586-.49z" />
-        </svg>
-        <span class="flex-1 ms-3 text-left rtl:text-right whitespace-nowrap">Nouveau produit</span>
-      </a>
         <table class="w-full table-auto text-sm text-left">
           <thead class="bg-gray-50 text-purple-900 font-medium border-b">
             <tr>
@@ -162,19 +164,30 @@
                                 Offline
                                 </a>
                             {% else %}
-                                <i class="py-2 px-3 font-medium text-xs bg-red-200 text-red-600 rounded-lg">Non publié</i>
+                                <i class="py-2 px-3 font-medium text-xs bg-red-200 text-red-600 rounded-lg">Non public</i>
                                 <a href="{{ path('product.publish', { id: product.id }) }}" title="Rendre visible pour les clients en ligne" class="py-2 px-3 font-medium bg-green-600 text-white duration-150 hover:bg-green-500 rounded-lg" rel="nofollow">
                                 Publier
                                 </a>
                         {% endif %}
+                        
+                        {{ include("product/_delete_form.html.twig") }}
                     </div>
                 </td>
               </tr>
-            {% else %}
-              <tr>Vous n'avez aucun produit</tr>
             {% endfor %}
           </tbody>
         </table>
+        {% if products|length == 0 %}
+          <div class="flex flex-col justify-center items-center p-4 gap-4">
+            <p class="text-gray-500">Aucun produit trouvé</p>
+            <a href="{{ path('product.add') }}" class="flex items-center w-auto p-2 bg-purple-800 hover:bg-purple-700 text-white rounded-lg dark:text-white dark:hover:bg-gray-700 group">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="size-6">
+                <path fill-rule="evenodd" d="M12 3.75a.75.75 0 0 1 .75.75v6.75h6.75a.75.75 0 0 1 0 1.5h-6.75v6.75a.75.75 0 0 1-1.5 0v-6.75H4.5a.75.75 0 0 1 0-1.5h6.75V4.5a.75.75 0 0 1 .75-.75Z" clip-rule="evenodd" />
+              </svg>
+              <span class="flex-1 ms-3 text-left rtl:text-right whitespace-nowrap">Ajouter un produit</span>
+            </a>
+          </div>
+        {% endif %}
       </div>
     </div>
   </div>

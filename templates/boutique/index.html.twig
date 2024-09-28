@@ -10,7 +10,7 @@
   <div class="py-5 lg:py-8 max-w-screen-2xl flex gap-6">
 
     <div class="w-2/6 text-center hidden lg:block">
-      <div class="flex flex-col gap-4 bg-white rounded-lg border sticky top-4 shadow-md">
+      <div class="flex flex-col gap-4 bg-white rounded-lg border sticky top-36 shadow-md">
         <div class="text-white bg-purple-800 w-full py-2 rounded-t-lg">
           <h2 class="uppercase text-lg">Votre panier</h2>
         </div>
@@ -47,12 +47,12 @@
 
       <section class="bg-white py-4 text-gray-700 rounded-lg shadow-md">
         <div class="mx-auto max-w-screen-xl px-4 sm:px-6 lg:px-8">
-          <div id="products" class="mt-10 grid grid-cols-2 gap-6 sm:grid-cols-4 sm:gap-4 lg:mt-16">
+          <div id="products" class="mt-4 grid grid-cols-2 gap-6 sm:grid-cols-4 sm:gap-4 lg:mt-6">
             {{ include('card/_product.html.twig', { 'product': products }) }}
           </div>
         </div>
           <div class="w-full flex justify-center contents-center mt-12">
-            {{ knp_pagination_render(products) }}
+          {{ knp_pagination_render(products) }}
           </div>
       </section>
       <div id="toast-to-cart-success" class="hidden items-center w-full max-w-xs p-4 mb-4 text-gray-500 bg-white rounded-lg shadow dark:text-gray-400 dark:bg-gray-800 fixed bottom-5 left-5" role="alert">

@@ -1,10 +1,10 @@
 <div class="flex flex-col md:grid grid-cols-2 gap-4 {{ app.user ? 'w-full' : '' }}">
   <div class="relative col-span-1 p-2 border rounded inline-flex">
-    <img src="{{ product.productImage }}" class="w-full" alt="Image du produit" />
+    <img src="{{ asset('images/uploads/products/' ~ product.productImage) }}" class="w-full" alt="Image du produit" />
     <div class="absolute w-16 left-2 top-2 flex flex-col gap-1">
-      <button class="w-16 focus:border-2 focus:border-purple-800 cursor-pointer rounded-md p-2"><img src="{{ product.productImage }}" alt="Image du produit" /></button>
-      <button class="w-16 focus:border-2 focus:border-purple-800 rounded-md p-2"><img src="{{ product.productImage }}" alt="Image du produit" /></button>
-      <button class="w-16 focus:border-2 focus:border-purple-800 rounded-md p-2"><img src="{{ product.productImage }}" alt="Image du produit" /></button>
+      <button class="w-16 focus:border-2 focus:border-purple-800 cursor-pointer rounded-md p-2"><img src="{{ asset('images/uploads/products/' ~ product.productImage) }}" alt="Image du produit" /></button>
+      <button class="w-16 focus:border-2 focus:border-purple-800 rounded-md p-2"><img src="{{ asset('images/uploads/products/' ~ product.productImage) }}" alt="Image du produit" /></button>
+      <button class="w-16 focus:border-2 focus:border-purple-800 rounded-md p-2"><img src="{{ asset('images/uploads/products/' ~ product.productImage) }}" alt="Image du produit" /></button>
     </div>
   </div>
 
@@ -83,7 +83,7 @@
           </div>
         </div>
         <div class="w-full">
-          <button type="submit" class="text-lg w-full font-medium text-white bg-purple-700 hover:bg-purple-800 uppercase py-5 justify-center inline-flex rounded-md shadow-md">
+          <button type="submit" class="text-lg w-full font-medium text-white bg-purple-700 hover:bg-purple-800 uppercase py-3 justify-center inline-flex rounded-md shadow-md">
             <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="bi bi-bag-plus mr-2 w-6 h-6" viewBox="0 0 16 16">
               <path fill-rule="evenodd" d="M8 7.5a.5.5 0 0 1 .5.5v1.5H10a.5.5 0 0 1 0 1H8.5V12a.5.5 0 0 1-1 0v-1.5H6a.5.5 0 0 1 0-1h1.5V8a.5.5 0 0 1 .5-.5" />
               <path d="M8 1a2.5 2.5 0 0 1 2.5 2.5V4h-5v-.5A2.5 2.5 0 0 1 8 1m3.5 3v-.5a3.5 3.5 0 1 0-7 0V4H1v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V4zM2 5h12v9a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1z" />
@@ -107,7 +107,7 @@
       <p>
         <strong class="font-medium text-gray-800 dark:text-white">{{ product.name }}</strong>
       </p>
-      <p class="text-sm text-gray-500 dark:text-gray-400">{{ product.productDescription }}</p>
+      <p class="text-sm text-gray-500 dark:text-gray-400">{{ product.productDescription|raw }}</p>
     </div>
   </div>
 </div>

@@ -83,59 +83,7 @@ class CollecteController extends AbstractController
     {
         return $this->render('collecte/qrCodeScan.html.twig');
     }
-
-    #[Route('/clothing', name: 'collecte.clothing', methods: ['GET', 'POST'])]
-    public function clothing(Request $request, EntityManagerInterface $entityManager): Response
-    {
-        $datas = [
-            [
-                'name' => 'T-Shirt',
-                'price' => 500
-            ],
-            [
-                'name' => 'Pantalon',
-                'price' => 500
-            ],
-            [
-                'name' => 'Pull',
-                'price' => 500
-            ],
-            [
-                'name' => 'Short',
-                'price' => 500
-            ],
-            [
-                'name' => 'Robe',
-                'price' => 1000
-            ],
-            [
-                'name' => 'Veste',
-                'price' => 1000
-            ],
-            [
-                'name' => 'Jacket',
-                'price' => 1000
-            ],
-            [
-                'name' => 'Robe de soiree',
-                'price' => 1500
-            ],
-            [
-                'name' => 'Robe perle',
-                'price' => 2000
-            ]
-        ];
-
-        foreach ($datas as $key => $data) {
-            $clothingType = new ClothingType();
-            $clothingType->setName($data['name']);
-            $clothingType->setPrice($data['price']);
-            $entityManager->persist($clothingType);
-            $entityManager->flush();
-        }
-        return $this->render('collecte/qrscan.html.twig');
-    }
-
+    
     /**
     * @param User|null $user
     */
